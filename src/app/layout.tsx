@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { spline_sans } from "@/ui/fonts";
+import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "VitalAIze",
@@ -14,12 +15,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${spline_sans.className} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider
+      appearance={{
+        cssLayerName: "clerk",
+      }}
+    >
+      <html lang="en">
+        <body className={`${spline_sans.className} antialiased`}>
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

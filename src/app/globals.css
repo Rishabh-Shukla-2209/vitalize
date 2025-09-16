@@ -1,7 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-    --color-primary: rgb(19, 236, 19);         
-    --color-primary-dark: #38e07b;           
-    --color-primary-light: #A6F9B2;          
+  --color-primary: rgb(19, 236, 19);
+  --color-primary-dark: #38e07b;
+  --color-primary-light: #a6f9b2;
+
+}
+
+@layer base {
+  input {
+    @apply bg-white text-base border rounded-xl border-zinc-200 px-3.5 py-2.5 text-zinc-900 focus:border-primary focus:border-2 outline-none;
+  }
+
+  button {
+    @apply cursor-pointer;
+  }
+
+  form {
+    @apply flex flex-col gap-5;
+  }
+}
+
+@layer utilities {
+    .error {
+        @apply text-red-500 text-sm;
+    }
+
+    .flex-center {
+        @apply flex items-center justify-center;
+    }
 }

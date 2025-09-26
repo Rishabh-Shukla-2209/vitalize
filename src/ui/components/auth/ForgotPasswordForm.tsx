@@ -16,7 +16,7 @@ const ForgotPasswordForm: NextPage = () => {
 
   useEffect(() => {
     if (isSignedIn) {
-      router.push('/dashboard')
+      router.push('/home')
     }
   }, [isSignedIn, router])
 
@@ -68,7 +68,7 @@ const ForgotPasswordForm: NextPage = () => {
                 return
               }
 
-              router.push('/dashboard')
+              router.push('/home')
             },
           })
           setError('')

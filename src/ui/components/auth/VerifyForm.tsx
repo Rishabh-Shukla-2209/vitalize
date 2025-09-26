@@ -40,7 +40,7 @@ const VerifyForm = ({
               return;
             }
 
-            router.push("/dashboard");
+            router.push("/home");
           },
         });
       } else {

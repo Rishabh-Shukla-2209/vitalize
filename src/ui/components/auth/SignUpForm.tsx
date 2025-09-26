@@ -29,7 +29,7 @@ const SignUpForm = () => {
       .authenticateWithRedirect({
         strategy,
         redirectUrl: "/sign-in/sso-callback",
-        redirectUrlComplete: "/dashboard",
+        redirectUrlComplete: "/home",
       })
       .then((res) => {
         console.log(res);
@@ -73,7 +73,7 @@ const SignUpForm = () => {
     <div className="h-screen w-screen flex items-center justify-center">
       <div className="flex flex-col w-md shadow-xl rounded-3xl">
         <div className="flex-center my-3">
-          <div className="h-17 w-17 bg-black flex-center rounded-4xl">
+          <div className="h-15 w-15 bg-black flex-center rounded-4xl">
             <Logo />
           </div>
         </div>

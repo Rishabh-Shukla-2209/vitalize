@@ -28,7 +28,7 @@ const SignInForm = () => {
       .authenticateWithRedirect({
         strategy,
         redirectUrl: "/sign-in/sso-callback",
-        redirectUrlComplete: "/dashboard",
+        redirectUrlComplete: "/home",
       })
       .then((res) => {
         console.log(res);
@@ -51,7 +51,7 @@ const SignInForm = () => {
 
       if (signIn?.status === "complete") {
         await setActive({ session: signIn.createdSessionId });
-        router.push("/dashboard");
+        router.push("/home");
       } else {
         // If the status is not complete, check why. User may need to
         // complete further steps.
@@ -70,7 +70,7 @@ const SignInForm = () => {
     <div className="h-screen w-screen flex items-center justify-center">
       <div className="flex flex-col w-md shadow-xl rounded-3xl">
         <div className="flex-center my-3">
-          <div className="h-17 w-17 bg-black flex-center rounded-4xl">
+          <div className="h-15 w-15 bg-black flex-center rounded-4xl">
             <Logo />
           </div>
         </div>

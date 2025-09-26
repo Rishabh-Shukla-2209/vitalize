@@ -1,9 +1,9 @@
-import { ReactNode } from "react"
-
-export default function MarketingLayout({ children }: { children: ReactNode }) {
+export default async function HomeLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div>
-      {children}
-    </div>
-  )
+    <div>{children}</div>
+  );
 }

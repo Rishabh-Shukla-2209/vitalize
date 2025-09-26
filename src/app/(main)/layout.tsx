@@ -1,0 +1,16 @@
+import Footer from "@/ui/components/layout/Footer";
+import Navbar from "@/ui/components/layout/Navbar";
+
+export default async function MainLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="w-screen min-h-screen flex flex-col justify-between">
+      <Navbar />
+      <div className="flex-1">{children}</div>
+      <Footer />
+    </div>
+  );
+}

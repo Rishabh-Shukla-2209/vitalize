@@ -1,0 +1,310 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Difficulty {
+  EASY
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum ExerciseCategory {
+  CARDIO
+  STRENGTH
+  FLEXIBILITY
+  HIIT
+  SPORTS
+  CORE
+  BALANCE
+  ENDURANCE
+  RECOVERY
+  MINDBODY
+}
+
+enum MuscleGroup {
+  CHEST
+  BACK
+  SHOULDERS
+  BICEPS
+  TRICEPS
+  FOREARMS
+  TRAPS
+  ROTATOR_CUFF
+  ABS
+  OBLIQUES
+  LOWER_BACK
+  LATS
+  QUADS
+  HAMSTRINGS
+  GLUTES
+  CALVES
+  HIP_FLEXORS
+  ADDUCTORS
+  ABDUCTORS
+  FULL_BODY
+}
+
+enum Equipment {
+  NONE
+  DUMBBELL
+  BARBELL
+  KETTLEBELL
+  RESISTANCE_BAND
+  MACHINE
+  CABLE
+  SMITH_MACHINE
+  EZ_BAR
+  MEDICINE_BALL
+  STABILITY_BALL
+  BENCH
+  BOX
+  JUMP_ROPE
+  PULL_UP_BAR
+  TRX
+  TREADMILL
+  BIKE
+  ROWING_MACHINE
+  ELLIPTICAL
+}
+
+enum LikeTargetType {
+  POST
+  COMMENT
+}
+
+enum NotificationType {
+  FOLLOW
+  LIKE
+  COMMENT
+}
+
+enum NotificationTargetType {
+  FOLLOW
+  LIKE_POST
+  LIKE_COMMENT
+  COMMENT
+}
+
+enum Status {
+  PLANNED
+  IN_PROGRESS
+  ACHIEVED
+  ABANDONED
+}
+
+model User {
+  id                    String            @id
+  createdAt             DateTime          @default(now())
+  gender                Gender?
+  dateOfBirth           DateTime?
+  currentStreakDays     Int               @default(0)
+  longestStreakDays     Int               @default(0)
+  lastActiveOn          DateTime?
+  Follows               Follow[]          @relation("FollowingRelation")
+  Following             Follow[]          @relation("FollowerRelation")
+  WorkoutPlans          WorkoutPlan[]
+  WorkoutLogs           WorkoutLog[]
+  ExerciseCatalog       ExerciseCatalog[]
+  Posts                 Post[]
+  Comments              Comment[]
+  Like                  Like[]
+  Goal                  Goal[]
+  NotificationRecipient Notification[]    @relation("RecipientRelation")
+  NotificationSender    Notification[]    @relation("SenderRelation")
+  AiInteraction         AiInteraction[]
+  MeasureMent           Measurement[]
+}
+
+model ExerciseCatalog {
+  id           String            @id @default(uuid())
+  name         String            @unique
+  category     ExerciseCategory?
+  instructions String?
+  createdAt    DateTime          @default(now())
+  muscleGroup  MuscleGroup?
+  equipment    Equipment?
+  createdBy    User?             @relation(fields: [createdByid], references: [id])
+  createdByid  String?
+  ExerciseLogs ExerciseLog[]
+  planExercise PlanExercise[]
+  Goal         Goal[]
+}
+
+model WorkoutPlan {
+  id          String         @id @default(uuid())
+  userId      String?
+  createdBy   User?          @relation(fields: [userId], references: [id])
+  level       Difficulty
+  name        String         @unique
+  description String
+  duration    Int
+  exercises   PlanExercise[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now())
+  WorkoutLogs WorkoutLog[]
+}
+
+model PlanExercise {
+  id            String          @id @default(uuid())
+  position      Int
+  sets          Int
+  reps          Int
+  rest          Int?
+  distance      Float?
+  time          Int?
+  exercise      ExerciseCatalog @relation(fields: [exerciseid], references: [id])
+  exerciseid    String
+  WorkoutPlan   WorkoutPlan     @relation(fields: [WorkoutPlanid], references: [id])
+  WorkoutPlanid String
+  ExerciseLogs  ExerciseLog[]
+}
+
+model WorkoutLog {
+  id        String        @id @default(uuid())
+  user      User          @relation(fields: [userId], references: [id])
+  userId    String
+  plan      WorkoutPlan?  @relation(fields: [planid], references: [id])
+  planid    String?
+  exercises ExerciseLog[]
+  duration  Int?
+  createdAt DateTime
+  notes     String?
+
+  Post Post[]
+}
+
+model ExerciseLog {
+  id           String           @id @default(uuid())
+  exercise     ExerciseCatalog? @relation(fields: [exerciseid], references: [id])
+  exerciseid   String?
+  name         String?
+  sets         Int              @default(0)
+  reps         Int              @default(0)
+  rest         Int              @default(0)
+  distance     Float            @default(0)
+  time         Int              @default(0)
+  weightUsed   Int              @default(0)
+  createdAt    DateTime         @default(now())
+  WorkoutLog   WorkoutLog       @relation(fields: [WorkoutLogid], references: [id])
+  WorkoutLogid String
+  planExercise PlanExercise[]
+}
+
+model Measurement {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userid], references: [id])
+  userid     String
+  measuredAt DateTime @default(now())
+  height     Int?
+  weight     Int?
+  fatPct     Float?
+  notes      String?
+
+  @@unique([userid, measuredAt])
+}
+
+model Goal {
+  id               String           @id @default(uuid())
+  user             User             @relation(fields: [userid], references: [id])
+  userid           String
+  title            String
+  description      String
+  status           Status
+  targetExercise   ExerciseCatalog? @relation(fields: [targetExerciseid], references: [id])
+  targetExerciseid String?
+  targetWeight     Int?
+  targetTime       Int?
+  targetSets       Int?
+  targetReps       Int?
+  targetDate       DateTime
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  follower    User     @relation("FollowerRelation", fields: [followerId], references: [id])
+  followerId  String
+  following   User     @relation("FollowingRelation", fields: [followingId], references: [id])
+  followingId String
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Post {
+  id            String      @id @default(uuid())
+  user          User        @relation(fields: [userid], references: [id])
+  userid        String
+  title         String
+  body          String?
+  workoutLog    WorkoutLog? @relation(fields: [workoutLogid], references: [id])
+  workoutLogid  String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @default(now())
+  updated       Boolean     @default(false)
+  likesCount    Int         @default(0)
+  commentsCount Int         @default(0)
+  Comments      Comment[]
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userid], references: [id])
+  userid     String
+  text       String
+  post       Post     @relation(fields: [postid], references: [id])
+  postid     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  updated    Boolean  @default(false)
+  likesCount Int      @default(0)
+}
+
+model Like {
+  id        String         @id @default(uuid())
+  target    LikeTargetType
+  targetId  String
+  user      User           @relation(fields: [userid], references: [id])
+  userid    String
+  createdAt DateTime       @default(now())
+
+  @@unique([targetId, userid])
+}
+
+model Notification {
+  id          String                 @id @default(uuid())
+  recipient   User                   @relation("RecipientRelation", fields: [recipientid], references: [id])
+  recipientid String
+  type        NotificationType
+  actor       User                   @relation("SenderRelation", fields: [actorId], references: [id])
+  actorId     String
+  target      NotificationTargetType
+  targetId    String
+  payload     Json
+  isRead      Boolean                @default(false)
+  readAt      DateTime?
+  createdAt   DateTime               @default(now())
+}
+
+model AiInteraction {
+  id           String @id @default(uuid())
+  user         User   @relation(fields: [userid], references: [id])
+  userid       String
+  requestText  String
+  response     Json
+  model        String
+  tokensInput  Int
+  tokensOutput Int
+}

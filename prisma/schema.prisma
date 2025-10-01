@@ -26,7 +26,6 @@ enum ExerciseCategory {
   STRENGTH
   FLEXIBILITY
   HIIT
-  SPORTS
   CORE
   BALANCE
   ENDURANCE
@@ -113,6 +112,7 @@ model User {
   currentStreakDays     Int               @default(0)
   longestStreakDays     Int               @default(0)
   lastActiveOn          DateTime?
+  isProfileComplete     Boolean           @default(false)
   Follows               Follow[]          @relation("FollowingRelation")
   Following             Follow[]          @relation("FollowerRelation")
   WorkoutPlans          WorkoutPlan[]
@@ -149,6 +149,7 @@ model WorkoutPlan {
   createdBy   User?          @relation(fields: [userId], references: [id])
   level       Difficulty
   name        String         @unique
+  imgUrl      String?
   description String
   duration    Int
   exercises   PlanExercise[]
@@ -160,9 +161,9 @@ model WorkoutPlan {
 model PlanExercise {
   id            String          @id @default(uuid())
   position      Int
-  sets          Int
-  reps          Int
-  rest          Int?
+  sets          Int             @default(0)
+  reps          Int             @default(0)
+  rest          Int             @default(0)
   distance      Float?
   time          Int?
   exercise      ExerciseCatalog @relation(fields: [exerciseid], references: [id])
@@ -187,20 +188,37 @@ model WorkoutLog {
 }
 
 model ExerciseLog {
-  id           String           @id @default(uuid())
-  exercise     ExerciseCatalog? @relation(fields: [exerciseid], references: [id])
-  exerciseid   String?
-  name         String?
-  sets         Int              @default(0)
-  reps         Int              @default(0)
-  rest         Int              @default(0)
-  distance     Float            @default(0)
-  time         Int              @default(0)
-  weightUsed   Int              @default(0)
-  createdAt    DateTime         @default(now())
-  WorkoutLog   WorkoutLog       @relation(fields: [WorkoutLogid], references: [id])
-  WorkoutLogid String
-  planExercise PlanExercise[]
+  id                   String           @id @default(uuid())
+  exercise             ExerciseCatalog? @relation(fields: [exerciseid], references: [id])
+  exerciseid           String?
+  name                 String?
+  sets                 Int              @default(0)
+  reps                 Int              @default(0)
+  vol                  Int              @default(0)
+  weightUsed           Int              @default(0)
+  rest                 Int              @default(0)
+  distance             Float            @default(0)
+  duration             Int              @default(0)
+  heartRate            Int              @default(0)
+  speed                Int              @default(0)
+  caloriesBurned       Int              @default(0)
+  vo2Max               Float            @default(0)
+  rpe                  Int              @default(0) //rate of perceived exertion 1-10.
+  rangeOfMotion        Float            @default(0)
+  staticFlexibility    Float            @default(0)
+  dynamicFlexibility   Float            @default(0)
+  workIntervalDuration Int              @default(0)
+  restIntervalDuration Int              @default(0)
+  workToRestRatio      Float            @default(0)
+  numberOfRounds       Int              @default(0)
+  plankHoldTime        Int              @default(0)
+  tug                  Int              @default(0) //Timed up and go test
+  timeToExhaustion     Int              @default(0)
+  heartRateVariability Int              @default(0)
+  createdAt            DateTime         @default(now())
+  WorkoutLog           WorkoutLog       @relation(fields: [WorkoutLogid], references: [id])
+  WorkoutLogid         String
+  planExercise         PlanExercise[]
 }
 
 model Measurement {
@@ -209,7 +227,7 @@ model Measurement {
   userid     String
   measuredAt DateTime @default(now())
   height     Int?
-  weight     Int?
+  weight     Int
   fatPct     Float?
   notes      String?
 
@@ -249,6 +267,7 @@ model Post {
   userid        String
   title         String
   body          String?
+  imgUrl        String?
   workoutLog    WorkoutLog? @relation(fields: [workoutLogid], references: [id])
   workoutLogid  String?
   createdAt     DateTime    @default(now())

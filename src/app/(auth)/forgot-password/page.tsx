@@ -1,6 +1,6 @@
 'use client'
 
-import ForgotPasswordForm from "@/ui/components/auth/ForgotPasswordForm"
+import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm"
 import { NextPage } from "next"
 
 const ForgotPasswordPage: NextPage = () => {

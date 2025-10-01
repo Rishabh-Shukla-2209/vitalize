@@ -1,4 +1,4 @@
-import Logo from '@/ui/components/icons/Logo';
+import Logo from '@/components/icons/Logo';
 import { SignOutButton } from '@clerk/nextjs';
 
 export default function Home() {  

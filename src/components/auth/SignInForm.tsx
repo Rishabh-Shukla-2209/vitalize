@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { LoginSchemaType, loginSchema } from "@/validations/auth";
-import Logo from "@/ui/components/icons/Logo";
+import Logo from "@/components/icons/Logo";
 import Image from "next/image";
 import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";

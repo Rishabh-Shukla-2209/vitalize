@@ -1,5 +1,5 @@
 "use client";
-import SignInForm from "@/ui/components/auth/SignInForm";
+import SignInForm from "@/components/auth/SignInForm";
 
 const SignInPage = () => {
   return <SignInForm />

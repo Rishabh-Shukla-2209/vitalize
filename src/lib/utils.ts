@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { EquipmentType, ExerciseCategoryType, MuscleGroupType } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -9,28 +10,17 @@ export const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 export const dayName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export const ExerciseCategories = [
-  "CARDIO",
-  "STRENGTH",
-  "FLEXIBILITY",
-  "HIIT",
-  "CORE",
-  "BALANCE",
-  "ENDURANCE",
-  "RECOVERY",
-  "MINDBODY",
+export const ExerciseCategories: { label: string; val: ExerciseCategoryType }[] = [
+  { label: "Cardio", val: "CARDIO" },
+  { label: "Strength", val: "STRENGTH" },
+  { label: "Flexibility", val: "FLEXIBILITY" },
+  { label: "Hiit", val: "HIIT" },
+  { label: "Core", val: "CORE" },
+  { label: "Balance", val: "BALANCE" },
+  { label: "Endurance", val: "ENDURANCE" },
+  { label: "Recovery", val: "RECOVERY" },
+  { label: "Mindbody", val: "MINDBODY" }
 ];
-
-export type ExerciseCategory =
-  | "CARDIO"
-  | "STRENGTH"
-  | "FLEXIBILITY"
-  | "HIIT"
-  | "CORE"
-  | "BALANCE"
-  | "ENDURANCE"
-  | "RECOVERY"
-  | "MINDBODY";
 
 export const ExerciseFilterOptions = {
   CARDIO: "caloriesBurned",
@@ -44,52 +34,61 @@ export const ExerciseFilterOptions = {
   MINDBODY: "duration",
 } as const;
 
-export type MuscleGroup =
-  | "CHEST"
-  | "BACK"
-  | "SHOULDERS"
-  | "BICEPS"
-  | "TRICEPS"
-  | "FOREARMS"
-  | "TRAPS"
-  | "ROTATOR_CUFF"
-  | "ABS"
-  | "OBLIQUES"
-  | "LOWER_BACK"
-  | "LATS"
-  | "QUADS"
-  | "HAMSTRINGS"
-  | "GLUTES"
-  | "CALVES"
-  | "HIP_FLEXORS"
-  | "ADDUCTORS"
-  | "ABDUCTORS"
-  | "FULL_BODY";
+export const Difficulty: { label: string; val: string }[] = [
+  { label: "Beginner", val: "BEGINNER" },
+  { label: "Intermediate", val: "INTERMEDIATE" },
+  { label: "Advanced", val: "ADVANCED" },
+];
 
-export const MuscleGroups = [
-  "CHEST",
-  "BACK",
-  "SHOULDERS",
-  "BICEPS",
-  "TRICEPS",
-  "FOREARMS",
-  "TRAPS",
-  "ROTATOR_CUFF",
-  "ABS",
-  "OBLIQUES",
-  "LOWER_BACK",
-  "LATS",
-  "QUADS",
-  "HAMSTRINGS",
-  "GLUTES",
-  "CALVES",
-  "HIP_FLEXORS",
-  "ADDUCTORS",
-  "ABDUCTORS",
-  "FULL_BODY"
-]
+export const Equipment: { label: string; val: EquipmentType }[] = [
+  { label: "None", val: "NONE" },
+  { label: "Dumbbell", val: "DUMBBELL" },
+  { label: "Barbell", val: "BARBELL" },
+  { label: "Kettlebell", val: "KETTLEBELL" },
+  { label: "Resistance Band", val: "RESISTANCE_BAND" },
+  { label: "Machine", val: "MACHINE" },
+  { label: "Cable", val: "CABLE" },
+  { label: "Smith Machine", val: "SMITH_MACHINE" },
+  { label: "Ez Bar", val: "EZ_BAR" },
+  { label: "Medicine Ball", val: "MEDICINE_BALL" },
+  { label: "Stability Ball", val: "STABILITY_BALL" },
+  { label: "Bench", val: "BENCH" },
+  { label: "Box", val: "BOX" },
+  { label: "Jump Rope", val: "JUMP_ROPE" },
+  { label: "Pull Up Bar", val: "PULL_UP_BAR" },
+  { label: "Trx", val: "TRX" },
+  { label: "Treadmill", val: "TREADMILL" },
+  { label: "Bike", val: "BIKE" },
+  { label: "Rowing Machine", val: "ROWING_MACHINE" },
+  { label: "Elliptical", val: "ELLIPTICAL" }
+];
 
-export const MuscleGroupToCategories: Record<MuscleGroup, ExerciseCategory[]> =
+export const MuscleGroups: { label: string; val: MuscleGroupType }[] = [
+  { label: "Chest", val: "CHEST" },
+  { label: "Back", val: "BACK" },
+  { label: "Shoulders", val: "SHOULDERS" },
+  { label: "Biceps", val: "BICEPS" },
+  { label: "Triceps", val: "TRICEPS" },
+  { label: "Forearms", val: "FOREARMS" },
+  { label: "Traps", val: "TRAPS" },
+  { label: "Rotator Cuff", val: "ROTATOR_CUFF" },
+  { label: "Abs", val: "ABS" },
+  { label: "Obliques", val: "OBLIQUES" },
+  { label: "Lower Back", val: "LOWER_BACK" },
+  { label: "Lats", val: "LATS" },
+  { label: "Quads", val: "QUADS" },
+  { label: "Hamstrings", val: "HAMSTRINGS" },
+  { label: "Glutes", val: "GLUTES" },
+  { label: "Calves", val: "CALVES" },
+  { label: "Hip Flexors", val: "HIP_FLEXORS" },
+  { label: "Adductors", val: "ADDUCTORS" },
+  { label: "Abductors", val: "ABDUCTORS" },
+  { label: "Full Body", val: "FULL_BODY" }
+];
+
+
+
+export const MuscleGroupToCategories: Record<MuscleGroupType, ExerciseCategoryType[]> =
   {
     CHEST: ["STRENGTH", "HIIT"],
     BACK: ["STRENGTH", "HIIT"],
@@ -113,8 +112,24 @@ export const MuscleGroupToCategories: Record<MuscleGroup, ExerciseCategory[]> =
     FULL_BODY: ["STRENGTH", "HIIT", "CORE", "ENDURANCE", "BALANCE", "FLEXIBILITY", "MINDBODY", "RECOVERY", "CARDIO"],
   };
 
+export const Duration: {label: string, val: string}[] = [
+  {label: "Under 30 mins", val: "30,31"},
+  {label: "30 - 45 mins", val: "30,45"},
+  {label: "45 - 60 mins", val: "45,60"},
+  {label: "Over 60 mins", val: "60,500"},
+]
+
 export const getAvailableCategoriesForMuscleGroup = (
-  group: MuscleGroup
-): ExerciseCategory[] => {
-  return MuscleGroupToCategories[group] || [];
+  group: MuscleGroupType | ''
+): {label: string, val: ExerciseCategoryType}[] => {
+  if(group === '') return [];
+  return MuscleGroupToCategories[group].map(el => ({label: toProperCase(el), val: el})) || [];
 };
+
+export const toProperCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .replace(/\b\w/g, char => char.toUpperCase())
+    .replace(/_/g, " ");
+}
+

@@ -6,24 +6,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+type SelectorProps = {
+  choices: Array<{ label: string; val: string }>;
+  setChoice: Dispatch<SetStateAction<string>>;
+  placeholder: string;
+  selectedValue: string;
+};
+
 const Selector = ({
   choices,
-  choice,
   setChoice,
-}: {
-  choices: string[];
-  choice: string;
-  setChoice: Dispatch<SetStateAction<string>>;
-}) => {
+  placeholder,
+  selectedValue
+}: SelectorProps
+) => {
   return (
-    <Select value={choice} onValueChange={setChoice}>
+    <Select value={selectedValue} onValueChange={setChoice}>
       <SelectTrigger className="w-40">
-        <SelectValue placeholder={choice} />
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {choices.map((choice) => (
-          <SelectItem key={choice} value={choice}>
-            {choice}
+        {choices.map(({ label, val }) => (
+          <SelectItem key={label} value={val}>
+            {label}
           </SelectItem>
         ))}
       </SelectContent>

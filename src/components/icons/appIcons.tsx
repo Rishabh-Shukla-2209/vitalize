@@ -8,6 +8,11 @@ import {
   CirclePlus,
   Brain,
   CircleX,
+  Clock,
+  Search,
+  Dumbbell,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 const Icons = {
@@ -19,7 +24,12 @@ const Icons = {
   uncheck: CircleX,
   home: House,
   add: CirclePlus,
-  ai: Brain
+  ai: Brain,
+  clock: Clock,
+  search: Search,
+  dumbell: Dumbbell,
+  expand: ChevronDown,
+  collapse: ChevronUp,
 };
 
 export default Icons;

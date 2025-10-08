@@ -2,7 +2,8 @@
 
 import { AreaChart, Area, YAxis, Legend, ResponsiveContainer } from "recharts";
 import { useEffect, useState } from "react";
-import { ExerciseCategories, ExerciseCategory } from "@/lib/utils";
+import { ExerciseCategories } from "@/lib/utils";
+import { ExerciseCategoryType } from "@/lib/types";
 import { getExerciseCatData } from "@/lib/db";
 import { subDays } from "date-fns";
 import { DatePicker } from "../DatePicker";
@@ -10,7 +11,8 @@ import Selector from "../Selector";
 import { Button } from "../ui/button";
 
 const ExerciseCategoryChart = ({ userId }: { userId: string }) => {
-  const [selectedCategory, setSelectedCategory] = useState("STRENGTH");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categoryError, setCategoryError] = useState(false);
   const [dateFrom, setDateFrom] = useState<Date | undefined>(
     subDays(new Date(), 30)
   );
@@ -31,9 +33,17 @@ const ExerciseCategoryChart = ({ userId }: { userId: string }) => {
   }, [userId])
 
   const updateData = async (userId: string) => {
-    const updatedData = await getExerciseCatData(userId, selectedCategory as ExerciseCategory, dateFrom, dateTo);
+    if(!selectedCategory){
+      setCategoryError(true);
+      return;
+    }
+    const updatedData = await getExerciseCatData(userId, selectedCategory as ExerciseCategoryType, dateFrom, dateTo);
     setData(updatedData);
   }
+
+  useEffect(() => {
+    setCategoryError(false);
+  }, [selectedCategory]);
 
 
   const chartName = `${selectedCategory} PROGRESS`;
@@ -42,11 +52,15 @@ const ExerciseCategoryChart = ({ userId }: { userId: string }) => {
     <div className="boundary p-5">
       <h3 className="text-lg text-gray-600 mb-2">Progress by Workout Type</h3>
       <div className="flex gap-10">
-        <Selector
-          choices={categories}
-          choice={selectedCategory}
-          setChoice={setSelectedCategory}
-        />
+        <div>
+          <Selector
+            choices={categories}
+            placeholder="Strength"
+            setChoice={setSelectedCategory}
+            selectedValue={selectedCategory}
+          />
+          {categoryError && <span className="error">Required</span>}
+        </div>
         <DatePicker label="From:" date={dateFrom} setDate={setDateFrom} />
         <DatePicker label="To:" date={dateTo} setDate={setDateTo} />
         <Button variant='default' onClick={() => updateData(userId)}>Go</Button>

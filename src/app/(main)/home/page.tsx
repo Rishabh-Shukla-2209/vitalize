@@ -11,14 +11,11 @@ import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import ExerciseCategoryChartSkeleton from "@/components/charts/ExerciseCategoryChartSkeleton";
 import ProgressCompChartSkeleton from "@/components/charts/ProgressCompChartSkeleton";
+import Link from "next/link";
 
 const Homepage = () => {
   const { user, isLoaded, isSignedIn } = useUser();
   const [todaysWorkoutComplete, setTodaysWorkoutComplete] = useState(false);
-
-  // const logWorkout = async (userId: string) => {
-
-  // }
 
   useEffect(() => {
     async function didWorkoutToday(userId: string) {
@@ -39,16 +36,20 @@ const Homepage = () => {
           </div>
         </div>
         <div className="mr-5">
-          <button className="bg-primary-dark text-gray-900 px-2.5 py-2 rounded-lg mr-5">
-            <span className="flex-center gap-1">
-              <Icons.add /> <p>Log Workout</p>
-            </span>
-          </button>
-          <button className="bg-zinc-200 text-gray-900 px-3.5 py-2.25 rounded-lg mr-5">
-            <span className="flex-center gap-1">
-              <Icons.ai /> <p>AI Coach</p>
-            </span>
-          </button>
+          <Link href={'/workouts/log-workout'}>
+            <button className="bg-primary-dark text-gray-900 px-2.5 py-2 rounded-lg mr-5">
+              <span className="flex-center gap-1">
+                <Icons.add /> <p>Log Workout</p>
+              </span>
+            </button>
+          </Link>
+          <Link href={'/programs/ai-coach'}>
+            <button className="bg-zinc-200 text-gray-900 px-3.5 py-2.25 rounded-lg mr-5">
+              <span className="flex-center gap-1">
+                <Icons.ai /> <p>AI Coach</p>
+              </span>
+            </button>
+          </Link>
         </div>
       </div>
       <div className="flex gap-10 mt-8">

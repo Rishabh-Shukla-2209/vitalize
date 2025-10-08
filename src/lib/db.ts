@@ -9,7 +9,14 @@ import {
   getYear,
   subDays,
 } from "date-fns";
-import { dayName, ExerciseCategory, ExerciseFilterOptions, MuscleGroup } from "./utils";
+import { dayName, ExerciseFilterOptions } from "./utils";
+import {
+  DifficultyType,
+  EquipmentType,
+  ExerciseCategoryType,
+  MuscleGroupType,
+} from "./types";
+import { Prisma } from "@/generated/prisma";
 
 export const getLastWeekVol = async (userId: string) => {
   const earliestDate = subDays(new Date(), 7);
@@ -153,11 +160,10 @@ export const hasWorkedOutToday = async (userId: string) => {
 
 export const getExerciseCatData = async (
   userId: string,
-  category: ExerciseCategory,
+  category: ExerciseCategoryType,
   startDate = new Date(),
-  endDate = new Date(),
+  endDate = new Date()
 ) => {
-  
   const data = await prisma.exerciseLog.findMany({
     where: {
       WorkoutLog: {
@@ -168,7 +174,7 @@ export const getExerciseCatData = async (
         lt: endDate,
       },
       exercise: {
-        category
+        category,
       },
     },
 
@@ -179,29 +185,31 @@ export const getExerciseCatData = async (
   });
 
   const diffInDates = differenceInCalendarDays(endDate, startDate);
-  const dayVolArr: number[] = Array(diffInDates).fill(0);  
+  const dayVolArr: number[] = Array(diffInDates).fill(0);
 
   data.forEach((record) => {
-    // @ts-expect-error The data from Prisma is fine but due to 
+    // @ts-expect-error The data from Prisma is fine but due to
     // [ExerciseFilterOptions[category]]: true, ts can't infer type properly.
     const index = differenceInCalendarDays(record.createdAt, startDate);
     // @ts-expect-error same as above
-    dayVolArr[index] += record[ExerciseFilterOptions[category]]; 
+    dayVolArr[index] += record[ExerciseFilterOptions[category]];
   });
 
-  const result = dayVolArr.map((val, index) => ({name: index.toString(), val}));
-  
+  const result = dayVolArr.map((val, index) => ({
+    name: index.toString(),
+    val,
+  }));
+
   return result;
 };
 
 export const getMuscleGroupData = async (
   userId: string,
-  muscleGroup: MuscleGroup,
-  category: ExerciseCategory,
+  muscleGroup: MuscleGroupType,
+  category: ExerciseCategoryType,
   startDate = new Date(),
-  endDate = new Date(),
+  endDate = new Date()
 ) => {
-  
   const data = await prisma.exerciseLog.findMany({
     where: {
       WorkoutLog: {
@@ -213,7 +221,7 @@ export const getMuscleGroupData = async (
       },
       exercise: {
         muscleGroup,
-        category
+        category,
       },
     },
 
@@ -224,17 +232,100 @@ export const getMuscleGroupData = async (
   });
 
   const diffInDates = differenceInCalendarDays(endDate, startDate);
-  const dayVolArr: number[] = Array(diffInDates).fill(0);  
+  const dayVolArr: number[] = Array(diffInDates).fill(0);
 
   data.forEach((record) => {
-    // @ts-expect-error The data from Prisma is fine but due to 
+    // @ts-expect-error The data from Prisma is fine but due to
     // [ExerciseFilterOptions[category]]: true, ts can't infer type properly.
     const index = differenceInCalendarDays(record.createdAt, startDate);
     // @ts-expect-error same as above
-    dayVolArr[index] += record[ExerciseFilterOptions[category]]; 
+    dayVolArr[index] += record[ExerciseFilterOptions[category]];
   });
 
-  const result = dayVolArr.map((val, index) => ({name: index.toString(), val}));
-  
+  const result = dayVolArr.map((val, index) => ({
+    name: index.toString(),
+    val,
+  }));
+
   return result;
+};
+
+export const getWorkoutPlans = async (
+  muscleGroup: MuscleGroupType | "",
+  equipment: EquipmentType | "",
+  difficulty: DifficultyType | "",
+  duration: string,
+  search: string
+) => {
+  const whereClause: Prisma.WorkoutPlanWhereInput = {};
+
+  if (difficulty) {
+    whereClause.level = difficulty;
+  }
+
+  if (duration) {
+    const [min, max] = duration.split(",").map(Number);
+    whereClause.duration = {
+      gte: min,
+      lte: max,
+    };
+  }
+
+  if (search) {
+    whereClause.name = {
+      contains: search,
+      mode: "insensitive",
+    };
+
+    whereClause.description = {
+      contains: search,
+      mode: "insensitive",
+    };
+  }
+
+  if (muscleGroup || equipment) {
+    whereClause.exercises = {
+      some: {
+        exercise: {
+          ...(muscleGroup && muscleGroup !== "FULL_BODY" && { muscleGroup }),
+          ...(equipment && { equipment }),
+        },
+      },
+    };
+  }
+
+  const data = await prisma.workoutPlan.findMany({
+    where: whereClause,
+  });
+
+  return data;
+};
+
+export const getWorkoutDetails = async (id: string) => {
+  const data = await prisma.workoutPlan.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      exercises: {
+        include: {
+          exercise: {
+            select: {
+              equipment: true,
+              muscleGroup: true,
+              name: true,
+              category: true,
+              instructions: true,
+              imgUrl: true
+            }
+          }
+        },
+        orderBy: {
+          position: "asc",
+        },
+      },
+    },
+  });
+
+  return data;
 };

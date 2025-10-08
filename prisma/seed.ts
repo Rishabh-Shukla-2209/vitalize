@@ -1116,13 +1116,15 @@ async function seed() {
 
   // --- WORKOUT PLAN ---
 
-  // --- EASY LEVEL WORKOUT ---
+  // --- BEGINNER LEVEL WORKOUT ---
   const beginnerStrengthPlan = await prisma.workoutPlan.create({
     data: {
       name: "Beginner Strength Plan",
       description:
         "A simple full-body strength workout for beginners using bodyweight.",
-      level: Difficulty.EASY,
+      level: Difficulty.BEGINNER,
+      imgUrl:
+        "https://res.cloudinary.com/dlyluxb9z/image/upload/flat-illustration-of-a-sporty-couple-a-man-and-a-woman-lift-dumbbells-on-their-both-hands-as-strength-training-workout-vector_nxpmyr.jpg",
       duration: 25,
       userId: null,
       exercises: {
@@ -1164,6 +1166,8 @@ async function seed() {
       description:
         "A sweaty session combining cardio bursts with core stability work.",
       level: Difficulty.INTERMEDIATE,
+      imgUrl: 
+        "https://res.cloudinary.com/dlyluxb9z/image/upload/womens-cardio-exercise-icon-vector-4878396_o35ice.jpg",
       duration: 40,
       userId: null,
       exercises: {
@@ -1211,6 +1215,7 @@ async function seed() {
       description:
         "High-intensity mix of strength and cardio intervals designed for advanced trainees.",
       level: Difficulty.ADVANCED,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/man-doing-pushups-gym-vector-illustration-flat-style_159885-3113_opx4lx.jpg",
       duration: 55,
       userId: null,
       exercises: {
@@ -1263,13 +1268,14 @@ async function seed() {
     include: { exercises: true },
   });
 
-  // --- PLAN 4: EASY FLEXIBILITY & RECOVERY ---
+  // --- PLAN 4: BEGINNER FLEXIBILITY & RECOVERY ---
   const beginnerFlexibilityPlan = await prisma.workoutPlan.create({
     data: {
       name: "Beginner Flexibility & Recovery",
       description:
         "Gentle stretching routine to improve mobility and aid recovery.",
-      level: Difficulty.EASY,
+      level: Difficulty.BEGINNER,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/woman-stretching-workout-semi-flat-color-character-editable-figure-full-body-people-on-white-flexibility-exercises-simple-cartoon-style-illustration-for-web-graphic-design-and-animation-vector_v9tr8n.jpg",
       duration: 20,
       userId: null,
       exercises: {
@@ -1315,6 +1321,7 @@ async function seed() {
       description:
         "Improve stability and coordination with this balance-focused workout.",
       level: Difficulty.INTERMEDIATE,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/flat-vector-illustration-man-performing-600nw-2667949145_r2xpv6.jpg",
       duration: 30,
       userId: null,
       exercises: {
@@ -1360,6 +1367,7 @@ async function seed() {
       description:
         "A high-volume endurance workout designed to push cardiovascular capacity.",
       level: Difficulty.ADVANCED,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/vector-kettlebell-swing-exercise-clipart_1218867-3690_lv2fbj.jpg",
       duration: 60,
       userId: null,
       exercises: {
@@ -1399,13 +1407,14 @@ async function seed() {
     include: { exercises: true },
   });
 
-  // --- PLAN 7: EASY MINDBODY FLOW ---
+  // --- PLAN 7: BEGINNER MINDBODY FLOW ---
   const beginnerMindBodyPlan = await prisma.workoutPlan.create({
     data: {
       name: "Beginner Mind-Body Flow",
       description:
         "Gentle yoga-inspired flow to connect breath with movement and improve flexibility.",
-      level: Difficulty.EASY,
+      level: Difficulty.BEGINNER,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/self-care-1_01_mane2f.jpg",
       duration: 25,
       userId: null,
       exercises: {
@@ -1451,6 +1460,7 @@ async function seed() {
       description:
         "A challenging ab workout to build midsection strength and stability.",
       level: Difficulty.INTERMEDIATE,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/flat-vector-man-doing-sit-ups-towel-under-back-stopwatch-nearby-core-workout-isolated-white-generative-ai-404888182_xohmfp.jpg",
       duration: 35,
       userId: null,
       exercises: {
@@ -1503,6 +1513,7 @@ async function seed() {
       description:
         "High-volume upper body workout for advanced strength trainees.",
       level: Difficulty.ADVANCED,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/1000_F_386831633_M70T62G1gFwq6D1lf0Y3rOxNxQIBPqkc_bnb0gk.jpg",
       duration: 70,
       userId: null,
       exercises: {
@@ -1555,12 +1566,13 @@ async function seed() {
     include: { exercises: true },
   });
 
-  // --- PLAN 10: EASY CARDIO ENDURANCE ---
+  // --- PLAN 10: BEGINNER CARDIO ENDURANCE ---
   const beginnerCardioEndurance = await prisma.workoutPlan.create({
     data: {
       name: "Beginner Cardio Endurance",
       description: "Low-impact cardio session to build basic aerobic fitness.",
-      level: Difficulty.EASY,
+      level: Difficulty.BEGINNER,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/man-running-on-treadmill-sportsman-jogging-on-fitness-equipment-endurance-cardio-run-training-flat-illustration-vector_apbkdy.jpg",
       duration: 30,
       userId: null,
       exercises: {
@@ -1606,6 +1618,7 @@ async function seed() {
       description:
         "Circuit-style workout alternating strength and cardio intervals.",
       level: Difficulty.INTERMEDIATE,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/crossfit-workout-man-woman-doing-physical-exercise-engaged-competitive-fitness-sport-vector-set-young-male-female-271155617_nupmso.jpg",
       duration: 35,
       userId: null,
       exercises: {
@@ -1658,6 +1671,7 @@ async function seed() {
       description:
         "Combination of heavy lifts and conditioning for maximum performance.",
       level: Difficulty.ADVANCED,
+      imgUrl: "https://res.cloudinary.com/dlyluxb9z/image/upload/man-workout-in-gym-for-healthy-llifestyle-free-vector_cwcolp.jpg",
       duration: 65,
       userId: null,
       exercises: {

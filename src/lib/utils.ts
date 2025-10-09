@@ -119,6 +119,58 @@ export const Duration: {label: string, val: string}[] = [
   {label: "Over 60 mins", val: "60,500"},
 ]
 
+export const fitnessMetricUnits = {
+  sets: "",
+  reps: "",
+  weightUsed: "kg",
+  distance: "km",
+  rest: "s",
+  duration: "s",
+  heartRate: "bpm",
+  speed: "m/s",
+  caloriesBurned: "kcal",
+  vo2Max: "ml/kg/min",
+  rpe: "scale",
+  rangeOfMotion: "degrees",
+  staticFlexibility: "cm",
+  dynamicFlexibility: "cm",
+  workIntervalDuration: "s",
+  restIntervalDuration: "s",
+  workToRestRatio: "ratio",
+  numberOfRounds: "count",
+  plankHoldTime: "s",
+  tug: "s",
+  timeToExhaustion: "s",
+  heartRateVariability: "ms",
+};
+
+export const fitnessMetricLabels = {
+  sets: "Sets",
+  reps: "Reps",
+  weightUsed: "Weight Used",
+  distance: "Distance",
+  rest: "Rest",
+  duration: "Duration",
+  heartRate: "Heart Rate",
+  speed: "Speed",
+  caloriesBurned: "Calories Burned",
+  vo2Max: "VO₂ Max",
+  rpe: "RPE",
+  rangeOfMotion: "Range of Motion",
+  staticFlexibility: "Static Flexibility",
+  dynamicFlexibility: "Dynamic Flexibility",
+  workIntervalDuration: "Work Interval",
+  restIntervalDuration: "Rest Interval",
+  workToRestRatio: "Work:Rest Ratio",
+  numberOfRounds: "Rounds",
+  plankHoldTime: "Plank Hold",
+  tug: "TUG",
+  timeToExhaustion: "Time to Exhaustion",
+  heartRateVariability: "HRV",
+};
+
+
+
 export const getAvailableCategoriesForMuscleGroup = (
   group: MuscleGroupType | ''
 ): {label: string, val: ExerciseCategoryType}[] => {

@@ -178,8 +178,8 @@ model WorkoutLog {
   id        String        @id @default(uuid())
   user      User          @relation(fields: [userId], references: [id])
   userId    String
-  plan      WorkoutPlan?  @relation(fields: [planid], references: [id])
-  planid    String?
+  plan      WorkoutPlan  @relation(fields: [planid], references: [id])
+  planid    String
   exercises ExerciseLog[]
   duration  Int?
   createdAt DateTime
@@ -190,9 +190,8 @@ model WorkoutLog {
 
 model ExerciseLog {
   id                   String           @id @default(uuid())
-  exercise             ExerciseCatalog? @relation(fields: [exerciseid], references: [id])
-  exerciseid           String?
-  name                 String?
+  exercise             ExerciseCatalog @relation(fields: [exerciseid], references: [id])
+  exerciseid           String
   sets                 Int              @default(0)
   reps                 Int              @default(0)
   vol                  Int              @default(0)
@@ -210,7 +209,7 @@ model ExerciseLog {
   dynamicFlexibility   Float            @default(0)
   workIntervalDuration Int              @default(0)
   restIntervalDuration Int              @default(0)
-  workToRestRatio      Float            @default(0)
+  workToRestRatio      String           @default("")
   numberOfRounds       Int              @default(0)
   plankHoldTime        Int              @default(0)
   tug                  Int              @default(0) //Timed up and go test

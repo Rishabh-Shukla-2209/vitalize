@@ -1,4 +1,4 @@
-export type DifficultyType = "BEGINNER" | "INTERMEDIATE" | "ADVANCED" ;
+export type DifficultyType = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
 
 export type ExerciseCategoryType =
   | "CARDIO"
@@ -10,7 +10,6 @@ export type ExerciseCategoryType =
   | "ENDURANCE"
   | "RECOVERY"
   | "MINDBODY";
-
 
 export type MuscleGroupType =
   | "CHEST"
@@ -34,41 +33,39 @@ export type MuscleGroupType =
   | "ABDUCTORS"
   | "FULL_BODY";
 
-export type EquipmentType = 
-  |"NONE"
-  |"DUMBBELL"
-  |"BARBELL"
-  |"KETTLEBELL"
-  |"RESISTANCE_BAND"
-  |"MACHINE"
-  |"CABLE"
-  |"SMITH_MACHINE"
-  |"EZ_BAR"
-  |"MEDICINE_BALL"
-  |"STABILITY_BALL"
-  |"BENCH"
-  |"BOX"
-  |"JUMP_ROPE"
-  |"PULL_UP_BAR"
-  |"TRX"
-  |"TREADMILL"
-  |"BIKE"
-  |"ROWING_MACHINE"
-  |"ELLIPTICAL"
+export type EquipmentType =
+  | "NONE"
+  | "DUMBBELL"
+  | "BARBELL"
+  | "KETTLEBELL"
+  | "RESISTANCE_BAND"
+  | "MACHINE"
+  | "CABLE"
+  | "SMITH_MACHINE"
+  | "EZ_BAR"
+  | "MEDICINE_BALL"
+  | "STABILITY_BALL"
+  | "BENCH"
+  | "BOX"
+  | "JUMP_ROPE"
+  | "PULL_UP_BAR"
+  | "TRX"
+  | "TREADMILL"
+  | "BIKE"
+  | "ROWING_MACHINE"
+  | "ELLIPTICAL";
 
-
-  
 export type WorkoutPlanType = {
-    id: string;
-    name: string;
-    userId: string | null;
-    level: DifficultyType;
-    imgUrl: string | null;
-    description: string;
-    duration: number;
-    createdAt: Date;
-    updatedAt: Date;
-}
+  id: string;
+  name: string;
+  userId: string | null;
+  level: DifficultyType;
+  imgUrl: string | null;
+  description: string;
+  duration: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 export type ExercisePropType = {
   exercise: {
@@ -89,4 +86,52 @@ export type ExercisePropType = {
   distance: number | null;
   exerciseid: string;
   WorkoutPlanid: string;
+};
+
+export type ExerciseLogType = {
+    id: string;
+    createdAt: Date;
+    duration: number;
+    exerciseid: string;
+    sets: number;
+    reps: number;
+    vol: number;
+    weightUsed: number;
+    rest: number;
+    distance: number;
+    heartRate: number;
+    speed: number;
+    caloriesBurned: number;
+    vo2Max: number;
+    rpe: number;
+    rangeOfMotion: number;
+    staticFlexibility: number;
+    dynamicFlexibility: number;
+    workIntervalDuration: number;
+    restIntervalDuration: number;
+    workToRestRatio: string;
+    numberOfRounds: number;
+    plankHoldTime: number;
+    tug: number;
+    timeToExhaustion: number;
+    heartRateVariability: number;
+    WorkoutLogid: string;
+}
+
+export type WorkoutType = {
+  plan: {
+    name: string;
+  };
+  exercises: ({
+    exercise: {
+      name: string;
+    };
+  } & ExerciseLogType)[];
+} & {
+  id: string;
+  createdAt: Date;
+  userId: string;
+  duration: number | null;
+  planid: string | null;
+  notes: string | null;
 };

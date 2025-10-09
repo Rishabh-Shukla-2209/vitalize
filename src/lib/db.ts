@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import {
+  addDays,
   differenceInCalendarDays,
   format,
   getDate,
@@ -316,15 +317,65 @@ export const getWorkoutDetails = async (id: string) => {
               name: true,
               category: true,
               instructions: true,
-              imgUrl: true
-            }
-          }
+              imgUrl: true,
+            },
+          },
         },
         orderBy: {
           position: "asc",
         },
       },
     },
+  });
+
+  return data;
+};
+
+export const getPastWorkouts = async (
+  userId: string,
+  date: Date | undefined,
+  muscleGroup: MuscleGroupType | ""
+) => {
+
+  const whereClause: Prisma.WorkoutLogWhereInput = {userId};
+
+  if(date) {
+    whereClause.createdAt = {
+      gte: date,
+      lt: addDays(date, 1)
+    }
+  }
+
+  if(muscleGroup){
+    whereClause.exercises = {
+      some: {
+        exercise: {muscleGroup}
+      }
+    }
+  }
+
+
+  const data = await prisma.workoutLog.findMany({
+    where: whereClause,
+    include: {
+      exercises: {
+        include: {
+          exercise: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      plan: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
   });
 
   return data;

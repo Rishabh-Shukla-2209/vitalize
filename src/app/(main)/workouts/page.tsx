@@ -1,9 +1,17 @@
-import React from 'react'
+"use client";
+
+import WorkoutHistory from "@/components/WorkoutHistory";
+import { useUser } from "@clerk/nextjs";
 
 const WorkoutsPage = () => {
-  return (
-    <div>WorkoutsPage</div>
-  )
-}
+  
+  const {user, isSignedIn, isLoaded} = useUser();
+  
+  if(isLoaded && isSignedIn){
+    return <WorkoutHistory userId={user.id} />
+  }
 
-export default WorkoutsPage
+  return <p>Loading...</p>
+};
+
+export default WorkoutsPage;

@@ -13,6 +13,8 @@ import {
   Dumbbell,
   ChevronDown,
   ChevronUp,
+  CalendarCheck,
+  RotateCcw,
 } from "lucide-react";
 
 const Icons = {
@@ -30,6 +32,8 @@ const Icons = {
   dumbell: Dumbbell,
   expand: ChevronDown,
   collapse: ChevronUp,
+  calendar: CalendarCheck,
+  repeat: RotateCcw
 };
 
 export default Icons;

@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import clsx from "clsx"
 
 export function DatePicker({label, date, setDate}: {label: string, date: Date | undefined, setDate: React.Dispatch<React.SetStateAction<Date | undefined>>}) {
   const [open, setOpen] = React.useState(false)
@@ -25,7 +26,7 @@ export function DatePicker({label, date, setDate}: {label: string, date: Date | 
           <Button
             variant="outline"
             id="date"
-            className="w-35 justify-between font-normal"
+            className={clsx("w-35 justify-between font-normal", {"text-zinc-500": !date})}
           >
             {date ? date.toLocaleDateString() : "Select date"}
             <ChevronDownIcon />

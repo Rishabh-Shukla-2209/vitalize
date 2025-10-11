@@ -1,4 +1,4 @@
-import { WorkoutType } from "@/lib/types";
+import { WorkoutLogType } from "@/lib/types";
 import Icons from "./icons/appIcons";
 import { Button } from "./ui/button";
 import { useState } from "react";
@@ -7,7 +7,7 @@ import ExerciseLog from "./ExerciseLog";
 import { format } from "date-fns";
 import Link from "next/link";
 
-const WorkoutHistoryCard = ({ workout }: { workout: WorkoutType }) => {
+const WorkoutHistoryCard = ({ workout, action }: { workout: WorkoutLogType, action: string }) => {
   const [expanded, setExpanded] = useState(false);
   return (
     <div>
@@ -30,12 +30,19 @@ const WorkoutHistoryCard = ({ workout }: { workout: WorkoutType }) => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Link href={`/workouts/${workout.id}`}>
+          {action === "repeat" ? <Link href={`/workouts/${workout.planid}`}>
               <Button variant="default" className="text-lg">
                 <Icons.repeat />
                 Repeat
               </Button>
+          </Link> : 
+          <Link href={`/workouts/log-workout/${workout.id}`}>
+              <Button variant="default" className="text-lg">
+                <Icons.log />
+                Log Workout
+              </Button>
           </Link>
+          }
           <div
             className="flex-center cursor-pointer"
             onClick={() => setExpanded((prev) => !prev)}

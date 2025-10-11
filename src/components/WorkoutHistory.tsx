@@ -66,7 +66,7 @@ const WorkoutHistory = ({ userId }: { userId: string }) => {
           <div className="flex flex-col gap-5 ">
             {data.length > 0 ? (
               data.map((workout) => (
-                <WorkoutHistoryCard key={workout.id} workout={workout} />
+                <WorkoutHistoryCard key={workout.id} workout={workout} action="repeat" />
               ))
             ) : (
               <p>No workouts to show right now.</p>

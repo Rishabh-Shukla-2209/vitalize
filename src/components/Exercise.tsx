@@ -1,13 +1,13 @@
 "use client";
 
-import { ExercisePropType } from "@/lib/types";
+import { ExerciseDetailsType } from "@/lib/types";
 import Image from "next/image";
 import { useState } from "react";
 import Icons from "./icons/appIcons";
 import { toProperCase } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Exercise = ({ exercise }: { exercise: ExercisePropType }) => {
+const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (

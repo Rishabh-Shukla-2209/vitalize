@@ -67,7 +67,42 @@ export type WorkoutPlanType = {
   updatedAt: Date;
 };
 
-export type ExercisePropType = {
+export type WorkoutPlanDetailsType = {
+  exercises: ({
+        exercise: {
+            name: string;
+            imgUrl: string | null;
+            category: ExerciseCategoryType | null;
+            instructions: string;
+            muscleGroup: MuscleGroupType;
+            equipment: EquipmentType | null;
+        };
+    } & {
+        id: string;
+        position: number;
+        time: number | null;
+        sets: number;
+        reps: number;
+        rest: number;
+        distance: number | null;
+        exerciseid: string;
+        WorkoutPlanid: string;
+    })[];
+} & {
+    id: string;
+    name: string;
+    userId: string | null;
+    level: DifficultyType;
+    imgUrl: string | null;
+    description: string;
+    duration: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+
+
+export type ExerciseDetailsType = {
   exercise: {
     name: string;
     category: ExerciseCategoryType | null;
@@ -118,7 +153,7 @@ export type ExerciseLogType = {
     WorkoutLogid: string;
 }
 
-export type WorkoutType = {
+export type WorkoutLogType = {
   plan: {
     name: string;
   };
@@ -135,3 +170,19 @@ export type WorkoutType = {
   planid: string | null;
   notes: string | null;
 };
+
+
+export type WorkoutItem = {
+  exercise: ExerciseDetailsType | undefined;
+  type: "work" | "rest";
+  currValues: {set: number;
+    reps: number;
+    distance: number | null;
+    time: number | null;
+  };
+} | null;
+
+export type StackAction =
+  | { type: "PUSH"; payload: WorkoutItem }
+  | { type: "POP" }
+  | { type: "CLEAR" };

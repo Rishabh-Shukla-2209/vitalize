@@ -8,8 +8,9 @@ import { getWorkoutPlans } from "@/lib/db";
 import { DifficultyType, EquipmentType, MuscleGroupType } from "@/lib/types";
 import { Difficulty, Duration, Equipment, MuscleGroups } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import {useDebounce} from 'react-use'
+import { useDebounce } from "react-use";
 
 const ProgramsPage = () => {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
@@ -18,9 +19,9 @@ const ProgramsPage = () => {
   const [selectedDuration, setSelectedDuration] = useState("");
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  useDebounce(()=>setDebouncedSearch(search), 500, [search]);
+  useDebounce(() => setDebouncedSearch(search), 500, [search]);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [
@@ -31,13 +32,13 @@ const ProgramsPage = () => {
       { selectedDuration },
       { debouncedSearch },
     ],
-    queryFn: async() => {
+    queryFn: async () => {
       const data = await getWorkoutPlans(
-        selectedMuscleGroup as MuscleGroupType | '',
-        selectedEquipment as EquipmentType | '',
-        selectedDifficulty as DifficultyType | '',
+        debouncedSearch,
+        selectedMuscleGroup as MuscleGroupType | "",
+        selectedEquipment as EquipmentType | "",
+        selectedDifficulty as DifficultyType | "",
         selectedDuration,
-        debouncedSearch
       );
 
       return data;
@@ -46,7 +47,12 @@ const ProgramsPage = () => {
   });
 
   useEffect(() => {
-    if (selectedMuscleGroup || selectedEquipment || selectedDifficulty || selectedDuration) {
+    if (
+      selectedMuscleGroup ||
+      selectedEquipment ||
+      selectedDifficulty ||
+      selectedDuration
+    ) {
       setFiltersApplied(true);
     } else {
       setFiltersApplied(false);
@@ -75,7 +81,7 @@ const ProgramsPage = () => {
           <Icons.search />
           <input
             type="text"
-            className="border-0 bg-zinc-100 text-zinc-600"
+            className="border-0 bg-zinc-100 text-zinc-600 flex-1"
             placeholder="Search workouts..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -121,7 +127,9 @@ const ProgramsPage = () => {
         <div className="grid grid-cols-4 auto-rows gap-5">
           {data.length > 0 ? (
             data.map((workout) => (
-              <WorkoutPlanCard key={workout.id} workout={workout} />
+              <Link href={`/programs/${workout.id}`} key={workout.id}>
+                <WorkoutPlanCard workout={workout} />
+              </Link>
             ))
           ) : (
             <p>No workouts are available for your selection.</p>

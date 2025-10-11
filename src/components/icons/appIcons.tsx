@@ -15,6 +15,11 @@ import {
   ChevronUp,
   CalendarCheck,
   RotateCcw,
+  NotepadText,
+  ArrowRight,
+  ArrowLeft,
+  Pause,
+  Play,
 } from "lucide-react";
 
 const Icons = {
@@ -33,7 +38,12 @@ const Icons = {
   expand: ChevronDown,
   collapse: ChevronUp,
   calendar: CalendarCheck,
-  repeat: RotateCcw
+  repeat: RotateCcw,
+  log: NotepadText,
+  right: ArrowRight,
+  left: ArrowLeft,
+  pause: Pause,
+  play: Play
 };
 
 export default Icons;

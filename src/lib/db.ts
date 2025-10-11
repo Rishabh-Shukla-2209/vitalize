@@ -252,11 +252,11 @@ export const getMuscleGroupData = async (
 };
 
 export const getWorkoutPlans = async (
-  muscleGroup: MuscleGroupType | "",
-  equipment: EquipmentType | "",
-  difficulty: DifficultyType | "",
-  duration: string,
-  search: string
+  search: string,
+  muscleGroup: MuscleGroupType | "" = "",
+  equipment: EquipmentType | "" = "",
+  difficulty: DifficultyType | "" = "",
+  duration: string = ""
 ) => {
   const whereClause: Prisma.WorkoutPlanWhereInput = {};
 
@@ -327,14 +327,14 @@ export const getWorkoutDetails = async (id: string) => {
       },
     },
   });
-
+  
   return data;
 };
 
 export const getPastWorkouts = async (
   userId: string,
-  date: Date | undefined,
-  muscleGroup: MuscleGroupType | ""
+  date: Date | undefined | "" = "",
+  muscleGroup: MuscleGroupType | "" = ""
 ) => {
 
   const whereClause: Prisma.WorkoutLogWhereInput = {userId};

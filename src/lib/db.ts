@@ -8,6 +8,7 @@ import {
   getDate,
   getMonth,
   getYear,
+  isSameDay,
   subDays,
 } from "date-fns";
 import { dayName, ExerciseFilterOptions } from "./utils";
@@ -16,8 +17,54 @@ import {
   EquipmentType,
   ExerciseCategoryType,
   MuscleGroupType,
+  WorkoutLogDataType,
 } from "./types";
-import { Prisma } from "@/generated/prisma";
+import { Gender, Prisma } from "@/generated/prisma";
+
+export const createUser = async (id: string, email: string) => {
+  if (await prisma.user.findUnique({ where: { id } })) return;
+
+  const user = await prisma.user.create({
+    data: {
+      id,
+      email,
+    },
+  });
+
+  return user;
+};
+
+export const saveOnboardingData = async (
+  id: string,
+  firstName: string,
+  lastName: string,
+  imgUrl: string,
+  weight: number,
+  height: number,
+  gender: Gender,
+  dob: Date
+) => {
+  await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      firstName,
+      lastName,
+      gender,
+      imgUrl,
+      dateOfBirth: dob,
+    },
+  });
+
+  await prisma.measurement.create({
+    data: {
+      user: { connect: { id } },
+      height,
+      weight,
+    },
+  });
+};
 
 export const getLastWeekVol = async (userId: string) => {
   const earliestDate = subDays(new Date(), 7);
@@ -273,15 +320,10 @@ export const getWorkoutPlans = async (
   }
 
   if (search) {
-    whereClause.name = {
-      contains: search,
-      mode: "insensitive",
-    };
-
-    whereClause.description = {
-      contains: search,
-      mode: "insensitive",
-    };
+    whereClause.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+    ];
   }
 
   if (muscleGroup || equipment) {
@@ -327,7 +369,7 @@ export const getWorkoutDetails = async (id: string) => {
       },
     },
   });
-  
+
   return data;
 };
 
@@ -336,24 +378,22 @@ export const getPastWorkouts = async (
   date: Date | undefined | "" = "",
   muscleGroup: MuscleGroupType | "" = ""
 ) => {
+  const whereClause: Prisma.WorkoutLogWhereInput = { userId };
 
-  const whereClause: Prisma.WorkoutLogWhereInput = {userId};
-
-  if(date) {
+  if (date) {
     whereClause.createdAt = {
       gte: date,
-      lt: addDays(date, 1)
-    }
+      lt: addDays(date, 1),
+    };
   }
 
-  if(muscleGroup){
+  if (muscleGroup) {
     whereClause.exercises = {
       some: {
-        exercise: {muscleGroup}
-      }
-    }
+        exercise: { muscleGroup },
+      },
+    };
   }
-
 
   const data = await prisma.workoutLog.findMany({
     where: whereClause,
@@ -374,9 +414,88 @@ export const getPastWorkouts = async (
       },
     },
     orderBy: {
-      createdAt: "desc"
-    }
+      createdAt: "desc",
+    },
   });
 
   return data;
+};
+
+export const saveWorkoutLog = async (
+  userId: string,
+  planId: string,
+  workoutData: WorkoutLogDataType
+) => {
+  const exercises: Prisma.ExerciseLogCreateWithoutWorkoutLogInput[] = [];
+
+  for (const category of Object.keys(workoutData)) {
+    if (category !== "duration" && category !== "notes") {
+      const catEx = workoutData[category as keyof WorkoutLogDataType];
+
+      if (Array.isArray(catEx)) {
+        catEx.forEach((ex) => {
+          const { exerciseId, ...rest } = ex;
+          const exLog: Prisma.ExerciseLogCreateWithoutWorkoutLogInput = {
+            exercise: { connect: { id: exerciseId } },
+            ...rest,
+          };
+          exercises.push(exLog);
+        });
+      }
+    }
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const timeNow = new Date();
+
+    await tx.workoutLog.create({
+      data: {
+        user: { connect: { id: userId } },
+        plan: { connect: { id: planId } },
+        duration: workoutData.duration,
+        notes: workoutData.notes,
+        createdAt: timeNow,
+        exercises: {
+          create: exercises,
+        },
+      },
+    });
+
+    const user = await tx.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    let currentStreak = user.currentStreakDays || 1;
+    let longestStreak = user.longestStreakDays || 1;
+
+    if (user.lastActiveOn) {
+      if (!isSameDay(timeNow, user.lastActiveOn)) {
+        if (isSameDay(user.lastActiveOn, subDays(timeNow, 1))) {
+          currentStreak += 1;
+          if (currentStreak > user.longestStreakDays) {
+            longestStreak = currentStreak;
+          }
+        } else {
+          currentStreak = 1;
+        }
+      }
+    }
+
+    await tx.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        currentStreakDays: currentStreak,
+        longestStreakDays: longestStreak,
+        lastActiveOn: timeNow,
+      },
+    });
+  });
 };

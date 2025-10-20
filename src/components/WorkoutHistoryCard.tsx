@@ -36,7 +36,7 @@ const WorkoutHistoryCard = ({ workout, action }: { workout: WorkoutLogType, acti
                 Repeat
               </Button>
           </Link> : 
-          <Link href={`/workouts/log-workout/${workout.id}`}>
+          <Link href={`/workouts/log-workout/${workout.planid}`}>
               <Button variant="default" className="text-lg">
                 <Icons.log />
                 Log Workout

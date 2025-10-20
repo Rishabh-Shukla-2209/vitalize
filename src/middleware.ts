@@ -1,4 +1,7 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import {
+  clerkMiddleware,
+  createRouteMatcher,
+} from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
@@ -6,17 +9,28 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/",
   "/forgot-password",
+  "/api/webhooks(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
     await auth.protect();
   }
-  const {isAuthenticated} = await auth();
-  
-  if(isPublicRoute(req) && isAuthenticated){
-    return NextResponse.redirect(new URL('/home', req.url)); 
+  const { isAuthenticated, sessionClaims } = await auth();
+
+  if (isAuthenticated) {
+    const hasOnboarded = sessionClaims.hasOnboarded;    
+    const isOnboardingPage = req.nextUrl.pathname.startsWith("/onboarding");
+
+    if (!hasOnboarded && !isOnboardingPage) {
+      return NextResponse.redirect(new URL("/onboarding", req.url));
+    }
+
+    if (isPublicRoute(req)|| (hasOnboarded && isOnboardingPage)) {
+      return NextResponse.redirect(new URL("/home", req.url));
+    }
   }
+  return NextResponse.next();
 });
 
 export const config = {
@@ -25,3 +39,6 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
+
+
+

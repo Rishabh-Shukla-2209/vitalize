@@ -44,7 +44,6 @@ async function seed() {
       id: "user_33K1mMWNnwvEn6j4huA0jMmw2Du",
       gender: Gender.FEMALE,
       dateOfBirth: new Date("1995-06-15"),
-      isProfileComplete: true,
     },
   });
 
@@ -53,7 +52,6 @@ async function seed() {
       id: "user_33K1hWoTa9eSsgAt2e7ehkTNkcB",
       gender: Gender.FEMALE,
       dateOfBirth: new Date("2005-01-10"),
-      isProfileComplete: true,
     },
   });
 
@@ -62,7 +60,6 @@ async function seed() {
       id: "user_33K1bv1Zec8jmGIOYAoYSvO7BCo",
       gender: Gender.FEMALE,
       dateOfBirth: new Date("1998-09-07"),
-      isProfileComplete: true,
     },
   });
 
@@ -71,7 +68,6 @@ async function seed() {
       id: "user_33K1B8jRT6b9Y6Xii3ocSH5ewbZ",
       gender: Gender.MALE,
       dateOfBirth: new Date("1998-05-06"),
-      isProfileComplete: true,
     },
   });
   const riya = await prisma.user.create({
@@ -79,7 +75,6 @@ async function seed() {
       id: "user_33K1fQ6yTMdm71mvzCC0C1GZ39I",
       gender: Gender.FEMALE,
       dateOfBirth: new Date("1995-11-18"),
-      isProfileComplete: true,
     },
   });
 
@@ -88,7 +83,6 @@ async function seed() {
       id: "user_33K1ZkyUJ6QFsybzrmL8c8XUuDt",
       gender: Gender.FEMALE,
       dateOfBirth: new Date("1997-03-10"),
-      isProfileComplete: true,
     },
   });
   const vihaan = await prisma.user.create({
@@ -96,7 +90,6 @@ async function seed() {
       id: "user_33K1RThXJXucJt8wbrsffA15lGY",
       gender: Gender.MALE,
       dateOfBirth: new Date("1996-10-13"),
-      isProfileComplete: true,
     },
   });
 
@@ -105,7 +98,6 @@ async function seed() {
       id: "user_33K1VLGrfecrH1iH9GILVNlIuDC",
       gender: Gender.MALE,
       dateOfBirth: new Date("1999-12-17"),
-      isProfileComplete: true,
     },
   });
   const ishan = await prisma.user.create({
@@ -113,7 +105,6 @@ async function seed() {
       id: "user_33K1OuhazSOcOeSltYwVAhG26GN",
       gender: Gender.MALE,
       dateOfBirth: new Date("1999-12-09"),
-      isProfileComplete: true,
     },
   });
 
@@ -122,7 +113,6 @@ async function seed() {
       id: "user_33K1LILynATF0RvFTLOUpWPgeWg",
       gender: Gender.MALE,
       dateOfBirth: new Date("1992-02-20"),
-      isProfileComplete: true,
     },
   });
   const arjun = await prisma.user.create({
@@ -130,7 +120,6 @@ async function seed() {
       id: "user_33K1Fk5zH2yY8tKw155FxtaPjoZ",
       gender: Gender.MALE,
       dateOfBirth: new Date("2005-05-29"),
-      isProfileComplete: true,
     },
   });
 
@@ -139,7 +128,6 @@ async function seed() {
       id: "user_32lmZQf16AOvb8sAJXL3YzgmcSz",
       gender: Gender.MALE,
       dateOfBirth: new Date("1997-08-04"),
-      isProfileComplete: true,
     },
   });
 

@@ -10,7 +10,16 @@ export const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 export const dayName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export const ExerciseCategories: { label: string; val: ExerciseCategoryType }[] = [
+export const GenderOptions = [
+  { label: "Male", val: "MALE" },
+  { label: "Female", val: "FEMALE" },
+  { label: "Other", val: "OTHER" },
+];
+
+export const ExerciseCategories: {
+  label: string;
+  val: ExerciseCategoryType;
+}[] = [
   { label: "Cardio", val: "CARDIO" },
   { label: "Strength", val: "STRENGTH" },
   { label: "Flexibility", val: "FLEXIBILITY" },
@@ -19,7 +28,7 @@ export const ExerciseCategories: { label: string; val: ExerciseCategoryType }[] 
   { label: "Balance", val: "BALANCE" },
   { label: "Endurance", val: "ENDURANCE" },
   { label: "Recovery", val: "RECOVERY" },
-  { label: "Mindbody", val: "MINDBODY" }
+  { label: "Mindbody", val: "MINDBODY" },
 ];
 
 export const ExerciseFilterOptions = {
@@ -60,7 +69,7 @@ export const Equipment: { label: string; val: EquipmentType }[] = [
   { label: "Treadmill", val: "TREADMILL" },
   { label: "Bike", val: "BIKE" },
   { label: "Rowing Machine", val: "ROWING_MACHINE" },
-  { label: "Elliptical", val: "ELLIPTICAL" }
+  { label: "Elliptical", val: "ELLIPTICAL" },
 ];
 
 export const MuscleGroups: { label: string; val: MuscleGroupType }[] = [
@@ -83,41 +92,51 @@ export const MuscleGroups: { label: string; val: MuscleGroupType }[] = [
   { label: "Hip Flexors", val: "HIP_FLEXORS" },
   { label: "Adductors", val: "ADDUCTORS" },
   { label: "Abductors", val: "ABDUCTORS" },
-  { label: "Full Body", val: "FULL_BODY" }
+  { label: "Full Body", val: "FULL_BODY" },
 ];
 
+export const MuscleGroupToCategories: Record<
+  MuscleGroupType,
+  ExerciseCategoryType[]
+> = {
+  CHEST: ["STRENGTH", "HIIT"],
+  BACK: ["STRENGTH", "HIIT"],
+  SHOULDERS: ["STRENGTH", "HIIT"],
+  BICEPS: ["STRENGTH"],
+  TRICEPS: ["STRENGTH"],
+  FOREARMS: ["STRENGTH"],
+  TRAPS: ["STRENGTH"],
+  ROTATOR_CUFF: ["STRENGTH", "FLEXIBILITY", "RECOVERY"],
+  ABS: ["CORE", "STRENGTH", "HIIT", "ENDURANCE"],
+  OBLIQUES: ["CORE", "STRENGTH", "HIIT", "ENDURANCE"],
+  LOWER_BACK: ["CORE", "STRENGTH", "FLEXIBILITY"],
+  LATS: ["STRENGTH", "HIIT"],
+  QUADS: ["STRENGTH", "HIIT", "CARDIO", "ENDURANCE"],
+  HAMSTRINGS: ["STRENGTH", "HIIT", "CARDIO", "ENDURANCE"],
+  GLUTES: ["STRENGTH", "HIIT", "CARDIO", "ENDURANCE"],
+  CALVES: ["STRENGTH", "CARDIO", "ENDURANCE"],
+  HIP_FLEXORS: ["STRENGTH", "FLEXIBILITY", "RECOVERY"],
+  ADDUCTORS: ["STRENGTH", "FLEXIBILITY"],
+  ABDUCTORS: ["STRENGTH", "FLEXIBILITY"],
+  FULL_BODY: [
+    "STRENGTH",
+    "HIIT",
+    "CORE",
+    "ENDURANCE",
+    "BALANCE",
+    "FLEXIBILITY",
+    "MINDBODY",
+    "RECOVERY",
+    "CARDIO",
+  ],
+};
 
-
-export const MuscleGroupToCategories: Record<MuscleGroupType, ExerciseCategoryType[]> =
-  {
-    CHEST: ["STRENGTH", "HIIT"],
-    BACK: ["STRENGTH", "HIIT"],
-    SHOULDERS: ["STRENGTH", "HIIT"],
-    BICEPS: ["STRENGTH"],
-    TRICEPS: ["STRENGTH"],
-    FOREARMS: ["STRENGTH"],
-    TRAPS: ["STRENGTH"],
-    ROTATOR_CUFF: ["STRENGTH", "FLEXIBILITY", "RECOVERY"],
-    ABS: ["CORE", "STRENGTH", "HIIT", "ENDURANCE"],
-    OBLIQUES: ["CORE", "STRENGTH", "HIIT", "ENDURANCE"],
-    LOWER_BACK: ["CORE", "STRENGTH", "FLEXIBILITY"],
-    LATS: ["STRENGTH", "HIIT"],
-    QUADS: ["STRENGTH", "HIIT", "CARDIO", "ENDURANCE"],
-    HAMSTRINGS: ["STRENGTH", "HIIT", "CARDIO", "ENDURANCE"],
-    GLUTES: ["STRENGTH", "HIIT", "CARDIO", "ENDURANCE"],
-    CALVES: ["STRENGTH", "CARDIO", "ENDURANCE"],
-    HIP_FLEXORS: ["STRENGTH", "FLEXIBILITY", "RECOVERY"],
-    ADDUCTORS: ["STRENGTH", "FLEXIBILITY"],
-    ABDUCTORS: ["STRENGTH", "FLEXIBILITY"],
-    FULL_BODY: ["STRENGTH", "HIIT", "CORE", "ENDURANCE", "BALANCE", "FLEXIBILITY", "MINDBODY", "RECOVERY", "CARDIO"],
-  };
-
-export const Duration: {label: string, val: string}[] = [
-  {label: "Under 30 mins", val: "30,31"},
-  {label: "30 - 45 mins", val: "30,45"},
-  {label: "45 - 60 mins", val: "45,60"},
-  {label: "Over 60 mins", val: "60,500"},
-]
+export const Duration: { label: string; val: string }[] = [
+  { label: "Under 30 mins", val: "30,31" },
+  { label: "30 - 45 mins", val: "30,45" },
+  { label: "45 - 60 mins", val: "45,60" },
+  { label: "Over 60 mins", val: "60,500" },
+];
 
 export const fitnessMetricUnits = {
   sets: "",
@@ -137,7 +156,6 @@ export const fitnessMetricUnits = {
   workIntervalDuration: "s",
   restIntervalDuration: "s",
   workToRestRatio: "ratio",
-  numberOfRounds: "count",
   plankHoldTime: "s",
   tug: "s",
   timeToExhaustion: "s",
@@ -162,26 +180,27 @@ export const fitnessMetricLabels = {
   workIntervalDuration: "Work Interval",
   restIntervalDuration: "Rest Interval",
   workToRestRatio: "Work:Rest Ratio",
-  numberOfRounds: "Rounds",
   plankHoldTime: "Plank Hold",
   tug: "TUG",
   timeToExhaustion: "Time to Exhaustion",
   heartRateVariability: "HRV",
 };
 
-
-
 export const getAvailableCategoriesForMuscleGroup = (
-  group: MuscleGroupType | ''
-): {label: string, val: ExerciseCategoryType}[] => {
-  if(group === '') return [];
-  return MuscleGroupToCategories[group].map(el => ({label: toProperCase(el), val: el})) || [];
+  group: MuscleGroupType | ""
+): { label: string; val: ExerciseCategoryType }[] => {
+  if (group === "") return [];
+  return (
+    MuscleGroupToCategories[group].map((el) => ({
+      label: toProperCase(el),
+      val: el,
+    })) || []
+  );
 };
 
 export const toProperCase = (str: string) => {
   return str
     .toLowerCase()
-    .replace(/\b\w/g, char => char.toUpperCase())
+    .replace(/\b\w/g, (char) => char.toUpperCase())
     .replace(/_/g, " ");
-}
-
+};

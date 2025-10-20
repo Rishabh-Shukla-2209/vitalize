@@ -23,7 +23,7 @@ const Selector = ({
 ) => {
   return (
     <Select value={selectedValue} onValueChange={setChoice}>
-      <SelectTrigger className="w-40">
+      <SelectTrigger className="min-w-40">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

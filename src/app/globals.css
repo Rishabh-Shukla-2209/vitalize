@@ -4,14 +4,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-primary: rgb(19, 236, 19);
+  --color-primary: #13ec13;
   --color-primary-dark: #38e07b;
   --color-primary-light: #a6f9b2;
 }
 
 @layer base {
   input {
-    @apply bg-white text-base border rounded-xl border-zinc-200 px-3.5 py-2.5 text-zinc-900 focus:border-primary focus:border-2 outline-none;
+    @apply bg-white text-base border rounded-md border-zinc-200 px-3.5 py-2.5 text-zinc-900 focus:border-primary-dark focus:border-2 outline-none;
   }
 
   button {
@@ -36,6 +36,15 @@
     @apply border border-gray-400 rounded-md;
   }
 
+  .input-no-spinner::-webkit-inner-spin-button,
+  .input-no-spinner::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .input-no-spinner {
+    -moz-appearance: textfield; /* Firefox */
+  }
 }
 
 @theme inline {

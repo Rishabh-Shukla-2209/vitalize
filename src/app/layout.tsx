@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { spline_sans } from "../../public/fonts";
+import { spline_sans } from "./fonts/fonts";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ReactQueryProvider } from "@/lib/react-query-provider";

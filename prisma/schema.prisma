@@ -107,12 +107,15 @@ enum Status {
 model User {
   id                    String            @id
   createdAt             DateTime          @default(now())
+  firstName             String?
+  lastName              String?
+  email                 String?
+  imgUrl                String?
   gender                Gender?
   dateOfBirth           DateTime?
   currentStreakDays     Int               @default(0)
   longestStreakDays     Int               @default(0)
   lastActiveOn          DateTime?
-  isProfileComplete     Boolean           @default(false)
   Follows               Follow[]          @relation("FollowingRelation")
   Following             Follow[]          @relation("FollowerRelation")
   WorkoutPlans          WorkoutPlan[]
@@ -129,15 +132,15 @@ model User {
 }
 
 model ExerciseCatalog {
-  id           String            @id @default(uuid())
-  name         String            @unique
-  category     ExerciseCategory?
+  id           String           @id @default(uuid())
+  name         String           @unique
+  category     ExerciseCategory
   instructions String
   imgUrl       String?
-  createdAt    DateTime          @default(now())
+  createdAt    DateTime         @default(now())
   muscleGroup  MuscleGroup
   equipment    Equipment?
-  createdBy    User?             @relation(fields: [createdByid], references: [id])
+  createdBy    User?            @relation(fields: [createdByid], references: [id])
   createdByid  String?
   ExerciseLogs ExerciseLog[]
   planExercise PlanExercise[]
@@ -178,10 +181,10 @@ model WorkoutLog {
   id        String        @id @default(uuid())
   user      User          @relation(fields: [userId], references: [id])
   userId    String
-  plan      WorkoutPlan  @relation(fields: [planid], references: [id])
+  plan      WorkoutPlan   @relation(fields: [planid], references: [id])
   planid    String
   exercises ExerciseLog[]
-  duration  Int?
+  duration  Int
   createdAt DateTime
   notes     String?
 
@@ -189,34 +192,33 @@ model WorkoutLog {
 }
 
 model ExerciseLog {
-  id                   String           @id @default(uuid())
+  id                   String          @id @default(uuid())
   exercise             ExerciseCatalog @relation(fields: [exerciseid], references: [id])
   exerciseid           String
-  sets                 Int              @default(0)
-  reps                 Int              @default(0)
-  vol                  Int              @default(0)
-  weightUsed           Int              @default(0)
-  rest                 Int              @default(0)
-  distance             Float            @default(0)
-  duration             Int              @default(0)
-  heartRate            Int              @default(0)
-  speed                Int              @default(0)
-  caloriesBurned       Int              @default(0)
-  vo2Max               Float            @default(0)
-  rpe                  Int              @default(0) //rate of perceived exertion 1-10.
-  rangeOfMotion        Float            @default(0)
-  staticFlexibility    Float            @default(0)
-  dynamicFlexibility   Float            @default(0)
-  workIntervalDuration Int              @default(0)
-  restIntervalDuration Int              @default(0)
-  workToRestRatio      String           @default("")
-  numberOfRounds       Int              @default(0)
-  plankHoldTime        Int              @default(0)
-  tug                  Int              @default(0) //Timed up and go test
-  timeToExhaustion     Int              @default(0)
-  heartRateVariability Int              @default(0)
-  createdAt            DateTime         @default(now())
-  WorkoutLog           WorkoutLog       @relation(fields: [WorkoutLogid], references: [id], onDelete: Cascade)
+  sets                 Int             @default(0)
+  reps                 Int             @default(0)
+  vol                  Int             @default(0)
+  weightUsed           Int             @default(0)
+  rest                 Int             @default(0)
+  distance             Float           @default(0)
+  duration             Int             @default(0)
+  heartRate            Int             @default(0)
+  speed                Int             @default(0)
+  caloriesBurned       Int             @default(0)
+  vo2Max               Float           @default(0)
+  rpe                  Int             @default(0) //rate of perceived exertion 1-10.
+  rangeOfMotion        Float           @default(0)
+  staticFlexibility    Float           @default(0)
+  dynamicFlexibility   Float           @default(0)
+  workIntervalDuration Int             @default(0)
+  restIntervalDuration Int             @default(0)
+  workToRestRatio      Float           @default(0)
+  plankHoldTime        Int             @default(0)
+  tug                  Int             @default(0) //Timed up and go test
+  timeToExhaustion     Int             @default(0)
+  heartRateVariability Int             @default(0)
+  createdAt            DateTime        @default(now())
+  WorkoutLog           WorkoutLog      @relation(fields: [WorkoutLogid], references: [id], onDelete: Cascade)
   WorkoutLogid         String
   planExercise         PlanExercise[]
 }

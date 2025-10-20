@@ -69,38 +69,36 @@ export type WorkoutPlanType = {
 
 export type WorkoutPlanDetailsType = {
   exercises: ({
-        exercise: {
-            name: string;
-            imgUrl: string | null;
-            category: ExerciseCategoryType | null;
-            instructions: string;
-            muscleGroup: MuscleGroupType;
-            equipment: EquipmentType | null;
-        };
-    } & {
-        id: string;
-        position: number;
-        time: number | null;
-        sets: number;
-        reps: number;
-        rest: number;
-        distance: number | null;
-        exerciseid: string;
-        WorkoutPlanid: string;
-    })[];
-} & {
+    exercise: {
+      name: string;
+      imgUrl: string | null;
+      category: ExerciseCategoryType;
+      instructions: string;
+      muscleGroup: MuscleGroupType;
+      equipment: EquipmentType | null;
+    };
+  } & {
     id: string;
-    name: string;
-    userId: string | null;
-    level: DifficultyType;
-    imgUrl: string | null;
-    description: string;
-    duration: number;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-
+    position: number;
+    time: number | null;
+    sets: number;
+    reps: number;
+    rest: number;
+    distance: number | null;
+    exerciseid: string;
+    WorkoutPlanid: string;
+  })[];
+} & {
+  id: string;
+  name: string;
+  userId: string | null;
+  level: DifficultyType;
+  imgUrl: string | null;
+  description: string;
+  duration: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 export type ExerciseDetailsType = {
   exercise: {
@@ -124,34 +122,33 @@ export type ExerciseDetailsType = {
 };
 
 export type ExerciseLogType = {
-    id: string;
-    createdAt: Date;
-    duration: number;
-    exerciseid: string;
-    sets: number;
-    reps: number;
-    vol: number;
-    weightUsed: number;
-    rest: number;
-    distance: number;
-    heartRate: number;
-    speed: number;
-    caloriesBurned: number;
-    vo2Max: number;
-    rpe: number;
-    rangeOfMotion: number;
-    staticFlexibility: number;
-    dynamicFlexibility: number;
-    workIntervalDuration: number;
-    restIntervalDuration: number;
-    workToRestRatio: string;
-    numberOfRounds: number;
-    plankHoldTime: number;
-    tug: number;
-    timeToExhaustion: number;
-    heartRateVariability: number;
-    WorkoutLogid: string;
-}
+  id: string;
+  createdAt: Date;
+  duration: number;
+  exerciseid: string;
+  sets: number;
+  reps: number;
+  vol: number;
+  weightUsed: number;
+  rest: number;
+  distance: number;
+  heartRate: number;
+  speed: number;
+  caloriesBurned: number;
+  vo2Max: number;
+  rpe: number;
+  rangeOfMotion: number;
+  staticFlexibility: number;
+  dynamicFlexibility: number;
+  workIntervalDuration: number;
+  restIntervalDuration: number;
+  workToRestRatio: number;
+  plankHoldTime: number;
+  tug: number;
+  timeToExhaustion: number;
+  heartRateVariability: number;
+  WorkoutLogid: string;
+};
 
 export type WorkoutLogType = {
   plan: {
@@ -171,11 +168,11 @@ export type WorkoutLogType = {
   notes: string | null;
 };
 
-
 export type WorkoutItem = {
   exercise: ExerciseDetailsType | undefined;
   type: "work" | "rest";
-  currValues: {set: number;
+  currValues: {
+    set: number;
     reps: number;
     distance: number | null;
     time: number | null;
@@ -186,3 +183,97 @@ export type StackAction =
   | { type: "PUSH"; payload: WorkoutItem }
   | { type: "POP" }
   | { type: "CLEAR" };
+
+export type WorkoutLogDataType = {
+  notes: string;
+  duration: number;
+  balance?: {
+    exerciseId: string;
+    tug: number;
+    sets: number;
+    reps: number;
+    rest: number;
+  }[];
+
+  cardio?: {
+    exerciseId: string;
+    sets: number;
+    reps: number;
+    rest: number;
+    caloriesBurned: number;
+    distance: number;
+    duration: number;
+    heartRate: number;
+    vo2Max: number;
+    speed: number;
+  }[];
+
+  core?: {
+    exerciseId: string;
+    sets: number;
+    reps: number;
+    rest: number;
+    plankHoldTime: number;
+  }[];
+
+  endurance: {
+    exerciseId: string;
+    sets: number;
+    reps: number;
+    rest: number;
+    timeToExhaustion: number;
+  }[];
+
+  flexibility?: {
+    exerciseId: string;
+    sets: number;
+    reps: number;
+    rest: number;
+    rangeOfMotion: number;
+    staticFlexibility: number;
+    dynamicFlexibility: number;
+  }[];
+
+  hiit?: {
+    exerciseId: string;
+    sets: number;
+    reps: number;
+    rest: number;
+    workIntervalDuration: number;
+    workToRestRatio: number;
+  }[];
+
+  mindbody: {
+    exerciseId: string;
+    sets: number;
+    reps: number;
+    rest: number;
+    duration: number;
+  }[];
+
+  recovery: {
+    exerciseId: string;
+    sets: number;
+    reps: number;
+    rest: number;
+    heartRateVariability: number;
+  }[];
+
+  strength?: {
+    exerciseId: string;
+    sets: number;
+    reps: number;
+    weightUsed: number;
+    rest: number;
+    vol: number;
+  }[];
+};
+
+export type OnboaringDataType = {
+  firstName: string,
+  lastName: string,
+  gender: "MALE" | "FEMALE" | "OTHER"
+  dob: Date,
+  weight: number,
+  height: number,
+}

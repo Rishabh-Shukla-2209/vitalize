@@ -13,26 +13,26 @@ import {
 import WorkoutVolumeChartSkeleton from "./WorkoutVolumeChartSkeleton";
 
 const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
-  
-  const {
-    data,
-    isLoading,
-    isError,
-  }  = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["weeklyChartData", userId],
     queryFn: () => getLastWeekVol(userId),
-    staleTime: 12 * 60 * 60 * 1000
+    staleTime: 12 * 60 * 60 * 1000,
   });
-  if(isLoading || isError || !data) {
-    return <WorkoutVolumeChartSkeleton />
+  if (isLoading || isError || !data) {
+    return <WorkoutVolumeChartSkeleton />;
   }
 
   const totalVolCurrent = data.totalVolCurrent;
   const totalVolPrev = data.totalVolPrev;
-  const change = totalVolPrev === 0 ? 100 : (
-    (Math.abs(totalVolCurrent - totalVolPrev!) / totalVolPrev) *
-    100
-  ).toFixed(0);
+  const change =
+    totalVolPrev === 0
+      ? totalVolCurrent === 0
+        ? 0
+        : 100
+      : (
+          (Math.abs(totalVolCurrent - totalVolPrev!) / totalVolPrev) *
+          100
+        ).toFixed(0);
 
   return (
     <div className="boundary p-5">

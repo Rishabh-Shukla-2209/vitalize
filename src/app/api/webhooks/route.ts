@@ -1,4 +1,4 @@
-import { createUser } from "@/lib/db";
+import { createUser } from "@/lib/queries";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextRequest } from "next/server";
 

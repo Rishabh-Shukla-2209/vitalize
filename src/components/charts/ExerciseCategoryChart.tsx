@@ -4,7 +4,7 @@ import { AreaChart, Area, YAxis, Legend, ResponsiveContainer } from "recharts";
 import { useEffect, useState } from "react";
 import { ExerciseCategories } from "@/lib/utils";
 import { ExerciseCategoryType } from "@/lib/types";
-import { getExerciseCatData } from "@/lib/db";
+import { getExerciseCatData } from "@/lib/queries";
 import { subDays } from "date-fns";
 import { DatePicker } from "../DatePicker";
 import Selector from "../Selector";

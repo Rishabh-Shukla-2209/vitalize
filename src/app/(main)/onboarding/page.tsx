@@ -5,7 +5,7 @@ import Selector from "@/components/Selector";
 import { Button } from "@/components/ui/button";
 import { Gender } from "@/generated/prisma";
 import { completeOnboarding } from "@/lib/actions/user";
-import { saveOnboardingData } from "@/lib/db";
+import { saveOnboardingData } from "@/lib/queries";
 import { GenderOptions } from "@/lib/utils";
 import { useSession, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";

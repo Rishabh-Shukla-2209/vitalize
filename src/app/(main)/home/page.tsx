@@ -1,5 +1,5 @@
 "use client";
-import { hasWorkedOutToday } from "@/lib/db";
+import { hasWorkedOutToday } from "@/lib/queries";
 import ExerciseCategoryChart from "@/components/charts/ExerciseCategoryChart";
 import MonthlyWorkouts from "@/components/charts/MonthlyWorkouts";
 import MonthlyWorkoutsSkeleton from "@/components/charts/MonthlyWorkoutsSkeleton";
@@ -12,6 +12,10 @@ import { useState, useEffect } from "react";
 import ExerciseCategoryChartSkeleton from "@/components/charts/ExerciseCategoryChartSkeleton";
 import ProgressCompChartSkeleton from "@/components/charts/ProgressCompChartSkeleton";
 import Link from "next/link";
+import Goals from "@/components/goal/Goals";
+import PRs from "@/components/personalRecords/PRs";
+import GoalSkeleton from "@/components/goal/GoalSkeleton";
+import PRSkeleton from "@/components/personalRecords/PRSkeleton";
 
 const Homepage = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -36,14 +40,14 @@ const Homepage = () => {
           </div>
         </div>
         <div className="mr-5">
-          <Link href={'/workouts/log-workout'}>
+          <Link href={"/workouts/log-workout"}>
             <button className="bg-primary-dark text-gray-900 px-2.5 py-2 rounded-lg mr-5">
               <span className="flex-center gap-1">
                 <Icons.add /> <p>Log Workout</p>
               </span>
             </button>
           </Link>
-          <Link href={'/programs/ai-coach'}>
+          <Link href={"/programs/ai-coach"}>
             <button className="bg-zinc-200 text-gray-900 px-3.5 py-2.25 rounded-lg mr-5">
               <span className="flex-center gap-1">
                 <Icons.ai /> <p>AI Coach</p>
@@ -91,12 +95,18 @@ const Homepage = () => {
 
         <div className="flex flex-col flex-2 gap-10">
           {isLoaded && isSignedIn ? (
-            <MonthlyWorkouts userId={user.id} />
+            <>
+              <MonthlyWorkouts userId={user.id} />
+              <Goals userId={user.id} />
+              <PRs userId={user.id} />
+            </>
           ) : (
-            <MonthlyWorkoutsSkeleton />
+            <>
+              <MonthlyWorkoutsSkeleton />
+              <GoalSkeleton />
+              <PRSkeleton />
+            </>
           )}
-          <div className="boundary w-full h-60"></div>
-          <div className="boundary w-full h-200"></div>
         </div>
       </div>
     </div>

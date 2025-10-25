@@ -142,6 +142,7 @@ export const fitnessMetricUnits = {
   sets: "",
   reps: "",
   weightUsed: "kg",
+  vol: "kg (volume)",
   distance: "km",
   rest: "s",
   duration: "s",

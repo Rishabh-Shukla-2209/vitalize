@@ -1,4 +1,4 @@
-import { getLastWeekVol } from "@/lib/db";
+import { getLastWeekVol } from "@/lib/queries";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import {
@@ -57,7 +57,7 @@ const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
             width={500}
             height={250}
             data={data.lastWeekVolData}
-            margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
             <XAxis dataKey="name" />
             <Legend />

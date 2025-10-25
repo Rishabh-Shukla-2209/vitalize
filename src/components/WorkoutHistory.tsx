@@ -1,6 +1,6 @@
 import { DatePicker } from "@/components/DatePicker";
 import Selector from "@/components/Selector";
-import { getPastWorkouts } from "@/lib/db";
+import { getPastWorkouts } from "@/lib/queries";
 import { MuscleGroups } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";

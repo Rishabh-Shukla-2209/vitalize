@@ -11,7 +11,7 @@ import Mindbody from "@/components/workoutLog/Mindbody";
 import Recovery from "@/components/workoutLog/Recovery";
 import Strength from "@/components/workoutLog/Strength";
 import { ExerciseCategory } from "@/generated/prisma";
-import { getWorkoutDetails, saveWorkoutLog } from "@/lib/db";
+import { getWorkoutDetails, saveWorkoutLog } from "@/lib/queries";
 import { WorkoutPlanDetailsType } from "@/lib/types";
 import { WorkoutLogDataType } from "@/lib/types";
 import { useUser } from "@clerk/nextjs";

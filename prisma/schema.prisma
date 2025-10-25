@@ -101,7 +101,7 @@ enum Status {
   PLANNED
   IN_PROGRESS
   ACHIEVED
-  ABANDONED
+  MISSED
 }
 
 model User {
@@ -129,6 +129,8 @@ model User {
   NotificationSender    Notification[]    @relation("SenderRelation")
   AiInteraction         AiInteraction[]
   MeasureMent           Measurement[]
+
+  PR PR[]
 }
 
 model ExerciseCatalog {
@@ -145,6 +147,8 @@ model ExerciseCatalog {
   ExerciseLogs ExerciseLog[]
   planExercise PlanExercise[]
   Goal         Goal[]
+
+  PR PR[]
 }
 
 model WorkoutPlan {
@@ -237,19 +241,31 @@ model Measurement {
 }
 
 model Goal {
-  id               String           @id @default(uuid())
-  user             User             @relation(fields: [userid], references: [id], onDelete: Cascade)
+  id               String          @id @default(uuid())
+  user             User            @relation(fields: [userid], references: [id], onDelete: Cascade)
   userid           String
   title            String
-  description      String
   status           Status
-  targetExercise   ExerciseCatalog? @relation(fields: [targetExerciseid], references: [id])
-  targetExerciseid String?
-  targetWeight     Int?
-  targetTime       Int?
-  targetSets       Int?
-  targetReps       Int?
+  targetExercise   ExerciseCatalog @relation(fields: [targetExerciseid], references: [id])
+  targetExerciseid String
+  targetField      String
+  targetValue      Float
+  initialValue     Float
+  currentValue     Float
   targetDate       DateTime
+}
+
+model PR {
+  id         String          @id @default(uuid())
+  user       User            @relation(fields: [userid], references: [id])
+  userid     String
+  exercise   ExerciseCatalog @relation(fields: [exerciseid], references: [id])
+  exerciseid String          
+  prField    String
+  prValue    Float
+  updatedAt  DateTime        @default(now())
+
+  @@unique([userid, exerciseid])
 }
 
 model Follow {

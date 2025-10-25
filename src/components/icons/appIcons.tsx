@@ -20,6 +20,8 @@ import {
   ArrowLeft,
   Pause,
   Play,
+  Goal,
+  Trophy,
 } from "lucide-react";
 
 const Icons = {
@@ -43,7 +45,9 @@ const Icons = {
   right: ArrowRight,
   left: ArrowLeft,
   pause: Pause,
-  play: Play
+  play: Play,
+  goal: Goal,
+  trophy: Trophy
 };
 
 export default Icons;

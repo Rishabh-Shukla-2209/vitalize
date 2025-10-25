@@ -11,7 +11,7 @@ import {
 import { ExerciseCategoryType, MuscleGroupType } from "@/lib/types";
 import { DatePicker } from "../DatePicker";
 import { Button } from "../ui/button";
-import { getMuscleGroupData } from "@/lib/db";
+import { getMuscleGroupData } from "@/lib/queries";
 const ProgressCompChart = ({ userId }: { userId: string }) => {
   const [data, setData] = useState<Array<{ name: string; val: number }>>([]);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");

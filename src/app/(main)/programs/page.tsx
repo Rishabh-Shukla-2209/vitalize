@@ -4,9 +4,10 @@ import Icons from "@/components/icons/appIcons";
 import Selector from "@/components/Selector";
 import { Button } from "@/components/ui/button";
 import WorkoutPlanCard from "@/components/WorkoutPlanCard";
-import { getWorkoutPlans } from "@/lib/db";
+import { getWorkoutPlans } from "@/lib/queries";
 import { DifficultyType, EquipmentType, MuscleGroupType } from "@/lib/types";
 import { Difficulty, Duration, Equipment, MuscleGroups } from "@/lib/utils";
+import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -20,6 +21,7 @@ const ProgramsPage = () => {
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const {user} = useUser();
 
   useDebounce(() => setDebouncedSearch(search), 500, [search]);
 
@@ -31,6 +33,7 @@ const ProgramsPage = () => {
       { selectedEquipment },
       { selectedDuration },
       { debouncedSearch },
+      { userId: user ? user.id : null}
     ],
     queryFn: async () => {
       const data = await getWorkoutPlans(
@@ -39,6 +42,7 @@ const ProgramsPage = () => {
         selectedEquipment as EquipmentType | "",
         selectedDifficulty as DifficultyType | "",
         selectedDuration,
+        user ? user.id : null
       );
 
       return data;

@@ -270,10 +270,33 @@ export type WorkoutLogDataType = {
 };
 
 export type OnboaringDataType = {
-  firstName: string,
-  lastName: string,
-  gender: "MALE" | "FEMALE" | "OTHER"
-  dob: Date,
-  weight: number,
-  height: number,
-}
+  firstName: string;
+  lastName: string;
+  gender: "MALE" | "FEMALE" | "OTHER";
+  dob: Date;
+  weight: number;
+  height: number;
+};
+
+export type GoalType = {
+  id: string;
+  title: string;
+  targetExercise: {
+    name: string;
+  };
+  targetField: string;
+  initialValue: number;
+  currentValue: number;
+  targetValue: number;
+  targetDate: Date
+};
+
+export type PRType = {
+  id: string;
+  prField: string;
+  prValue: number;
+  updatedAt: Date;
+  exercise: {
+    name: string;
+  };
+};

@@ -25,7 +25,7 @@ const Hiit = ({
   const [work, rest] = watch([workIntervalDurationFieldName, restFieldName]);
 
   useEffect(() => {
-    const WRRatio = (work || 0) / (rest || 1);
+    const WRRatio = Math.round((work || 0) / (rest || 1) * 100) / 100;
     setValue(workToRestFieldName, WRRatio);
   }, [rest, setValue, work, workToRestFieldName]);
 

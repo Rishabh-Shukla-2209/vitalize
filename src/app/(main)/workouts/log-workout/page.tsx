@@ -3,7 +3,7 @@
 import Icons from "@/components/icons/appIcons";
 import WorkoutHistoryCard from "@/components/WorkoutHistoryCard";
 import WorkoutPlanCard from "@/components/WorkoutPlanCard";
-import { getPastWorkouts, getWorkoutPlans } from "@/lib/db";
+import { getPastWorkouts, getWorkoutPlans } from "@/lib/queries";
 import { WorkoutLogType, WorkoutPlanType } from "@/lib/types";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -27,12 +27,12 @@ const LogWorkoutPage = () => {
 
   useEffect(() => {
     async function getData() {
-      const res = await getWorkoutPlans(debouncedSearch);
+      const res = await getWorkoutPlans(debouncedSearch, "", "", "", "", user ? user.id : null);
       setSearchedWorkouts(res);
     }
 
     if (debouncedSearch) getData();
-  }, [debouncedSearch]);
+  }, [debouncedSearch, user]);
 
   useEffect(() => {
     async function getData(userId: string) {

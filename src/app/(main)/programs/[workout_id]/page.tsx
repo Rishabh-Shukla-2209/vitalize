@@ -1,7 +1,7 @@
 import Exercise from "@/components/Exercise";
 import Icons from "@/components/icons/appIcons";
 import { Button } from "@/components/ui/button";
-import { getWorkoutDetails } from "@/lib/db";
+import { getWorkoutDetails } from "@/lib/queries";
 import { toProperCase } from "@/lib/utils";
 import clsx from "clsx";
 import Image from "next/image";

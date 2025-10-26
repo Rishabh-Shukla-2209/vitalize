@@ -633,20 +633,19 @@ export const saveWorkoutLog = async (
             },
             data: pr.val,
           })
-        ),
+        )
       );
 
       await Promise.all(
-        goalsToUpdate.map(goal => 
+        goalsToUpdate.map((goal) =>
           tx.goal.update({
             where: {
-            id: goal.key,
-          },
-          data: goal.val,
+              id: goal.key,
+            },
+            data: goal.val,
           })
         )
-      )
-
+      );
     });
   } catch (err) {
     console.error("Error saving workout log:", err);
@@ -752,18 +751,13 @@ export const getRecentPersonalRecords = async (userId: string) => {
 };
 
 export const getAvailableExercises = async (
-  muscleGroup: MuscleGroupType | "",
-  equipment: EquipmentType | "",
-  category: ExerciseCategoryType | ""
+  muscleGroups: Array<MuscleGroupType>,
+  category: ExerciseCategoryType
 ) => {
   const whereClause: Prisma.ExerciseCatalogWhereInput = {};
 
-  if (muscleGroup) {
-    whereClause.muscleGroup = muscleGroup;
-  }
-
-  if (equipment) {
-    whereClause.equipment = equipment;
+  if (muscleGroups.length > 0) {
+    whereClause.muscleGroup = { in: muscleGroups };
   }
 
   if (category) {
@@ -782,5 +776,31 @@ export const getAvailableExercises = async (
 };
 
 export const saveAiWorkout = async (data: Prisma.WorkoutPlanCreateInput) => {
-  await prisma.workoutPlan.create({ data });
+  const maxRetries = 5;
+  let attempt = 0;
+
+  while (attempt < maxRetries) {
+    try {
+      const savedWorkout = await prisma.workoutPlan.create({ data });
+      return savedWorkout.id;
+       
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        const uniqueSuffix = Math.floor(Math.random() * 10000)
+          .toString()
+          .padStart(4, "0");
+        data = { ...data, name: `${data.name}-${uniqueSuffix}` };
+        attempt++;
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  throw new Error("Failed to save unique workout after several retries");
 };
+
+

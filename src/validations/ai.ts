@@ -5,10 +5,11 @@ export const aiWorkoutSchema = z.object({
   description: z.string(),
   level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),
   duration: z.number(),
-  imgUrl: z.string().optional(),
   exercises: z.array(
     z.object({
       position: z.number(),
+      name: z.string(),
+      benefit: z.string().max(50),
       sets: z.number().min(1),
       reps: z.number().min(1),
       rest: z.number(),

@@ -22,6 +22,7 @@ import {
   Play,
   Goal,
   Trophy,
+  Sparkles,
 } from "lucide-react";
 
 const Icons = {
@@ -47,7 +48,8 @@ const Icons = {
   pause: Pause,
   play: Play,
   goal: Goal,
-  trophy: Trophy
+  trophy: Trophy,
+  sparkle: Sparkles
 };
 
 export default Icons;

@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import {
   Select,
   SelectContent,
@@ -6,24 +6,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import clsx from "clsx";
 
 type SelectorProps = {
   choices: Array<{ label: string; val: string }>;
   setChoice: Dispatch<SetStateAction<string>>;
   placeholder: string;
   selectedValue: string;
+  classes?: string
 };
 
 const Selector = ({
   choices,
   setChoice,
   placeholder,
-  selectedValue
+  selectedValue,
+  classes
 }: SelectorProps
 ) => {
   return (
     <Select value={selectedValue} onValueChange={setChoice}>
-      <SelectTrigger className="min-w-40">
+      <SelectTrigger className={clsx("min-w-40", classes)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

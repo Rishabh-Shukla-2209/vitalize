@@ -5,7 +5,6 @@ import { openai } from "../openai";
 import { getAvailableExercises, saveAiWorkout } from "../queries";
 import {
   DifficultyType,
-  EquipmentType,
   ExerciseCategoryType,
   MuscleGroupType,
 } from "../types";
@@ -13,14 +12,12 @@ import {
 import type { ChatCompletion } from "openai/resources/chat/completions";
 
 const getPrompt = async (
-  muscleGroup: MuscleGroupType | "",
-  equipment: EquipmentType | "",
-  category: ExerciseCategoryType | "",
+  muscleGroups: Array<MuscleGroupType>,
+  category: ExerciseCategoryType,
   difficulty: DifficultyType
 ) => {
   const availableExercises = await getAvailableExercises(
-    muscleGroup,
-    equipment,
+    muscleGroups,
     category
   );
 
@@ -42,6 +39,8 @@ Rules:
     "exercises": [
       {
         "position": number,
+        "name": string,
+        "benefit: string (max 50 characters)
         "sets": number,
         "reps": number,
         "rest": number,
@@ -50,47 +49,58 @@ Rules:
         "time"?: number (optional),
       }
     ]
-    "imgUrl": string (optional),
 }
 
 Available exercises:
 ${JSON.stringify(availableExercises, null, 2)}
 
-Now generate a ${difficulty} ${muscleGroup} ${category} workout.
+Now generate a ${difficulty} ${category} workout for ${JSON.stringify(muscleGroups)} muscle groups.
 Return JSON only — no markdown or prose.
 `;
 
   return prompt;
 };
 
-const getResponseWithTimeout = async (
+async function getResponseWithTimeout(
   prompt: string,
-  timeoutMs = 15000
-): Promise<ChatCompletion> => {
-  const timeout = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error("OpenAI request timed out")), timeoutMs)
-  );
-
-  const openAiCall = openai.chat.completions.create({
-    model: "gpt-5-mini",
-    temperature: 0.3,
-    messages: [{ role: "user", content: prompt }],
-    response_format: { type: "json_object" },
-    max_completion_tokens: 2000,
+  timeoutMs = 60000
+): Promise<ChatCompletion> {
+  let timeoutId: NodeJS.Timeout | null = null;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(
+      () => reject(new Error("OpenAI request timed out")),
+      timeoutMs
+    );
   });
 
-  return Promise.race([openAiCall, timeout]);
-};
+  try {
+    const response = await Promise.race([
+      openai.chat.completions.create({
+        model: "gpt-5-mini",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
+        max_completion_tokens: 5000,
+      }),
+      timeoutPromise,
+    ]);
+    if (timeoutId) clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    if (timeoutId) clearTimeout(timeoutId);
+    throw error;
+  }
+}
 
 const transformForPrisma = (aiWorkout: AiWorkoutSchemaType, userId: string) => {
   const result = {
     ...aiWorkout,
-    user: {connect: {id: userId}},
+    createdBy: { connect: { id: userId } },
     exercises: {
-      create: aiWorkout.exercises.map((e) => ({
-        ...e,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      create: aiWorkout.exercises.map(({ exerciseId, name, benefit, ...rest }) => ({
+        ...rest,
         exercise: {
-          connect: { id: e.exerciseId },
+          connect: { id: exerciseId },
         },
       })),
     },
@@ -100,14 +110,13 @@ const transformForPrisma = (aiWorkout: AiWorkoutSchemaType, userId: string) => {
 };
 
 export const createAiWorkout = async (
-  userId: string,
-  muscleGroup: MuscleGroupType | "",
-  equipment: EquipmentType | "",
+  muscleGroups: Array<MuscleGroupType>,
   category: ExerciseCategoryType,
   difficulty: DifficultyType
 ) => {
-  let prompt = await getPrompt(muscleGroup, equipment, category, difficulty);
-
+  
+  let prompt = await getPrompt(muscleGroups, category, difficulty);  
+  
   let attempt = 1;
   let result: AiWorkoutSchemaType | undefined;
 
@@ -115,7 +124,9 @@ export const createAiWorkout = async (
     try {
       const aiResponse = await getResponseWithTimeout(prompt);
       const messageContent = aiResponse.choices?.[0]?.message?.content;
-      if (!messageContent) throw new Error("No AI response content received.");
+      if (!messageContent) {
+        throw new Error("No AI response content received.");
+      }
       const aiOutput = JSON.parse(messageContent);
       const parsed = aiWorkoutSchema.safeParse(aiOutput);
       if (parsed.success) {
@@ -130,8 +141,7 @@ export const createAiWorkout = async (
         problem: i.message,
       }));
       prompt = `${await getPrompt(
-        muscleGroup,
-        equipment,
+        muscleGroups,
         category,
         difficulty
       )} \n The previous response failed validation. Fix the following issues: \n ${JSON.stringify(
@@ -154,10 +164,10 @@ export const createAiWorkout = async (
     throw new Error("AI could not create the Workout");
   }
 
-  const workoutPlan = transformForPrisma(result, userId);
-  console.log(workoutPlan);
-  
-//   await saveAiWorkout(workoutPlan);
-
-//   return workoutPlan;
+  return result;
 };
+
+export const saveToDB = async (userId: string, aiResult: AiWorkoutSchemaType) => {
+  const workoutPlan = transformForPrisma(aiResult, userId);
+  return await saveAiWorkout(workoutPlan);
+}

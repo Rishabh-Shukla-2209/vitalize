@@ -1,6 +1,15 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { EquipmentType, ExerciseCategoryType, MuscleGroupType } from "./types";
+import {
+  CropArea,
+  DifficultyType,
+  EquipmentType,
+  ExerciseCategoryType,
+  ExerciseLogType,
+  MuscleGroupType,
+} from "./types";
+import { differenceInCalendarDays, isToday, isYesterday } from "date-fns";
+import { Status } from "@/generated/prisma";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -43,10 +52,18 @@ export const ExerciseFilterOptions = {
   MINDBODY: "duration",
 } as const;
 
-export const Difficulty: { label: string; val: string }[] = [
+export const Difficulty: { label: string; val: DifficultyType }[] = [
   { label: "Beginner", val: "BEGINNER" },
   { label: "Intermediate", val: "INTERMEDIATE" },
   { label: "Advanced", val: "ADVANCED" },
+];
+
+export const GoalStatus: { label: string; val: Status | "All" }[] = [
+  { label: "All", val: "All" },
+  { label: "Active", val: "IN_PROGRESS" },
+  { label: "Achieved", val: "ACHIEVED" },
+  { label: "Missed", val: "MISSED" },
+  { label: "Abandoned", val: "ABANDONED" },
 ];
 
 export const Equipment: { label: string; val: EquipmentType }[] = [
@@ -187,6 +204,66 @@ export const fitnessMetricLabels = {
   heartRateVariability: "HRV",
 };
 
+export const validCategoryFields: {
+  [k in ExerciseCategoryType]: Array<{label: string, val: keyof ExerciseLogType}>;
+} = {
+  CARDIO: [
+    { label: "Sets", val: "sets" },
+    { label: "Reps", val: "reps" },
+    { label: "Calories Burned", val: "caloriesBurned" },
+    { label: "Distance", val: "distance" },
+    { label: "Duration", val: "duration" },
+    { label: "Heart Rate", val: "heartRate" },
+    { label: "VO2 Max", val: "vo2Max" },
+    { label: "Speed", val: "speed" },
+  ],
+  BALANCE: [
+    { label: "Sets", val: "sets" },
+    { label: "Reps", val: "reps" },
+    { label: "TUG", val: "tug" },
+  ],
+  STRENGTH: [
+    { label: "Sets", val: "sets" },
+    { label: "Reps", val: "reps" },
+    { label: "Volume", val: "vol" },
+    { label: "Weight Used", val: "weightUsed" },
+  ],
+  FLEXIBILITY: [
+    { label: "Sets", val: "sets" },
+    { label: "Reps", val: "reps" },
+    { label: "Range of Motion", val: "rangeOfMotion" },
+    { label: "Dynamic Flexibility", val: "dynamicFlexibility" },
+    { label: "Static Flexibility", val: "staticFlexibility" },
+  ],
+  MINDBODY: [
+    { label: "Sets", val: "sets" },
+    { label: "Reps", val: "reps" },
+    { label: "Duration", val: "duration" },
+  ],
+  ENDURANCE: [
+    { label: "Sets", val: "sets" },
+    { label: "Reps", val: "reps" },
+    { label: "Time to Exhaustion", val: "timeToExhaustion" },
+  ],
+  HIIT: [
+    { label: "Sets", val: "sets" },
+    { label: "Reps", val: "reps" },
+    { label: "Work to Rest Ratio", val: "workToRestRatio" },
+    { label: "Work Interval Duration", val: "workIntervalDuration" },
+  ],
+  CORE: [
+    { label: "Sets", val: "sets" },
+    { label: "Reps", val: "reps" },
+    { label: "Plank Hold Time", val: "plankHoldTime" },
+  ],
+  RECOVERY: [
+    { label: "Sets", val: "sets" },
+    { label: "Reps", val: "reps" },
+    { label: "Heart Rate Variability", val: "heartRateVariability" },
+  ],
+};
+
+
 export const getAvailableCategoriesForMuscleGroup = (
   group: MuscleGroupType | ""
 ): { label: string; val: ExerciseCategoryType }[] => {
@@ -205,3 +282,61 @@ export const toProperCase = (str: string) => {
     .replace(/\b\w/g, (char) => char.toUpperCase())
     .replace(/_/g, " ");
 };
+
+export const timeAgo = (date: Date) => {
+  if (isToday(date)) {
+    return "Today";
+  }
+
+  if (isYesterday(date)) {
+    return "Yesterday";
+  }
+
+  return `${differenceInCalendarDays(new Date(), date)} days ago`;
+};
+
+function createImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = url;
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+  });
+}
+
+
+export const getCroppedImg = async (
+  imageSrc: string,
+  pixelCrop: CropArea,
+  outputWidth: number,
+  outputHeight: number
+): Promise<Blob> => {
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) throw new Error("Canvas context not available");
+
+  canvas.width = outputWidth;
+  canvas.height = outputHeight;
+
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    outputWidth,
+    outputHeight
+  );
+
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      if (!blob) throw new Error("Canvas is empty");
+      resolve(blob);
+    }, "image/jpeg");
+  });
+}

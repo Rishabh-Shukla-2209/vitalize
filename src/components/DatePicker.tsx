@@ -18,9 +18,9 @@ export function DatePicker({label, date, setDate}: {label: string, date: Date | 
   
   return (
     <div className="flex gap-3">
-      <Label htmlFor="date" className="px-1">
+      {label && <Label htmlFor="date" className="px-1">
         {label}
-      </Label>
+      </Label>}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button

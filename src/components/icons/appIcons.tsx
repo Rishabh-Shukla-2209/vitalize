@@ -23,6 +23,9 @@ import {
   Goal,
   Trophy,
   Sparkles,
+  Edit,
+  FlagOff,
+  Eye,
 } from "lucide-react";
 
 const Icons = {
@@ -34,6 +37,7 @@ const Icons = {
   uncheck: CircleX,
   home: House,
   add: CirclePlus,
+  edit: Edit,
   ai: Brain,
   clock: Clock,
   search: Search,
@@ -49,7 +53,9 @@ const Icons = {
   play: Play,
   goal: Goal,
   trophy: Trophy,
-  sparkle: Sparkles
+  sparkle: Sparkles,
+  abandon: FlagOff,
+  view: Eye,
 };
 
 export default Icons;

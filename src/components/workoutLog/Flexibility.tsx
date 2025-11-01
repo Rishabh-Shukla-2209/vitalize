@@ -85,7 +85,7 @@ const Flexibility = ({
           <label>Static Flexibility</label>
           <input
             type="number"
-            {...register(staticFlexibilityFieldName)}
+            {...(register(staticFlexibilityFieldName), { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
@@ -93,7 +93,8 @@ const Flexibility = ({
           <label>Dynamic Flexibility</label>
           <input
             type="number"
-            {...register(dynamicFlexibilityFieldName)}
+            {...(register(dynamicFlexibilityFieldName),
+            { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>

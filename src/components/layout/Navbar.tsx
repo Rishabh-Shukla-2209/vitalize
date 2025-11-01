@@ -6,7 +6,9 @@ import Image from "next/image";
 import { clsx } from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getUser } from "@/lib/queries";
+import { useQuery } from "@tanstack/react-query";
 
 const links = [
   { name: "Home", href: "/home" },
@@ -18,14 +20,26 @@ const links = [
 const Navbar = () => {
   const pathname = usePathname();
   const [profileOptionsVisible, setProfileOptionsVisible] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
 
-  const { isLoaded, isSignedIn, user } = useUser();
-  let imageUrl = "";
-  if (isLoaded && isSignedIn) {
-    if (user.hasImage) {
-      imageUrl = user.imageUrl;
+  const { user } = useUser();
+
+  const { data: userData } = useQuery({
+    queryKey: ["user", { userId: user?.id }],
+    queryFn: () => getUser(user?.id),
+    staleTime: Infinity,
+    enabled: !!user
+  });
+
+  useEffect(() => {
+    if (!user && !userData) return;
+
+    if (userData?.imgUrl) {
+      setImageUrl(userData.imgUrl);
+    } else if (user?.hasImage) {
+      setImageUrl(user.imageUrl);
     }
-  }
+  }, [userData, user]);
 
   return (
     <div onClick={() => setProfileOptionsVisible(false)}>

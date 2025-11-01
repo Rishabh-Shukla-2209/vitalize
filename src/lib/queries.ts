@@ -20,7 +20,7 @@ import {
   MuscleGroupType,
   WorkoutLogDataType,
 } from "./types";
-import { Gender, Prisma } from "@/generated/prisma";
+import { Gender, Prisma, Status } from "@/generated/prisma";
 
 export const createUser = async (id: string, email: string) => {
   if (await prisma.user.findUnique({ where: { id } })) return;
@@ -34,6 +34,23 @@ export const createUser = async (id: string, email: string) => {
 
   return user;
 };
+
+export const updateUser = async (
+  id: string, 
+  data: {
+    imgUrl? : string,
+    about? : string,
+    bio? : string
+  }
+) => {
+  
+  await prisma.user.update({
+    where: {
+      id
+    },
+    data
+  })
+}
 
 export const saveOnboardingData = async (
   id: string,
@@ -79,6 +96,7 @@ export const getLastWeekVol = async (userId: string) => {
       },
       createdAt: {
         gte: earliestDate,
+        lte: startOfToday(),
       },
       vol: {
         gt: 0,
@@ -666,8 +684,10 @@ export const getActiveGoals = async (userId: string) => {
         select: {
           name: true,
           id: true,
+          category: true
         },
       },
+      status: true,
       targetValue: true,
       targetField: true,
       currentValue: true,
@@ -720,17 +740,58 @@ export const changePRField = async (
     data: {
       prField: newField,
       prValue: newPRValue._max[newField],
-      updatedAt: new Date(),
     },
   });
+
+  return newPRValue._max[newField];
 };
 
 export const getRecentPersonalRecords = async (userId: string) => {
-  const data = await prisma.pR.findMany({
-    take: 11,
+  const [prs, countOfTotalPRs] = await Promise.all([
+    prisma.pR.findMany({
+      take: 11,
+      where: {
+        userid: userId,
+      },
+      select: {
+        id: true,
+        prField: true,
+        prValue: true,
+        exercise: {
+          select: {
+            name: true,
+            category: true,
+            id: true,
+          },
+        },
+        updatedAt: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    }),
+
+    getNoOfPRs(userId),
+  ]);
+
+  return { prs, countOfTotalPRs };
+};
+
+export const getPersonalRecords = async (
+  userId: string,
+  cursor: string | null,
+  direction: "next" | "prev",
+  search: string = ""
+) => {
+  const findArgs: Prisma.PRFindManyArgs = {
+    take: direction === "next" ? 5 : -5,
     where: {
       userid: userId,
+      ...(search && {
+        exercise: { is: { name: { contains: search, mode: "insensitive" } } },
+      }),
     },
+    ...(cursor && { skip: 1, cursor: { id: cursor } }),
     select: {
       id: true,
       prField: true,
@@ -738,14 +799,18 @@ export const getRecentPersonalRecords = async (userId: string) => {
       exercise: {
         select: {
           name: true,
+          category: true,
+          id: true,
         },
       },
       updatedAt: true,
     },
     orderBy: {
-      updatedAt: "desc",
+      id: "asc",
     },
-  });
+  };
+
+  const data = await prisma.pR.findMany(findArgs);
 
   return data;
 };
@@ -783,7 +848,6 @@ export const saveAiWorkout = async (data: Prisma.WorkoutPlanCreateInput) => {
     try {
       const savedWorkout = await prisma.workoutPlan.create({ data });
       return savedWorkout.id;
-       
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -803,4 +867,135 @@ export const saveAiWorkout = async (data: Prisma.WorkoutPlanCreateInput) => {
   throw new Error("Failed to save unique workout after several retries");
 };
 
+export const getNoOfPRs = async (userId: string) => {
+  return await prisma.pR.count({
+    where: {
+      userid: userId,
+    },
+  });
+};
 
+export const getNoOfWorkoutsDone = async (userId: string) => {
+  return await prisma.workoutLog.count({
+    where: {
+      userId,
+    },
+  });
+};
+
+export const getUser = async (userId?: string | undefined) => {
+  if(!userId) return null;
+
+  const data = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    }
+  });
+
+  return data;
+};
+
+export const getGoals = async (
+  userId: string,
+  cursor: string | null,
+  direction: "next" | "prev",
+  search: string = "",
+  status?: Status|"All"
+) => {
+  const findArgs: Prisma.GoalFindManyArgs = {
+    take: direction === "next" ? 5 : -5,
+    ...(cursor && { skip: 1, cursor: { id: cursor } }),
+    where: {
+      userid: userId,
+      ...(status && status !== "All" && { status }),
+      ...(search && {
+        targetExercise: {
+          is: { name: { contains: search, mode: "insensitive" } },
+        },
+      }),
+    },
+    select: {
+      id: true,
+      title: true,
+      targetExercise: {
+        select: {
+          name: true,
+          id: true,
+          category: true
+        },
+      },
+      status: true,
+      targetValue: true,
+      targetField: true,
+      currentValue: true,
+      initialValue: true,
+      targetDate: true,
+    },
+    orderBy: {
+      id: "asc",
+    },
+  };
+
+  const goals = await prisma.goal.findMany(findArgs);
+
+  return goals;
+};
+
+export const getAllExercises = async () => {
+  const data = await prisma.exerciseCatalog.findMany({
+    select:{
+      id: true,
+      name: true,
+      category: true
+    }
+  });
+
+  return data;
+}
+
+export const addGoal = async (
+  data: {
+    userid: string;
+    title: string;
+    targetExerciseid: string;
+    targetField: string;
+    currentValue: number;
+    targetValue: number;
+    initialValue: number;
+    targetDate: Date;
+}) => {
+  await prisma.goal.create({data});
+}
+
+export const abandonGoal = async (goalId: string) => {
+  await prisma.goal.update({
+    where: {
+      id: goalId
+    },
+    data: {
+      status: "ABANDONED"
+    }
+  })
+}
+
+export const getUserAIWorkouts = async (userId: string, cursor: string|null, direction: "next"|"prev") => {
+  
+  const findArgs: Prisma.WorkoutPlanFindManyArgs = {
+    take: direction === "next" ? 5 : -5,
+    where: {
+      userId,
+    },
+    ...(cursor && { skip: 1, cursor: { id: cursor } }),
+    select: {
+      id: true,
+      name: true
+    },
+    orderBy: {
+      id: "asc",
+    },
+  }
+
+  const data = await prisma.workoutPlan.findMany(findArgs);
+
+  return data;
+}

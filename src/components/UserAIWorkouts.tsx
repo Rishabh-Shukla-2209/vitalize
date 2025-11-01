@@ -1,0 +1,92 @@
+import { getUserAIWorkouts } from "@/lib/queries";
+import { useState, useCallback } from "react";
+import Icons from "./icons/appIcons";
+import { Button } from "./ui/button";
+import { useQuery } from "@tanstack/react-query";
+import AIWorkoutCard from "./AIWorkoutCard";
+
+const UserAIWorkouts = ({ userId }: { userId: string }) => {
+  const [pageCursors, setPageCursors] = useState<
+    Array<{ first: string | null; last: string | null }>
+  >([{ first: null, last: null }]);
+  const [currIndex, setCurrIndex] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+
+  const getData = useCallback(async () => {
+    const cursor =
+      direction === "prev"
+        ? pageCursors[currIndex].first
+        : pageCursors[currIndex].last;
+
+    const data = await getUserAIWorkouts(
+      userId,
+      cursor,
+      direction,
+    );
+
+    if (data.length > 0) {
+      setPageCursors((prev) => {
+        const next = [...prev];
+        next[currIndex + 1] = {
+          first: data[0].id,
+          last: data[data.length - 1].id,
+        };
+        return next;
+      });
+    }
+
+    return data;
+  }, [userId, currIndex, direction, pageCursors]);
+
+
+  const { data } = useQuery({
+    queryKey: ["UserAIWorkouts", userId, currIndex],
+    queryFn: getData,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  return (
+    <div>
+        <h2 className="text-xl font-semibold text-zinc-700 mt-5">
+          AI Workouts
+        </h2>
+      <div className="flex flex-col gap-2 mt-2">
+        {data && data.length > 0 ? (
+          data.map((workout) => (
+              <AIWorkoutCard key={workout.id} workout={workout} />
+          ))
+        ) : (
+          <p className="text-zinc-700">
+            Your Generated AI workouts will appear here.
+          </p>
+        )}
+          <div className="flex justify-between">
+            <Button
+              variant="ghost"
+              className="text-red-500 text-center mt-2 cursor-pointer"
+              disabled={currIndex < 1}
+              onClick={() => {
+                setCurrIndex((prev) => prev - 1);
+                setDirection("prev");
+              }}
+            >
+              <Icons.left /> Prev
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-red-500 text-center mt-2 cursor-pointer"
+              disabled={!data || data.length < 5}
+              onClick={() => {
+                setCurrIndex((prev) => prev + 1);
+                setDirection("next");
+              }}
+            >
+              Next <Icons.right />
+            </Button>
+          </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserAIWorkouts;

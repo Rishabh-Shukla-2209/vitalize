@@ -1,4 +1,5 @@
 export type DifficultyType = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
+export type PrivacyType = "PUBLIC" | "PRIVATE";
 
 export type ExerciseCategoryType =
   | "CARDIO"
@@ -283,7 +284,10 @@ export type GoalType = {
   title: string;
   targetExercise: {
     name: string;
+    id: string;
+    category: string;
   };
+  status: string;
   targetField: string;
   initialValue: number;
   currentValue: number;
@@ -298,5 +302,24 @@ export type PRType = {
   updatedAt: Date;
   exercise: {
     name: string;
+    category: string;
+    id: string,
   };
+};
+
+export type UserDataType = {
+    firstName: string | null;
+    lastName: string | null;
+    imgUrl: string | null;
+    about: string | null;
+    bio: string | null;
+    privacy: PrivacyType;
+    createdAt: Date;
+} | null
+
+export type CropArea = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 };

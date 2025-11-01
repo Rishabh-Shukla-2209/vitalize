@@ -25,7 +25,7 @@ const Hiit = ({
   const [work, rest] = watch([workIntervalDurationFieldName, restFieldName]);
 
   useEffect(() => {
-    const WRRatio = Math.round((work || 0) / (rest || 1) * 100) / 100;
+    const WRRatio = Math.round(((work || 0) / (rest || 1)) * 100) / 100;
     setValue(workToRestFieldName, WRRatio);
   }, [rest, setValue, work, workToRestFieldName]);
 
@@ -91,7 +91,7 @@ const Hiit = ({
           <label>Work-Rest Ratio</label>
           <input
             type="number"
-            {...register(workToRestFieldName)}
+            {...(register(workToRestFieldName), { valueAsNumber: true })}
             readOnly
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />

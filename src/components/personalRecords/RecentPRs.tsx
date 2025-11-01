@@ -5,7 +5,7 @@ import PRSkeleton from "./PRSkeleton";
 import Link from "next/link";
 
 const PRs = ({ userId }: { userId: string }) => {
-  const { data, isLoading, isError } = useQuery({
+  const { data: { prs, countOfTotalPRs } = {}, isLoading, isError } = useQuery({
     queryKey: ["PRs"],
     queryFn: () => getRecentPersonalRecords(userId),
     staleTime: 5 * 60 * 1000,
@@ -19,8 +19,8 @@ const PRs = ({ userId }: { userId: string }) => {
     <div className="boundary w-full h-255 px-5 py-3">
       <h3 className="text-lg text-zinc-700 mb-1.5">Personal Records</h3>
       <div className="flex flex-col gap-2">
-        {data && data.length > 0 ? (
-          data.map((pr) => <PR key={pr.id} pR={pr} />)
+        {prs && prs.length > 0 ? (
+          prs.map((pr) => <PR key={pr.id} pR={pr} />)
         ) : (
           <p className="text-zinc-700">
             {isError
@@ -28,7 +28,7 @@ const PRs = ({ userId }: { userId: string }) => {
               : "Your personal records will appear here."}
           </p>
         )}
-        {data && data.length > 11 && (
+        {countOfTotalPRs && countOfTotalPRs > 11 && (
           <Link href="/profile" className="text-red-500 text-center mt-2">
             See more...
           </Link>

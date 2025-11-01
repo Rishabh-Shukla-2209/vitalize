@@ -12,8 +12,8 @@ import { useState, useEffect } from "react";
 import ExerciseCategoryChartSkeleton from "@/components/charts/ExerciseCategoryChartSkeleton";
 import ProgressCompChartSkeleton from "@/components/charts/ProgressCompChartSkeleton";
 import Link from "next/link";
-import Goals from "@/components/goal/Goals";
-import PRs from "@/components/personalRecords/PRs";
+import Goals from "@/components/goal/ActiveGoals";
+import PRs from "@/components/personalRecords/RecentPRs";
 import GoalSkeleton from "@/components/goal/GoalSkeleton";
 import PRSkeleton from "@/components/personalRecords/PRSkeleton";
 

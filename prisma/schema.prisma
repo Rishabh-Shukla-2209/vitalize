@@ -98,10 +98,15 @@ enum NotificationTargetType {
 }
 
 enum Status {
-  PLANNED
+  ABANDONED
   IN_PROGRESS
   ACHIEVED
   MISSED
+}
+
+enum Privacy {
+  PUBLIC
+  PRIVATE
 }
 
 model User {
@@ -116,6 +121,9 @@ model User {
   currentStreakDays     Int               @default(0)
   longestStreakDays     Int               @default(0)
   lastActiveOn          DateTime?
+  about                 String?
+  bio                   String?
+  privacy               Privacy           @default(PUBLIC)
   Follows               Follow[]          @relation("FollowingRelation")
   Following             Follow[]          @relation("FollowerRelation")
   WorkoutPlans          WorkoutPlan[]
@@ -245,7 +253,7 @@ model Goal {
   user             User            @relation(fields: [userid], references: [id], onDelete: Cascade)
   userid           String
   title            String
-  status           Status
+  status           Status          @default(IN_PROGRESS)
   targetExercise   ExerciseCatalog @relation(fields: [targetExerciseid], references: [id])
   targetExerciseid String
   targetField      String
@@ -253,6 +261,7 @@ model Goal {
   initialValue     Float
   currentValue     Float
   targetDate       DateTime
+  createdAt        DateTime        @default(now())
 }
 
 model PR {
@@ -260,7 +269,7 @@ model PR {
   user       User            @relation(fields: [userid], references: [id])
   userid     String
   exercise   ExerciseCatalog @relation(fields: [exerciseid], references: [id])
-  exerciseid String          
+  exerciseid String
   prField    String
   prValue    Float
   updatedAt  DateTime        @default(now())
@@ -293,6 +302,7 @@ model Post {
   updated       Boolean     @default(false)
   likesCount    Int         @default(0)
   commentsCount Int         @default(0)
+  privacy       Privacy     @default(PUBLIC)
   Comments      Comment[]
 }
 

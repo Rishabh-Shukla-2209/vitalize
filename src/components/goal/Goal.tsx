@@ -11,7 +11,7 @@ const Goal = ({ goal }: { goal: GoalType }) => {
 
   return (
     <div className="flex gap-2 w-full py-2 bg-zinc-50 rounded-lg my-1">
-      <div className="flex-center flex-1">
+      <div className="flex-center ml-2.5">
         <Icons.goal className="text-primary rounded-lg" size={45} />
       </div>
       <div className="w-full flex-5 pr-3">

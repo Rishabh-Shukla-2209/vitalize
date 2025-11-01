@@ -87,7 +87,7 @@ const Cardio = ({
           <label>Distance</label>
           <input
             type="number"
-            {...register(distanceFieldName)}
+            {...(register(distanceFieldName), { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
@@ -95,7 +95,7 @@ const Cardio = ({
           <label>Duration</label>
           <input
             type="number"
-            {...register(durationFieldName)}
+            {...(register(durationFieldName), { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
@@ -103,7 +103,7 @@ const Cardio = ({
           <label>Heart Rate</label>
           <input
             type="number"
-            {...register(heartRateFieldName)}
+            {...(register(heartRateFieldName), { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
@@ -111,7 +111,7 @@ const Cardio = ({
           <label>VO2 Max</label>
           <input
             type="number"
-            {...register(vo2MaxFieldName)}
+            {...(register(vo2MaxFieldName), { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
@@ -119,7 +119,7 @@ const Cardio = ({
           <label>Speed</label>
           <input
             type="number"
-            {...register(speedFieldName)}
+            {...(register(speedFieldName), { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>

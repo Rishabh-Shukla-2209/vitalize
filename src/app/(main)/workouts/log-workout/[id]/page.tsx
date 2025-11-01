@@ -36,13 +36,15 @@ const WorkoutLogPage = () => {
 
   const onSubmit = handleSubmit((data) => {
     if(isLoaded && isSignedIn){
-      setSubmitting(true);
+      setSubmitting(true);      
       saveWorkoutLog(user.id, workout!.id, data)
         .then(() => {
           router.push('/home')
         })
-        .catch(() => {
+        .catch((error) => {
           setSubmitting(false);
+          console.log(error);
+          
           window.alert("Error submitting workout details")
         })
     }
@@ -140,7 +142,7 @@ const WorkoutLogPage = () => {
               heartRateVariability: 0,
             })),
           balance: data.exercises
-            .filter((ex) => ex.exercise.category === ExerciseCategory.RECOVERY)
+            .filter((ex) => ex.exercise.category === ExerciseCategory.BALANCE)
             .map((ex) => ({
               exerciseId: ex.exerciseid,
               sets: ex.sets,

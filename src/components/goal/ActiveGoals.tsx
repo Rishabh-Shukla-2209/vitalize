@@ -24,7 +24,7 @@ const Goals = ({ userId }: { userId: string }) => {
 
   // pairing so that 2 items are visible at once in the carousel
   const goalPairs: Array<Array<GoalType>> = [];
-  if (data) {
+  if (data) {    
     for (let i = 0; i < data.length; i += 2) {
       goalPairs.push(data.slice(i, i + 2));
     }
@@ -40,7 +40,7 @@ const Goals = ({ userId }: { userId: string }) => {
               <CarouselItem key={index}>
                 <div className="flex flex-col gap-2">
                   <Goal goal={goalPair[0]} />
-                  <Goal goal={goalPair[1]} />
+                  {goalPair[1] && <Goal goal={goalPair[1]} />}
                 </div>
               </CarouselItem>
             ))}

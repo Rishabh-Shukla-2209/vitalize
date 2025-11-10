@@ -26,6 +26,11 @@ import {
   Edit,
   FlagOff,
   Eye,
+  MessageSquare,
+  Heart,
+  Share2,
+  SendHorizonal,
+  Trash,
 } from "lucide-react";
 
 const Icons = {
@@ -56,6 +61,11 @@ const Icons = {
   sparkle: Sparkles,
   abandon: FlagOff,
   view: Eye,
+  comment: MessageSquare,
+  like: Heart,
+  share: Share2,
+  send: SendHorizonal,
+  delete: Trash
 };
 
 export default Icons;

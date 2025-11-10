@@ -3,9 +3,9 @@ import { fitnessMetricLabels, fitnessMetricUnits } from "@/lib/utils";
 
 const ExerciseLog = ({ exercise, name }: { exercise: ExerciseLogType, name: string | null}) => {
   return (
-    <div>
-      <h3 className="text-zinc-600 font-semibold">{name}</h3>
-      <ul className="flex gap-3 text-zinc-600">
+    <div className="flex gap-2">
+      <h3 className="text-zinc-600 font-semibold flex-1">{name}</h3>
+      <ul className="flex gap-3 flex-wrap gap-y-0.5 text-zinc-600 flex-5">
         {Object.entries(fitnessMetricUnits).map(([key, unit]) => {
           const value = exercise[key as keyof typeof fitnessMetricUnits];
 
@@ -18,7 +18,7 @@ const ExerciseLog = ({ exercise, name }: { exercise: ExerciseLogType, name: stri
           ) {
             return (
               <li key={key}>
-               • {label}: {value} {unit} 
+                {label}: {value} {unit} 
               </li>
             );
           }

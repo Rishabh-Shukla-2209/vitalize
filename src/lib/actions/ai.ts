@@ -28,8 +28,9 @@ Your goal: generate a structured workout as JSON only (no extra text).
 
 Rules:
 1. Use ONLY exercises from the list below.
-2. Reference them using their "id".
-3. Always return valid JSON matching this structure:
+2. Do not repeat exercises.
+3. Reference them using their "id".
+4. Always return valid JSON matching this structure:
 
 {
     "name": string,

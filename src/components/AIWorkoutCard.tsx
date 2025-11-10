@@ -5,7 +5,7 @@ import Link from "next/link";
 const AIWorkoutCard = ({
   workout,
 }: {
-  workout: { name: string; id: string };
+  workout: { name: string; id: string, createdAt: Date };
 }) => {
   return (
     <div>

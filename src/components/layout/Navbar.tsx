@@ -28,7 +28,7 @@ const Navbar = () => {
     queryKey: ["user", { userId: user?.id }],
     queryFn: () => getUser(user?.id),
     staleTime: Infinity,
-    enabled: !!user
+    enabled: !!user,
   });
 
   useEffect(() => {
@@ -73,7 +73,7 @@ const Navbar = () => {
           <div
             className={clsx(
               "relative flex-center rounded-4xl cursor-pointer",
-              imageUrl && "p-1 bg-amber-400",
+              imageUrl && "p-1 bg-primary-dark",
               !imageUrl && "p-2.75 bg-gray-300"
             )}
             onClick={(e) => {
@@ -81,8 +81,7 @@ const Navbar = () => {
               setProfileOptionsVisible((prev) => !prev);
             }}
           >
-            {!imageUrl && <Icons.user width={25} height={25} />}
-            {imageUrl && (
+            {imageUrl ? (
               <Image
                 src={imageUrl}
                 alt="user profile image"
@@ -90,6 +89,8 @@ const Navbar = () => {
                 height={40}
                 className="rounded-4xl"
               />
+            ) : (
+              <Icons.user width={25} height={25} />
             )}
             {profileOptionsVisible && (
               <div className="absolute top-13 right-3.25 text-sm bg-white border border-gray-300 rounded-md p-3">

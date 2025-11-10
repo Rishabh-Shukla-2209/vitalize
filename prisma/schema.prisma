@@ -79,34 +79,30 @@ enum Equipment {
   ELLIPTICAL
 }
 
-enum LikeTargetType {
-  POST
-  COMMENT
-}
-
 enum NotificationType {
-  FOLLOW
-  LIKE
-  COMMENT
-}
-
-enum NotificationTargetType {
   FOLLOW
   LIKE_POST
   LIKE_COMMENT
   COMMENT
 }
 
-enum Status {
+enum GoalStatus {
   ABANDONED
   IN_PROGRESS
   ACHIEVED
   MISSED
+
+  @@map("Status")
 }
 
 enum Privacy {
   PUBLIC
   PRIVATE
+}
+
+enum FollowStatus {
+  REQUESTED
+  ACCEPTED
 }
 
 model User {
@@ -131,7 +127,6 @@ model User {
   ExerciseCatalog       ExerciseCatalog[]
   Posts                 Post[]
   Comments              Comment[]
-  Like                  Like[]
   Goal                  Goal[]
   NotificationRecipient Notification[]    @relation("RecipientRelation")
   NotificationSender    Notification[]    @relation("SenderRelation")
@@ -139,6 +134,10 @@ model User {
   MeasureMent           Measurement[]
 
   PR PR[]
+
+  PostLike PostLike[]
+
+  CommentLike CommentLike[]
 }
 
 model ExerciseCatalog {
@@ -253,7 +252,7 @@ model Goal {
   user             User            @relation(fields: [userid], references: [id], onDelete: Cascade)
   userid           String
   title            String
-  status           Status          @default(IN_PROGRESS)
+  status           GoalStatus      @default(IN_PROGRESS)
   targetExercise   ExerciseCatalog @relation(fields: [targetExerciseid], references: [id])
   targetExerciseid String
   targetField      String
@@ -272,77 +271,93 @@ model PR {
   exerciseid String
   prField    String
   prValue    Float
-  updatedAt  DateTime        @default(now())
+  createdAt  DateTime        @default(now())
 
   @@unique([userid, exerciseid])
 }
 
 model Follow {
-  id          String   @id @default(uuid())
-  follower    User     @relation("FollowerRelation", fields: [followerId], references: [id])
+  id          String       @id @default(uuid())
+  follower    User         @relation("FollowerRelation", fields: [followerId], references: [id])
   followerId  String
-  following   User     @relation("FollowingRelation", fields: [followingId], references: [id])
+  following   User         @relation("FollowingRelation", fields: [followingId], references: [id])
   followingId String
-  createdAt   DateTime @default(now())
+  status      FollowStatus
+  createdAt   DateTime     @default(now())
 
   @@unique([followerId, followingId])
 }
 
 model Post {
-  id            String      @id @default(uuid())
-  user          User        @relation(fields: [userid], references: [id], onDelete: Cascade)
-  userid        String
-  title         String
-  body          String?
-  imgUrl        String?
-  workoutLog    WorkoutLog? @relation(fields: [workoutLogid], references: [id])
-  workoutLogid  String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @default(now())
-  updated       Boolean     @default(false)
-  likesCount    Int         @default(0)
-  commentsCount Int         @default(0)
-  privacy       Privacy     @default(PUBLIC)
-  Comments      Comment[]
+  id           String         @id @default(uuid())
+  user         User           @relation(fields: [userid], references: [id], onDelete: Cascade)
+  userid       String
+  title        String
+  body         String?
+  imgUrl       String?
+  workoutLog   WorkoutLog?    @relation(fields: [workoutLogid], references: [id])
+  workoutLogid String?
+  createdAt    DateTime       @default(now())
+  privacy      Privacy        @default(PUBLIC)
+  PostLike     PostLike[]
+  Comment      Comment[]
+  Notification Notification[]
 }
 
 model Comment {
-  id         String   @id @default(uuid())
-  user       User     @relation(fields: [userid], references: [id], onDelete: Cascade)
-  userid     String
-  text       String
-  post       Post     @relation(fields: [postid], references: [id])
-  postid     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
-  updated    Boolean  @default(false)
-  likesCount Int      @default(0)
+  id          String        @id @default(uuid())
+  user        User          @relation(fields: [userid], references: [id], onDelete: Cascade)
+  userid      String
+  text        String
+  post        Post          @relation(fields: [postid], references: [id])
+  postid      String
+  parent      Comment?      @relation("replies", fields: [parentid], references: [id], onDelete: Cascade)
+  parentid    String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now())
+  updated     Boolean       @default(false)
+  CommentLike CommentLike[]
+  replies     Comment[]     @relation("replies")
+
+  Notification Notification[]
 }
 
-model Like {
-  id        String         @id @default(uuid())
-  target    LikeTargetType
-  targetId  String
-  user      User           @relation(fields: [userid], references: [id], onDelete: Cascade)
+model PostLike {
+  id        String   @id @default(uuid())
+  post      Post     @relation(fields: [postid], references: [id], onDelete: Cascade)
+  postid    String
+  user      User     @relation(fields: [userid], references: [id], onDelete: Cascade)
   userid    String
-  createdAt DateTime       @default(now())
+  createdAt DateTime @default(now())
 
-  @@unique([targetId, userid])
+  @@unique([postid, userid])
+}
+
+model CommentLike {
+  id        String   @id @default(uuid())
+  comment   Comment  @relation(fields: [commentid], references: [id], onDelete: Cascade)
+  commentid String
+  user      User     @relation(fields: [userid], references: [id], onDelete: Cascade)
+  userid    String
+  createdAt DateTime @default(now())
+
+  @@unique([commentid, userid])
 }
 
 model Notification {
-  id          String                 @id @default(uuid())
-  recipient   User                   @relation("RecipientRelation", fields: [recipientid], references: [id])
+  id          String           @id @default(uuid())
+  recipient   User             @relation("RecipientRelation", fields: [recipientid], references: [id], onDelete: Cascade)
   recipientid String
   type        NotificationType
-  actor       User                   @relation("SenderRelation", fields: [actorId], references: [id])
+  actor       User             @relation("SenderRelation", fields: [actorId], references: [id], onDelete: Cascade)
   actorId     String
-  target      NotificationTargetType
-  targetId    String
-  payload     Json
-  isRead      Boolean                @default(false)
+  post        Post?            @relation(fields: [postid], references: [id], onDelete: Cascade)
+  postid      String?
+  comment     Comment?         @relation(fields: [commentid], references: [id], onDelete: Cascade)
+  commentid   String?
+  isRead      Boolean          @default(false)
   readAt      DateTime?
-  createdAt   DateTime               @default(now())
+  createdAt   DateTime         @default(now())
 }
 
 model AiInteraction {

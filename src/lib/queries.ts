@@ -18,9 +18,14 @@ import {
   EquipmentType,
   ExerciseCategoryType,
   MuscleGroupType,
+  PostType,
+  Source,
   WorkoutLogDataType,
+  FollowStatus,
+  PrivacyType,
+  CommentType,
 } from "./types";
-import { Gender, Prisma, Status } from "@/generated/prisma";
+import { Gender, Prisma, GoalStatus } from "@/generated/prisma";
 
 export const createUser = async (id: string, email: string) => {
   if (await prisma.user.findUnique({ where: { id } })) return;
@@ -36,21 +41,20 @@ export const createUser = async (id: string, email: string) => {
 };
 
 export const updateUser = async (
-  id: string, 
+  id: string,
   data: {
-    imgUrl? : string,
-    about? : string,
-    bio? : string
+    imgUrl?: string;
+    about?: string;
+    bio?: string;
   }
 ) => {
-  
   await prisma.user.update({
     where: {
-      id
+      id,
     },
-    data
-  })
-}
+    data,
+  });
+};
 
 export const saveOnboardingData = async (
   id: string,
@@ -684,7 +688,7 @@ export const getActiveGoals = async (userId: string) => {
         select: {
           name: true,
           id: true,
-          category: true
+          category: true,
         },
       },
       status: true,
@@ -693,6 +697,7 @@ export const getActiveGoals = async (userId: string) => {
       currentValue: true,
       initialValue: true,
       targetDate: true,
+      createdAt: true,
     },
   });
   const missedGoals = data.filter((goal) => goal.targetDate < startOfToday());
@@ -764,10 +769,10 @@ export const getRecentPersonalRecords = async (userId: string) => {
             id: true,
           },
         },
-        updatedAt: true,
+        createdAt: true,
       },
       orderBy: {
-        updatedAt: "desc",
+        createdAt: "desc",
       },
     }),
 
@@ -779,7 +784,7 @@ export const getRecentPersonalRecords = async (userId: string) => {
 
 export const getPersonalRecords = async (
   userId: string,
-  cursor: string | null,
+  cursor: { createdAt: Date; id: string } | null,
   direction: "next" | "prev",
   search: string = ""
 ) => {
@@ -791,7 +796,10 @@ export const getPersonalRecords = async (
         exercise: { is: { name: { contains: search, mode: "insensitive" } } },
       }),
     },
-    ...(cursor && { skip: 1, cursor: { id: cursor } }),
+    ...(cursor && {
+      skip: 1,
+      cursor: { createdAt: cursor.createdAt, id: cursor.id },
+    }),
     select: {
       id: true,
       prField: true,
@@ -803,11 +811,9 @@ export const getPersonalRecords = async (
           id: true,
         },
       },
-      updatedAt: true,
+      createdAt: true,
     },
-    orderBy: {
-      id: "asc",
-    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
   };
 
   const data = await prisma.pR.findMany(findArgs);
@@ -884,12 +890,12 @@ export const getNoOfWorkoutsDone = async (userId: string) => {
 };
 
 export const getUser = async (userId?: string | undefined) => {
-  if(!userId) return null;
+  if (!userId) return null;
 
   const data = await prisma.user.findUnique({
     where: {
       id: userId,
-    }
+    },
   });
 
   return data;
@@ -897,14 +903,17 @@ export const getUser = async (userId?: string | undefined) => {
 
 export const getGoals = async (
   userId: string,
-  cursor: string | null,
+  cursor: { createdAt: Date; id: string } | null,
   direction: "next" | "prev",
   search: string = "",
-  status?: Status|"All"
+  status?: GoalStatus | "All"
 ) => {
   const findArgs: Prisma.GoalFindManyArgs = {
     take: direction === "next" ? 5 : -5,
-    ...(cursor && { skip: 1, cursor: { id: cursor } }),
+    ...(cursor && {
+      skip: 1,
+      cursor: { createdAt: cursor.createdAt, id: cursor.id },
+    }),
     where: {
       userid: userId,
       ...(status && status !== "All" && { status }),
@@ -921,7 +930,7 @@ export const getGoals = async (
         select: {
           name: true,
           id: true,
-          category: true
+          category: true,
         },
       },
       status: true,
@@ -930,10 +939,9 @@ export const getGoals = async (
       currentValue: true,
       initialValue: true,
       targetDate: true,
+      createdAt: true,
     },
-    orderBy: {
-      id: "asc",
-    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
   };
 
   const goals = await prisma.goal.findMany(findArgs);
@@ -943,59 +951,475 @@ export const getGoals = async (
 
 export const getAllExercises = async () => {
   const data = await prisma.exerciseCatalog.findMany({
-    select:{
+    select: {
       id: true,
       name: true,
-      category: true
-    }
+      category: true,
+    },
   });
 
   return data;
-}
+};
 
-export const addGoal = async (
-  data: {
-    userid: string;
-    title: string;
-    targetExerciseid: string;
-    targetField: string;
-    currentValue: number;
-    targetValue: number;
-    initialValue: number;
-    targetDate: Date;
+export const addGoal = async (data: {
+  userid: string;
+  title: string;
+  targetExerciseid: string;
+  targetField: string;
+  currentValue: number;
+  targetValue: number;
+  initialValue: number;
+  targetDate: Date;
 }) => {
-  await prisma.goal.create({data});
-}
+  await prisma.goal.create({ data });
+};
 
 export const abandonGoal = async (goalId: string) => {
   await prisma.goal.update({
     where: {
-      id: goalId
+      id: goalId,
     },
     data: {
-      status: "ABANDONED"
-    }
-  })
-}
+      status: "ABANDONED",
+    },
+  });
+};
 
-export const getUserAIWorkouts = async (userId: string, cursor: string|null, direction: "next"|"prev") => {
-  
+export const getUserAIWorkouts = async (
+  userId: string,
+  cursor: { createdAt: Date; id: string } | null,
+  direction: "next" | "prev"
+) => {
   const findArgs: Prisma.WorkoutPlanFindManyArgs = {
     take: direction === "next" ? 5 : -5,
     where: {
       userId,
     },
-    ...(cursor && { skip: 1, cursor: { id: cursor } }),
+    ...(cursor && {
+      skip: 1,
+      cursor: { createdAt: cursor.createdAt, id: cursor.id },
+    }),
     select: {
       id: true,
-      name: true
+      name: true,
+      createdAt: true,
     },
-    orderBy: {
-      id: "asc",
-    },
-  }
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+  };
 
   const data = await prisma.workoutPlan.findMany(findArgs);
 
   return data;
-}
+};
+
+export const getPosts = async (
+  userId: string,
+  cursor: { createdAt: Date; id: string } | null,
+  source: Source
+): Promise<{
+  posts: PostType[];
+  cursor: { createdAt: Date; id: string } | null;
+  nextSource: Source;
+}> => {
+  const following = await prisma.follow.findMany({
+    where: { followerId: userId },
+    select: { followingId: true, status: true },
+  });
+
+  const followingIds = following
+    .filter((f) => f.status === "ACCEPTED")
+    .map((f) => f.followingId);
+  const followRequestedIds = new Set(
+    following.filter((f) => f.status === "REQUESTED").map((f) => f.followingId)
+  );
+
+  if (source === "friends") {
+    const friendsPosts = await prisma.post.findMany({
+      take: 10,
+      ...(cursor && { skip: 1, cursor }),
+      where: { userid: { in: followingIds } },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            imgUrl: true,
+            privacy: true,
+          },
+        },
+        workoutLog: {
+          include: {
+            exercises: {
+              include: { exercise: { select: { name: true } } },
+            },
+          },
+        },
+        _count: {
+          select: {
+            Comment: true,
+            PostLike: true,
+          },
+        },
+      },
+    });
+
+    if (friendsPosts.length === 10) {
+      const likes = await prisma.postLike.findMany({
+        where: {
+          userid: userId,
+          postid: { in: friendsPosts.map((post) => post.id) },
+        },
+        select: {
+          postid: true,
+        },
+      });
+
+      const postsLikedIds = new Set(likes.map((like) => like.postid));
+      const posts = friendsPosts.map((post) => ({
+        ...post,
+        liked: postsLikedIds.has(post.id),
+        followStatus: "Accepted" as FollowStatus,
+      }));
+      return {
+        posts,
+        cursor: {
+          createdAt: posts.at(-1)!.createdAt,
+          id: posts.at(-1)!.id,
+        },
+        nextSource: "friends",
+      };
+    }
+
+    const excludedIds = [...followingIds, userId];
+    const remaining = 10 - friendsPosts.length;
+
+    const publicPosts = await prisma.post.findMany({
+      take: remaining,
+      where: {
+        userid: { notIn: excludedIds },
+        privacy: "PUBLIC",
+      },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            imgUrl: true,
+            privacy: true,
+          },
+        },
+        workoutLog: {
+          include: {
+            exercises: {
+              include: { exercise: { select: { name: true } } },
+            },
+          },
+        },
+        _count: {
+          select: {
+            Comment: true,
+            PostLike: true,
+          },
+        },
+      },
+    });
+
+    const postsWithoutLikesAdded = [
+      ...friendsPosts.map((post) => ({
+        ...post,
+        followStatus: "Accepted" as FollowStatus,
+      })),
+      ...publicPosts.map((post) => ({
+        ...post,
+        followStatus: followRequestedIds.has(post.user.id)
+          ? "Requested"
+          : ("Not Following" as FollowStatus),
+      })),
+    ];
+
+    if (postsWithoutLikesAdded.length === 0) {
+      return { posts: [], cursor: null, nextSource: null };
+    }
+
+    const likes = await prisma.postLike.findMany({
+      where: {
+        userid: userId,
+        postid: { in: postsWithoutLikesAdded.map((post) => post.id) },
+      },
+      select: {
+        postid: true,
+      },
+    });
+
+    const postsLikedIds = new Set(likes.map((like) => like.postid));
+    const postsWithLikes = postsWithoutLikesAdded.map((post) => ({
+      ...post,
+      liked: postsLikedIds.has(post.id),
+    }));
+
+    return {
+      posts: postsWithLikes,
+      cursor: {
+        createdAt: postsWithLikes.at(-1)!.createdAt,
+        id: postsWithLikes.at(-1)!.id,
+      },
+      nextSource: publicPosts.length > 0 ? "public" : null,
+    };
+  }
+
+  const publicPosts = await prisma.post.findMany({
+    take: 10,
+    ...(cursor && { skip: 1, cursor }),
+    where: {
+      userid: { notIn: [...followingIds, userId] },
+      privacy: "PUBLIC",
+    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    include: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          imgUrl: true,
+          privacy: true,
+        },
+      },
+      workoutLog: {
+        include: {
+          exercises: {
+            include: { exercise: { select: { name: true } } },
+          },
+        },
+      },
+      _count: {
+        select: {
+          Comment: true,
+          PostLike: true,
+        },
+      },
+    },
+  });
+
+  if (publicPosts.length === 0) {
+    return { posts: [], cursor: null, nextSource: null };
+  }
+
+  const likes = await prisma.postLike.findMany({
+    where: {
+      userid: userId,
+      postid: { in: publicPosts.map((post) => post.id) },
+    },
+    select: {
+      postid: true,
+    },
+  });
+
+  const postsLikedIds = new Set(likes.map((like) => like.postid));
+  const posts = publicPosts.map((post) => ({
+    ...post,
+    liked: postsLikedIds.has(post.id),
+    followStatus: "Not Following" as FollowStatus,
+  }));
+
+  return {
+    posts,
+    cursor: {
+      createdAt: posts.at(-1)!.createdAt,
+      id: posts.at(-1)!.id,
+    },
+    nextSource: "public",
+  };
+};
+
+export const savePostReaction = async (
+  postId: string,
+  userId: string,
+  reaction: "liked" | "unliked"
+) => {
+  if (reaction === "liked") {
+    await prisma.postLike.create({
+      data: {
+        userid: userId,
+        postid: postId,
+      },
+    });
+  } else {
+    await prisma.postLike.delete({
+      where: {
+        postid_userid: { postid: postId, userid: userId },
+      },
+    });
+  }
+};
+
+export const saveComment = async (
+  postId: string,
+  userId: string,
+  text: string,
+  parentId?: string
+) => {
+  const comment = await prisma.comment.create({
+    data: {
+      userid: userId,
+      postid: postId,
+      text,
+      ...(parentId && { parentid: parentId }),
+    },
+  });
+
+  return comment;
+};
+
+export const saveFollowing = async (
+  followerId: string,
+  followingId: string,
+  followingPrivacy: PrivacyType,
+  action: "follow" | "unFollow"
+) => {
+  if (action === "follow") {
+    await prisma.follow.create({
+      data: {
+        followerId,
+        followingId,
+        status: followingPrivacy === "PRIVATE" ? "REQUESTED" : "ACCEPTED",
+      },
+    });
+  } else {
+    await prisma.follow.delete({
+      where: {
+        followerId_followingId: { followerId, followingId },
+      },
+    });
+  }
+};
+
+export const getPostLikes = async (postId: string) => {
+  const likes = await prisma.postLike.findMany({
+    where: {
+      postid: postId,
+    },
+    include: {
+      user: {
+        select: { id: true, firstName: true, lastName: true, imgUrl: true },
+      },
+    },
+  });
+
+  return likes;
+};
+
+const getCommentTree = (comments: CommentType[]): CommentType[] => {
+  const commentsMap = new Map<string, CommentType>();
+
+  comments.forEach((c) => {
+    commentsMap.set(c.id, { ...c, replies: [] });
+  });
+
+  const commentsTree: CommentType[] = [];
+
+  comments.forEach((comment) => {
+    const mappedComment = commentsMap.get(comment.id)!;
+
+    if (comment.parentid === null) {
+      commentsTree.push(mappedComment);
+    } else {
+      const parent = commentsMap.get(comment.parentid);
+      if (parent) {
+        parent.replies!.push(mappedComment);
+      }
+    }
+  });
+
+  return commentsTree;
+};
+
+export const getComments = async (userId: string, postId: string) => {
+  const comments = await prisma.comment.findMany({
+    where: {
+      postid: postId,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          imgUrl: true,
+        },
+      },
+      _count: {
+        select: {
+          CommentLike: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const likes = await prisma.commentLike.findMany({
+    where: {
+      userid: userId,
+      commentid: { in: comments.map((c) => c.id) },
+    },
+    select: {
+      commentid: true,
+    },
+  });
+
+  const commentsLikedIds = new Set(likes.map((like) => like.commentid));
+  const commentsWithLikeStatus = comments.map((c) => ({
+    ...c,
+    liked: commentsLikedIds.has(c.id),
+  }));
+
+  return getCommentTree(commentsWithLikeStatus);
+};
+
+export const saveCommentReaction = async (
+  commentId: string,
+  userId: string,
+  reaction: "liked" | "unliked"
+) => {
+  if (reaction === "liked") {
+    await prisma.commentLike.create({
+      data: {
+        userid: userId,
+        commentid: commentId,
+      },
+    });
+  } else {
+    await prisma.commentLike.delete({
+      where: {
+        commentid_userid: { commentid: commentId, userid: userId },
+      },
+    });
+  }
+};
+
+export const getCommentLikes = async (commentId: string) => {
+  const likes = await prisma.commentLike.findMany({
+    where: {
+      commentid: commentId,
+    },
+    include: {
+      user: {
+        select: { id: true, firstName: true, lastName: true, imgUrl: true },
+      },
+    },
+  });
+
+  return likes;
+};
+
+export const deleteComment = async (id: string) => {
+  await prisma.comment.delete({
+    where: { id },
+  });
+};

@@ -8,8 +8,8 @@ import {
   ExerciseLogType,
   MuscleGroupType,
 } from "./types";
-import { differenceInCalendarDays, isToday, isYesterday } from "date-fns";
-import { Status } from "@/generated/prisma";
+import { differenceInCalendarDays, differenceInMinutes, isToday, isYesterday } from "date-fns";
+import { GoalStatus as Status } from "@/generated/prisma";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -159,7 +159,7 @@ export const fitnessMetricUnits = {
   sets: "",
   reps: "",
   weightUsed: "kg",
-  vol: "kg (volume)",
+  vol: "kg",
   distance: "km",
   rest: "s",
   duration: "s",
@@ -183,6 +183,7 @@ export const fitnessMetricUnits = {
 export const fitnessMetricLabels = {
   sets: "Sets",
   reps: "Reps",
+  vol: "Volume",
   weightUsed: "Weight Used",
   distance: "Distance",
   rest: "Rest",
@@ -198,7 +199,7 @@ export const fitnessMetricLabels = {
   workIntervalDuration: "Work Interval",
   restIntervalDuration: "Rest Interval",
   workToRestRatio: "Work:Rest Ratio",
-  plankHoldTime: "Plank Hold",
+  plankHoldTime: "Plank Hold Time",
   tug: "TUG",
   timeToExhaustion: "Time to Exhaustion",
   heartRateVariability: "HRV",
@@ -293,6 +294,25 @@ export const timeAgo = (date: Date) => {
   }
 
   return `${differenceInCalendarDays(new Date(), date)} days ago`;
+};
+
+
+export const minutesAgo = (time: Date) => {
+  const diffInMin = differenceInMinutes(new Date(), time);
+  
+  if(diffInMin < 60){
+    return `${diffInMin} m`;
+  }
+
+  const minInDay = 24 * 60;
+
+  if(diffInMin < minInDay){
+    const hours = Math.floor(diffInMin / 60);
+    return `${hours} h`;
+  }
+
+  const days = Math.floor(diffInMin / minInDay);
+  return `${days} d`;
 };
 
 function createImage(url: string): Promise<HTMLImageElement> {

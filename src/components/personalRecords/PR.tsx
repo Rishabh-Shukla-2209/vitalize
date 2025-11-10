@@ -1,6 +1,6 @@
 import { PRType } from "@/lib/types";
 import Icons from "../icons/appIcons";
-import { fitnessMetricUnits, timeAgo } from "@/lib/utils";
+import { fitnessMetricUnits, fitnessMetricLabels, timeAgo } from "@/lib/utils";
 
 const PR = ({ pR }: { pR: PRType }) => {
 
@@ -12,10 +12,13 @@ const PR = ({ pR }: { pR: PRType }) => {
       <div className="flex justify-between w-full flex-5 pr-3">
         <div>
           <h4>{pR.exercise.name}</h4>
-          <p className="text-zinc-700">{pR.prValue} {fitnessMetricUnits[pR.prField as keyof typeof fitnessMetricUnits]}</p>
+          <div className="flex gap-2">
+            <p className="text-zinc-700">{fitnessMetricLabels[pR.prField as keyof typeof fitnessMetricLabels]}:</p>
+            <p className="text-zinc-700">{pR.prValue} {fitnessMetricUnits[pR.prField as keyof typeof fitnessMetricUnits]}</p>
+          </div>
         </div>
         <div className="flex-center">
-          <p className="text-zinc-700">{timeAgo(pR.updatedAt)}</p>
+          <p className="text-zinc-700">{timeAgo(pR.createdAt)}</p>
         </div>
       </div>
     </div>

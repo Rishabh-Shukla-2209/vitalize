@@ -6,7 +6,7 @@ import Icons from "../icons/appIcons";
 import Goal from "./Goal";
 import { Button } from "../ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Status } from "@/generated/prisma";
+import { GoalStatus as Status } from "@/generated/prisma";
 import Selector from "../Selector";
 import { GoalStatus } from "@/lib/utils";
 import AddGoal from "./AddGoal";
@@ -14,7 +14,10 @@ import GoalEdit from "./GoalEdit";
 
 const AllGoals = ({ userId }: { userId: string }) => {
   const [pageCursors, setPageCursors] = useState<
-    Array<{ first: string | null; last: string | null }>
+    Array<{
+      first: { createdAt: Date; id: string } | null;
+      last: { createdAt: Date; id: string } | null;
+    }>
   >([{ first: null, last: null }]);
   const [currIndex, setCurrIndex] = useState(0);
   const [direction, setDirection] = useState<"next" | "prev">("next");
@@ -44,8 +47,11 @@ const AllGoals = ({ userId }: { userId: string }) => {
       setPageCursors((prev) => {
         const next = [...prev];
         next[currIndex + 1] = {
-          first: data[0].id,
-          last: data[data.length - 1].id,
+          first: { createdAt: data[0].createdAt, id: data[0].id },
+          last: {
+            createdAt: data[data.length - 1].createdAt,
+            id: data[data.length - 1].id,
+          },
         };
         return next;
       });
@@ -143,30 +149,30 @@ const AllGoals = ({ userId }: { userId: string }) => {
         ) : (
           <p className="text-zinc-700">Your Goals will appear here.</p>
         )}
-          <div className="flex justify-between">
-            <Button
-              variant="ghost"
-              className="text-red-500 text-center mt-2 cursor-pointer"
-              disabled={currIndex < 1}
-              onClick={() => {
-                setCurrIndex((prev) => prev - 1);
-                setDirection("prev");
-              }}
-            >
-              <Icons.left /> Prev
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-red-500 text-center mt-2 cursor-pointer"
-              disabled={!goals || goals.length < 5}
-              onClick={() => {
-                setCurrIndex((prev) => prev + 1);
-                setDirection("next");
-              }}
-            >
-              Next <Icons.right />
-            </Button>
-          </div>
+        <div className="flex justify-between">
+          <Button
+            variant="ghost"
+            className="text-red-500 text-center mt-2 cursor-pointer"
+            disabled={currIndex < 1}
+            onClick={() => {
+              setCurrIndex((prev) => prev - 1);
+              setDirection("prev");
+            }}
+          >
+            <Icons.left /> Prev
+          </Button>
+          <Button
+            variant="ghost"
+            className="text-red-500 text-center mt-2 cursor-pointer"
+            disabled={!goals || goals.length < 5}
+            onClick={() => {
+              setCurrIndex((prev) => prev + 1);
+              setDirection("next");
+            }}
+          >
+            Next <Icons.right />
+          </Button>
+        </div>
       </div>
     </div>
   );

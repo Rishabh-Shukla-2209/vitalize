@@ -292,30 +292,31 @@ export type GoalType = {
   initialValue: number;
   currentValue: number;
   targetValue: number;
-  targetDate: Date
+  targetDate: Date;
+  createdAt: Date;
 };
 
 export type PRType = {
   id: string;
   prField: string;
   prValue: number;
-  updatedAt: Date;
+  createdAt: Date;
   exercise: {
     name: string;
     category: string;
-    id: string,
+    id: string;
   };
 };
 
 export type UserDataType = {
-    firstName: string | null;
-    lastName: string | null;
-    imgUrl: string | null;
-    about: string | null;
-    bio: string | null;
-    privacy: PrivacyType;
-    createdAt: Date;
-} | null
+  firstName: string | null;
+  lastName: string | null;
+  imgUrl: string | null;
+  about: string | null;
+  bio: string | null;
+  privacy: PrivacyType;
+  createdAt: Date;
+} | null;
 
 export type CropArea = {
   x: number;
@@ -323,3 +324,83 @@ export type CropArea = {
   width: number;
   height: number;
 };
+
+export type FollowStatus = "Requested" | "Accepted" | "Not Following";
+
+export type PostType = {
+  user: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    imgUrl: string | null;
+    privacy: PrivacyType;
+  };
+  workoutLog?: Omit<WorkoutLogType, "plan"> | null;
+  _count: {
+    Comment: number;
+    PostLike: number;
+  };
+  followStatus: FollowStatus;
+} & {
+  id: string;
+  body: string | null;
+  title: string;
+  createdAt: Date;
+  imgUrl: string | null;
+  privacy: "PUBLIC" | "PRIVATE";
+  userid: string;
+  workoutLogid: string | null;
+  liked: boolean;
+};
+
+export type Cursor = { createdAt: Date; id: string } | null;
+export type Source = "friends" | "public" | null;
+
+export type PageParam = {
+  cursor: Cursor;
+  source: Source;
+};
+
+export type GetPostsResponse = {
+  posts: PostType[];
+  cursor: Cursor;
+  nextSource: Source;
+};
+
+export type LikeType = {
+  user: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    imgUrl: string | null;
+  };
+} & {
+  id: string;
+  postid?: string;
+  commentid?: string;
+  userid: string;
+  createdAt: Date;
+};
+
+export type CommentType = {
+    user: {
+        id: string;
+        firstName: string | null;
+        lastName: string | null;
+        imgUrl: string | null;
+    };
+    _count: {
+      CommentLike: number;
+    }
+} & {
+    id: string;
+    createdAt: Date;
+    userid: string;
+    text: string;
+    postid: string;
+    parentid: string | null;
+    updatedAt: Date;
+    updated: boolean;
+    liked: boolean;
+    replies?: CommentType[];
+}

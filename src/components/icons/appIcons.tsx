@@ -31,6 +31,7 @@ import {
   Share2,
   SendHorizonal,
   Trash,
+  Info,
 } from "lucide-react";
 
 const Icons = {
@@ -65,7 +66,8 @@ const Icons = {
   like: Heart,
   share: Share2,
   send: SendHorizonal,
-  delete: Trash
+  delete: Trash,
+  info: Info
 };
 
 export default Icons;

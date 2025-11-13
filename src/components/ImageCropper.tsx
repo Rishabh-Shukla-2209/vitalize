@@ -4,16 +4,13 @@ import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "@/lib/utils";
 import type { CropArea } from "@/lib/types";
-import Image from "next/image";
 import { Button } from "./ui/button";
 import { FilePicker } from "./FilePicker";
 
 export default function ImageCropper({
-  preview,
   setPreview,
   updating,
 }: {
-  preview: string | null;
   setPreview: Dispatch<SetStateAction<string | null>>;
   updating: boolean;
 }) {
@@ -93,20 +90,6 @@ export default function ImageCropper({
         </>
       )}
       {error && <p className="error">{error}</p>}
-      {preview && (
-        <>
-          <div className="mt-4">
-            <Image
-              src={preview}
-              alt="Cropped Preview"
-              height={500}
-              width={500}
-              className="rounded-full w-50 h-50"
-            />
-          </div>
-          {error && <span className="error">{error}</span>}
-        </>
-      )}
       <div onClick={() => setCropping(true)} aria-disabled={updating}>
         <FilePicker onChange={onFileChange} />
       </div>

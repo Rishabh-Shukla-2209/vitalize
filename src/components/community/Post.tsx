@@ -12,7 +12,15 @@ import Link from "next/link";
 import Like from "./Like";
 import PostWithComments from "./PostWithComments";
 
-const Post = ({ post, userId }: { post: PostType; userId: string }) => {
+const Post = ({
+  post,
+  userId,
+  specificUserId,
+}: {
+  post: PostType;
+  userId: string;
+  specificUserId?: string;
+}) => {
   const [comment, setComment] = useState("");
   const [liked, setLiked] = useState(post.liked);
   const [open, setOpen] = useState<"likes" | "comments" | "none">("none");
@@ -24,11 +32,13 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
 
   const updateLikeCommentQueryData = useCallback(
     (target: "like" | "comment", commentsToAdd: number = 1) => {
-      queryClient.setQueryData<{
-        pages: GetPostsResponse[];
-        pageParams: PageParam[];
-      }>(["feed", userId], (oldData) => {
+      const updateData = (
+        oldData:
+          | { pages: GetPostsResponse[]; pageParams: PageParam[] }
+          | undefined
+      ) => {
         if (!oldData) return oldData;
+
         return {
           ...oldData,
           pages: oldData.pages.map((page) => ({
@@ -54,9 +64,17 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
             ),
           })),
         };
-      });
+      };
+
+      queryClient.setQueryData(
+        ["feed", specificUserId ? specificUserId : "general", userId], updateData
+      );
+
+      if (specificUserId) {
+        queryClient.setQueryData(["feed", "general", userId], updateData);
+      }
     },
-    [liked, post.id, post.liked, queryClient, userId]
+    [liked, post.id, post.liked, queryClient, specificUserId, userId]
   );
 
   useEffect(() => {
@@ -65,16 +83,24 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
     const timer = setTimeout(() => {
       savePostReaction(post.id, userId, liked ? "liked" : "unliked");
       updateLikeCommentQueryData("like");
+      queryClient.invalidateQueries({
+        queryKey: ["activity", "postLikes"],
+        exact: false
+      })
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [liked, post.id, post.liked, updateLikeCommentQueryData, userId]);
+  }, [liked, post.id, post.liked, queryClient, updateLikeCommentQueryData, userId]);
 
-  const addComment = async (text: string, parentId?: string) => {
+  const addComment = useCallback(async (text: string, parentId?: string) => {
     updateLikeCommentQueryData("comment");
     const newComment = await saveComment(post.id, userId, text, parentId);
+    queryClient.invalidateQueries({
+      queryKey: ["activity", "comments"],
+      exact: false
+    })
     return newComment;
-  };
+  }, [post.id, queryClient, updateLikeCommentQueryData, userId])
 
   useEffect(() => {
     const getLikes = async () => {
@@ -86,10 +112,12 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
   }, [likes.length, open, post.id]);
 
   return (
-    <div className="flex justify-between flex-col bg-zinc-100 rounded-md p-5 min-h-150 max-h-150">
+    <div className="flex justify-between flex-col bg-zinc-100 rounded-md p-5 min-h-160">
       <Link
-        href={`/community/${post.userid}`}
-        className="flex gap-3 items-center cursor-pointer"
+        href={`/community/user/${post.userid}`}
+        className={clsx("flex gap-3 items-center cursor-pointer", {
+          "pointer-events-none": specificUserId,
+        })}
       >
         {post.user.imgUrl ? (
           <Image
@@ -113,6 +141,7 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
         <p className="text-zinc-600 font-semibold">{post.title}</p>
         <p className="text-zinc-600">{post.body}</p>
         {post.workoutLog && <WorkoutSummary workout={post.workoutLog} />}
+        {post.imgUrl && <div className="relative min-h-120 w-full rounded-md overflow-hidden"><Image src={post.imgUrl} alt="Post Image" fill style={{ objectFit: "cover" }} className="px-3 mt-2 rounded"/></div>}
       </div>
       <div className="flex gap-3 justify-between text-zinc-600 text-sm font-semibold mt-5">
         <p className="flex gap-1  cursor-pointer">

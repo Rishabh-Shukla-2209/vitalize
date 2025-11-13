@@ -21,6 +21,7 @@ const PostWithComments = ({
   setComment,
   addComment,
   updateLikeCommentQueryData,
+  targetCommentId,
 }: {
   post: PostType;
   userId: string;
@@ -37,6 +38,7 @@ const PostWithComments = ({
     target: "like" | "comment",
     commentsToAdd?: number
   ) => void;
+  targetCommentId?: string
 }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
 
@@ -86,7 +88,7 @@ const PostWithComments = ({
       </div>
       <div className="flex flex-col justify-between w-100 bg-zinc-200 p-2 rounded-md">
         <Link
-          href={`/community/${post.userid}`}
+          href={`/community/user/${post.userid}`}
           className="flex gap-3 items-center cursor-pointer pb-2 border-b border-b-zinc-400"
         >
           {post.user.imgUrl ? (
@@ -117,6 +119,7 @@ const PostWithComments = ({
                 userData={userData}
                 addComment={addComment}
                 updateLikeCommentQueryData={updateLikeCommentQueryData}
+                targetCommentId={targetCommentId}
               />
             ))
           ) : (

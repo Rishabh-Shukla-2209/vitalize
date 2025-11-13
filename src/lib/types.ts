@@ -1,3 +1,5 @@
+import { User } from "@/generated/prisma";
+
 export type DifficultyType = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
 export type PrivacyType = "PUBLIC" | "PRIVATE";
 
@@ -340,7 +342,6 @@ export type PostType = {
     Comment: number;
     PostLike: number;
   };
-  followStatus: FollowStatus;
 } & {
   id: string;
   body: string | null;
@@ -404,3 +405,17 @@ export type CommentType = {
     liked: boolean;
     replies?: CommentType[];
 }
+
+export type FeedFetcher = (params: {
+  userId: string;
+  cursor: Cursor;
+  source: Source;
+  callerId?: string;
+}) => Promise<GetPostsResponse>;
+
+export type ProfileDataType = {
+    prCount: number;
+    workoutCount: number;
+    profileUser: User;
+    followStatus: FollowStatus;
+} | undefined

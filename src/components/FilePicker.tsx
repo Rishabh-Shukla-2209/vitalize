@@ -24,7 +24,7 @@ export function FilePicker({
         variant="outline"
         onClick={() => inputRef.current?.click()}
       >
-        Change Photo
+        Select Photo
       </Button>
     </div>
   );

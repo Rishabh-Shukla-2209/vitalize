@@ -30,7 +30,7 @@ const Like = ({ like }: { like: LikeType }) => {
         </div>
       </div>
       <Button variant="outline" className="mr-1">
-          <Link href={`/community/${like.userid}`}>Profile</Link>
+          <Link href={`/community/user/${like.userid}`}>Profile</Link>
       </Button>
     </div>
   );

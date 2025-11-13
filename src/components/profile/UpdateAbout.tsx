@@ -9,9 +9,13 @@ import {
 } from "react";
 import ImageCropper from "../ImageCropper";
 import { Button } from "../ui/button";
-import Icons from "../icons/appIcons";
 import { uploadCroppedImage } from "@/lib/actions/uploadImage";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
+import { PrivacyType } from "@/lib/types";
+import { Spinner } from "../ui/spinner";
 
 const UpdateAbout = ({
   setEdit,
@@ -22,15 +26,17 @@ const UpdateAbout = ({
   const [about, setAbout] = useState("");
   const [bio, setBio] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
+  const [privacy, setPrivacy] = useState("");
   const [error, setError] = useState("");
   const [updating, setUpdating] = useState(false);
   const queryClient = useQueryClient();
+  
 
   const { data: userData } = useQuery({
     queryKey: ["user", { userId: user?.id }],
     queryFn: () => getUser(user?.id),
     staleTime: Infinity,
-    enabled: !!user
+    enabled: !!user,
   });
 
   useEffect(() => {
@@ -67,11 +73,12 @@ const UpdateAbout = ({
     }
 
     if (!error) {
-      const updatedData: { imgUrl?: string; about?: string; bio?: string } = {};
+      const updatedData: { imgUrl?: string; about?: string; bio?: string; privacy?: PrivacyType } = {};
 
       if (uploadUrl) updatedData.imgUrl = uploadUrl;
       if (bio !== (userData.bio ?? "")) updatedData.bio = bio;
       if (about !== (userData.about ?? "")) updatedData.about = about;
+      if( privacy !== userData.privacy) updatedData.privacy = privacy as PrivacyType
 
       if (Object.keys(updatedData).length !== 0) {
         await updateUser(userData.id, updatedData);
@@ -89,12 +96,19 @@ const UpdateAbout = ({
     <div className="border border-zinc-300 rounded-md bg-zinc-100 p-5">
       {userData ? (
         <>
-          <div className="flex-center mb-5">
-            <ImageCropper
-              preview={preview}
-              setPreview={setPreview}
-              updating={updating}
-            />
+          <div className="flex flex-col items-center gap-3 mb-5">
+            {preview && (
+              <div className="mt-4">
+                <Image
+                  src={preview}
+                  alt="Cropped Preview"
+                  height={500}
+                  width={500}
+                  className="rounded-full w-50 h-50"
+                />
+              </div>
+            )}
+            <ImageCropper setPreview={setPreview} updating={updating} />
           </div>
           <div className="flex-1 mb-5 flex flex-col gap-2">
             <p className="flex items-center text-zinc-600">
@@ -123,6 +137,21 @@ const UpdateAbout = ({
                 className="border border-zinc-200 bg-white rounded p-2 text-zinc-600 outline-0 flex-5 resize-none h-25 "
               ></textarea>
             </p>
+            <p className="flex items-center text-zinc-600 mt-2">
+              <label htmlFor="privacy" className="flex-1">
+                Visibility
+              </label>
+              <RadioGroup onValueChange={setPrivacy} defaultValue={userData.privacy} className="flex">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="PUBLIC" id="public" />
+                  <Label htmlFor="public">Public</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="PRIVATE" id="private" />
+                  <Label htmlFor="private">Private</Label>
+                </div>
+              </RadioGroup>
+            </p>
           </div>
           <Button
             variant="default"
@@ -130,8 +159,7 @@ const UpdateAbout = ({
             onClick={updateData}
             disabled={updating}
           >
-            <Icons.edit />
-            Done
+            {updating ? <Spinner /> : "Done"}
           </Button>
           {error && <span className="error">{error}</span>}
           <Button

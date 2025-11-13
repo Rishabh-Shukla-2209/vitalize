@@ -31,7 +31,7 @@ const Selector = ({
       </SelectTrigger>
       <SelectContent>
         {choices.map(({ label, val }) => (
-          <SelectItem key={label} value={val}>
+          <SelectItem key={val} value={val}>
             {label}
           </SelectItem>
         ))}

@@ -21,6 +21,7 @@ import {
   saveCommentReaction,
 } from "@/lib/queries";
 import Like from "./Like";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Comment = ({
   comment,
@@ -28,6 +29,7 @@ const Comment = ({
   userData,
   addComment,
   updateLikeCommentQueryData,
+  targetCommentId,
 }: {
   comment: CommentType;
   setComments: Dispatch<SetStateAction<CommentType[]>>;
@@ -40,6 +42,7 @@ const Comment = ({
     target: "like" | "comment",
     commentsToAdd?: number
   ) => void;
+  targetCommentId?: string;
 }) => {
   const [liked, setLiked] = useState(comment.liked);
   const [viewReplies, setViewReplies] = useState(false);
@@ -49,6 +52,10 @@ const Comment = ({
   const [reply, setReply] = useState("");
   const [addingReply, setAddingReply] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [highlight, setHighlight] = useState(false);
+  const queryClient = useQueryClient();
+
+  const isTarget = comment.id === targetCommentId;
 
   const addReplyToTree = (
     comments: CommentType[],
@@ -64,7 +71,6 @@ const Comment = ({
         };
       }
 
-      // Look deeper inside the tree
       if (c.replies && c.replies.length > 0) {
         return {
           ...c,
@@ -95,7 +101,6 @@ const Comment = ({
     };
 
     setComments((prev) => addReplyToTree(prev, comment.id, formattedComment));
-
     setAddingReply(false);
     setReply("");
     setAddReply(false);
@@ -135,7 +140,6 @@ const Comment = ({
     return { newTree, deletedCount };
   };
 
-  // Counts a node + all nested replies under it
   function countReplies(node: CommentType) {
     if (!node.replies || node.replies.length === 0) return 0;
 
@@ -195,6 +199,10 @@ const Comment = ({
     const timer = setTimeout(() => {
       saveCommentReaction(comment.id, userData.id, liked ? "liked" : "unliked");
       setComments((prev) => updateCommentLike(prev, comment.id, liked));
+      queryClient.invalidateQueries({
+        queryKey: ["activity", "commentLikes"],
+        exact: false,
+      });
     }, 1000);
 
     return () => clearTimeout(timer);
@@ -202,6 +210,7 @@ const Comment = ({
     comment.id,
     comment.liked,
     liked,
+    queryClient,
     setComments,
     updateCommentLike,
     userData.id,
@@ -216,10 +225,55 @@ const Comment = ({
     if (open && likes.length === 0) getLikes();
   }, [comment.id, likes.length, open]);
 
+  const containsComment = useCallback(
+    (comment: CommentType, targetId: string): boolean => {
+      if (comment.id === targetId) return true;
+      return (
+        comment.replies?.some((r) => containsComment(r, targetId)) || false
+      );
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (
+      targetCommentId &&
+      comment.replies?.some((r) => containsComment(r, targetCommentId))
+    ) {
+      setViewReplies(true);
+    }
+  }, [comment, containsComment, targetCommentId]);
+
+  useEffect(() => {
+    if (isTarget) {
+      const el = document.getElementById(comment.id);
+      if (el) {
+        const scrollTimer = setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          setHighlight(true);
+
+          const highlightTimer = setTimeout(() => setHighlight(false), 2000);
+
+          return () => clearTimeout(highlightTimer);
+        }, 500);
+
+        return () => clearTimeout(scrollTimer);
+      }
+    }
+  }, [comment.id, isTarget]);
+
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex gap-1 py-1 border-b border-b-zinc-300">
-        <Link href={`/community/${comment.userid}`} className="cursor-pointer">
+    <div className="flex flex-col gap-2" id={comment.id}>
+      <div
+        className={clsx(
+          "flex gap-1 py-1 border-b border-b-zinc-300 transition-colors duration-700",
+          { "bg-yellow-100 border-amber-600": highlight }
+        )}
+      >
+        <Link
+          href={`/community/user/${comment.userid}`}
+          className="cursor-pointer"
+        >
           {comment.user.imgUrl ? (
             <Image
               src={comment.user.imgUrl}
@@ -235,7 +289,7 @@ const Comment = ({
         <div className="flex flex-col flex-1 max-w-full overflow-x-hidden">
           <p className="text-zinc-600 break-words">
             <span className="cursor-pointer font-semibold">
-              <Link href={`/community/${comment.userid}`}>
+              <Link href={`/community/user/${comment.userid}`}>
                 {comment.user.firstName} {comment.user.lastName}{" "}
               </Link>
             </span>
@@ -274,18 +328,20 @@ const Comment = ({
                 size={20}
               />
             </span>
-            <span className="flex-center cursor-pointer">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span onClick={removeComment} className="text-sm">
-                    <Icons.delete className="text-red-500" size={20} />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Delete Comment</p>
-                </TooltipContent>
-              </Tooltip>
-            </span>
+            {comment.userid === userData.id && (
+              <span className="flex-center cursor-pointer">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span onClick={removeComment} className="text-sm">
+                      <Icons.delete className="text-red-500" size={20} />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Delete Comment</p>
+                  </TooltipContent>
+                </Tooltip>
+              </span>
+            )}
           </>
         )}
       </div>
@@ -300,6 +356,7 @@ const Comment = ({
                 userData={userData}
                 addComment={addComment}
                 updateLikeCommentQueryData={updateLikeCommentQueryData}
+                targetCommentId={targetCommentId}
               />
             ))}
         </div>

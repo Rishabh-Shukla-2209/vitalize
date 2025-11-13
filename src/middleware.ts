@@ -19,6 +19,7 @@ export default clerkMiddleware(async (auth, req) => {
   const { isAuthenticated, sessionClaims } = await auth();
 
   if (isAuthenticated) {
+    const userId = sessionClaims.sub;
     const hasOnboarded = sessionClaims.hasOnboarded;    
     const isOnboardingPage = req.nextUrl.pathname.startsWith("/onboarding");
 
@@ -28,6 +29,16 @@ export default clerkMiddleware(async (auth, req) => {
 
     if (isPublicRoute(req)|| (hasOnboarded && isOnboardingPage)) {
       return NextResponse.redirect(new URL("/home", req.url));
+    }
+
+    const match = req.nextUrl.pathname.match(/^\/community\/user\/([^\/]+)/);
+
+    if (match) {
+      const routeUserId = match[1];
+      
+      if (routeUserId === userId) {
+        return NextResponse.redirect(new URL("/profile", req.url));
+      }
     }
   }
   return NextResponse.next();

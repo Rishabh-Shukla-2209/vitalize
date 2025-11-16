@@ -32,7 +32,8 @@ const PostWithComments = ({
   setComment: Dispatch<SetStateAction<string>>;
   addComment: (
     text: string,
-    parentId?: string
+    parentId?: string,
+    parentAuthor?: string
   ) => Promise<Omit<CommentType, "user" | "_count" | "liked">>;
   updateLikeCommentQueryData: (
     target: "like" | "comment",

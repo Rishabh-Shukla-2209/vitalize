@@ -1,4 +1,4 @@
-import { User } from "@/generated/prisma";
+import { NotificationType, User } from "@/generated/prisma";
 
 export type DifficultyType = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
 export type PrivacyType = "PUBLIC" | "PRIVATE";
@@ -419,3 +419,20 @@ export type ProfileDataType = {
     profileUser: User;
     followStatus: FollowStatus;
 } | undefined
+
+export type NotificationPayload = {
+    actor: {
+        firstName: string | null;
+        id: string;
+    };
+} & {
+    id: string;
+    recipientid: string;
+    type: NotificationType;
+    actorId: string;
+    postid: string | null;
+    commentid: string | null;
+    isRead: boolean;
+    readAt: Date | null;
+    createdAt: Date;
+}

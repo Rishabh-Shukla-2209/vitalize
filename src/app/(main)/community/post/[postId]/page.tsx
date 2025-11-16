@@ -59,9 +59,9 @@ const PostPage = () => {
   );
 
   const addComment = useCallback(
-    async (text: string, parentId?: string) => {
+    async (text: string, parentId?: string, parentAuthor?: string) => {
       updateLikeCommentQueryData("comment");
-      const newComment = await saveComment(post!.id, user!.id, text, parentId);
+      const newComment = await saveComment(post!.id, post!.userid, user!.id, text, parentId, parentAuthor);
       queryClient.invalidateQueries({
       queryKey: ["activity", "comments"],
       exact: false
@@ -75,7 +75,7 @@ const PostPage = () => {
       if (!user || !post || liked === post.liked) return;
   
       const timer = setTimeout(() => {
-        savePostReaction(post.id, user.id, liked ? "liked" : "unliked");
+        savePostReaction(post.id, post.userid, user.id, liked ? "liked" : "unliked");
         updateLikeCommentQueryData("like");
         queryClient.invalidateQueries({
         queryKey: ["activity", "postLikes"],

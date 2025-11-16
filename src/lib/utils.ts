@@ -7,6 +7,7 @@ import {
   ExerciseCategoryType,
   ExerciseLogType,
   MuscleGroupType,
+  NotificationPayload,
 } from "./types";
 import { differenceInCalendarDays, differenceInMinutes, isToday, isYesterday } from "date-fns";
 import { GoalStatus as Status } from "@/generated/prisma";
@@ -301,18 +302,18 @@ export const minutesAgo = (time: Date) => {
   const diffInMin = differenceInMinutes(new Date(), time);
   
   if(diffInMin < 60){
-    return `${diffInMin} m`;
+    return `${diffInMin}m`;
   }
 
   const minInDay = 24 * 60;
 
   if(diffInMin < minInDay){
     const hours = Math.floor(diffInMin / 60);
-    return `${hours} h`;
+    return `${hours}h`;
   }
 
   const days = Math.floor(diffInMin / minInDay);
-  return `${days} d`;
+  return `${days}d`;
 };
 
 function createImage(url: string): Promise<HTMLImageElement> {
@@ -359,4 +360,28 @@ export const getCroppedImg = async (
       resolve(blob);
     }, "image/jpeg");
   });
+}
+
+export const getNotificationDetails = (notification: NotificationPayload) => {
+  const text = {
+    "FOLLOW": `${notification.actor.firstName} started following you`,
+    "FOLLOW_REQUESTED": `${notification.actor.firstName} sent you follow request`,
+    "FOLLOW_ACCEPTED": `${notification.actor.firstName} accepted your follow request`,
+    "LIKE_POST": `${notification.actor.firstName} liked your post`,
+    "LIKE_COMMENT": `${notification.actor.firstName} liked your comment`,
+    "COMMENT_POST": `${notification.actor.firstName} commented on your post`,
+    "COMMENT_COMMENT": `${notification.actor.firstName} commented on your comment`,
+  }
+
+  const link = {
+    "FOLLOW": `/community/user/${notification.actorId}`,
+    "FOLLOW_REQUESTED": `/community/user/${notification.actorId}`,
+    "FOLLOW_ACCEPTED": `/community/user/${notification.actorId}`,
+    "LIKE_POST": `/community/post/${notification.postid}`,
+    "LIKE_COMMENT": `/community/post/${notification.postid}?commentId=${notification.commentid}`,
+    "COMMENT_POST": `/community/post/${notification.postid}?commentId=${notification.commentid}`,
+    "COMMENT_COMMENT": `/community/post/${notification.postid}?commentId=${notification.commentid}`,
+  }
+
+  return {text: text[notification.type], link: link[notification.type]};
 }

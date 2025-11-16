@@ -81,9 +81,12 @@ enum Equipment {
 
 enum NotificationType {
   FOLLOW
+  FOLLOW_REQUESTED
+  FOLLOW_ACCEPTED
   LIKE_POST
   LIKE_COMMENT
-  COMMENT
+  COMMENT_POST
+  COMMENT_COMMENT
 }
 
 enum GoalStatus {

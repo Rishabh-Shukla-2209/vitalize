@@ -81,7 +81,7 @@ const Post = ({
     if (liked === post.liked) return;
 
     const timer = setTimeout(() => {
-      savePostReaction(post.id, userId, liked ? "liked" : "unliked");
+      savePostReaction(post.id, post.userid, userId, liked ? "liked" : "unliked");
       updateLikeCommentQueryData("like");
       queryClient.invalidateQueries({
         queryKey: ["activity", "postLikes"],
@@ -90,17 +90,17 @@ const Post = ({
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [liked, post.id, post.liked, queryClient, updateLikeCommentQueryData, userId]);
+  }, [liked, post.id, post.liked, post.userid, queryClient, updateLikeCommentQueryData, userId]);
 
-  const addComment = useCallback(async (text: string, parentId?: string) => {
+  const addComment = useCallback(async (text: string, parentId?: string, parentAuthor?: string) => {
     updateLikeCommentQueryData("comment");
-    const newComment = await saveComment(post.id, userId, text, parentId);
+    const newComment = await saveComment(post.id, post.userid, userId, text, parentId, parentAuthor);
     queryClient.invalidateQueries({
       queryKey: ["activity", "comments"],
       exact: false
     })
     return newComment;
-  }, [post.id, queryClient, updateLikeCommentQueryData, userId])
+  }, [post.id, post.userid, queryClient, updateLikeCommentQueryData, userId])
 
   useEffect(() => {
     const getLikes = async () => {

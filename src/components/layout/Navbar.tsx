@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getUser } from "@/lib/queries";
 import { useQuery } from "@tanstack/react-query";
+import { NotificationsList } from "../notifications/NotificationList";
 
 const links = [
   { name: "Home", href: "/home" },
@@ -68,7 +69,7 @@ const Navbar = () => {
               </Link>
             ))}
           </ul>
-          <Icons.bell className="cursor-pointer text-gray-500 hover:text-gray-900" />
+          <NotificationsList />
 
           <div
             className={clsx(
@@ -105,7 +106,7 @@ const Navbar = () => {
                     <p>Profile</p>
                   </div>
                 </Link>
-                <div className="h-0.25 bg-gray-300 my-2" />
+                <div className="h-0.5 bg-gray-300 my-2" />
                 <SignOutButton>
                   <div className="flex gap-1 text-red-600 mt-1">
                     <Icons.logout />
@@ -117,7 +118,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div className="h-0.25 bg-gray-300" />
+      <div className="h-0.5 bg-gray-300" />
     </div>
   );
 };

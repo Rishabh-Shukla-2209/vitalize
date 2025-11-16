@@ -27,6 +27,7 @@ import {
   Cursor,
 } from "./types";
 import { Gender, Prisma, GoalStatus, User } from "@/generated/prisma";
+import { pusherServer } from "./pusher-server";
 
 export const createUser = async (id: string, email: string) => {
   if (await prisma.user.findUnique({ where: { id } })) return;
@@ -47,7 +48,7 @@ export const updateUser = async (
     imgUrl?: string;
     about?: string;
     bio?: string;
-    privacy?: PrivacyType
+    privacy?: PrivacyType;
   }
 ) => {
   await prisma.user.update({
@@ -1222,30 +1223,72 @@ export const getPosts = async (
 
 export const savePostReaction = async (
   postId: string,
+  authorId: string,
   userId: string,
   reaction: "liked" | "unliked"
 ) => {
-  if (reaction === "liked") {
-    await prisma.postLike.create({
-      data: {
-        userid: userId,
-        postid: postId,
-      },
-    });
-  } else {
-    await prisma.postLike.delete({
+  const newNotification = await prisma.$transaction(async (tx) => {
+    if (reaction === "liked") {
+      await tx.postLike.create({
+        data: {
+          userid: userId,
+          postid: postId,
+        },
+      });
+
+      if (userId === authorId) return;
+
+      return await tx.notification.create({
+        data: {
+          actorId: userId,
+          recipientid: authorId,
+          type: "LIKE_POST",
+          postid: postId,
+        },
+        include: {
+          actor: {
+            select: {
+              firstName: true,
+            },
+          },
+        },
+      });
+    }
+
+    await tx.postLike.delete({
       where: {
         postid_userid: { postid: postId, userid: userId },
       },
     });
+
+    await tx.notification.deleteMany({
+      where: {
+        actorId: userId,
+        recipientid: authorId,
+        postid: postId,
+        type: "LIKE_POST"
+      },
+    });
+
+    return null;
+  });
+
+  if (newNotification) {
+    await pusherServer.trigger(
+      `private-user-${authorId}`,
+      "notification:new",
+      newNotification
+    );
   }
 };
 
 export const saveComment = async (
   postId: string,
+  authorId: string,
   userId: string,
   text: string,
-  parentId?: string
+  parentId?: string,
+  parentAuthorId?: string
 ) => {
   const comment = await prisma.comment.create({
     data: {
@@ -1256,6 +1299,35 @@ export const saveComment = async (
     },
   });
 
+  if (userId === (parentId ? parentAuthorId! : authorId)) return comment;
+
+  if (comment) {
+    const newNotification = await prisma.notification.create({
+      data: {
+        actorId: userId,
+        recipientid: parentId ? parentAuthorId! : authorId,
+        type: parentId ? "COMMENT_COMMENT" : "COMMENT_POST",
+        postid: postId,
+        commentid: comment.id,
+      },
+      include: {
+        actor: {
+          select: {
+            firstName: true,
+          },
+        },
+      },
+    });
+
+    if (newNotification) {
+      await pusherServer.trigger(
+        `private-user-${parentId ? parentAuthorId! : authorId}`,
+        "notification:new",
+        newNotification
+      );
+    }
+  }
+
   return comment;
 };
 
@@ -1265,20 +1337,56 @@ export const saveFollowing = async (
   followingPrivacy: PrivacyType,
   action: "follow" | "unFollow"
 ) => {
-  if (action === "follow") {
-    await prisma.follow.create({
-      data: {
-        followerId,
-        followingId,
-        status: followingPrivacy === "PRIVATE" ? "REQUESTED" : "ACCEPTED",
-      },
-    });
-  } else {
-    await prisma.follow.delete({
-      where: {
-        followerId_followingId: { followerId, followingId },
-      },
-    });
+  const newNotification = await prisma.$transaction(async (tx) => {
+    if (action === "follow") {
+      await tx.follow.create({
+        data: {
+          followerId,
+          followingId,
+          status: followingPrivacy === "PRIVATE" ? "REQUESTED" : "ACCEPTED",
+        },
+      });
+
+      return await tx.notification.create({
+        data: {
+          actorId: followerId,
+          recipientid: followingId,
+          type: followingPrivacy === "PRIVATE" ? "FOLLOW_REQUESTED" : "FOLLOW",
+        },
+        include: {
+          actor: {
+            select: {
+              firstName: true,
+            },
+          },
+        },
+      });
+    } else {
+      await tx.follow.delete({
+        where: {
+          followerId_followingId: { followerId, followingId },
+        },
+      });
+
+      await tx.notification.deleteMany({
+        where: {
+          actorId: followerId,
+          recipientid: followingId,
+          type: {
+            in: ["FOLLOW", "FOLLOW_REQUESTED"],
+          },
+        },
+      });
+      return null;
+    }
+  });
+
+  if (newNotification) {
+    await pusherServer.trigger(
+      `private-user-${followingId}`,
+      "notification:new",
+      newNotification
+    );
   }
 };
 
@@ -1368,22 +1476,64 @@ export const getComments = async (userId: string, postId: string) => {
 
 export const saveCommentReaction = async (
   commentId: string,
+  commentAuthorId: string,
+  postId: string,
   userId: string,
   reaction: "liked" | "unliked"
 ) => {
-  if (reaction === "liked") {
-    await prisma.commentLike.create({
-      data: {
-        userid: userId,
-        commentid: commentId,
-      },
-    });
-  } else {
-    await prisma.commentLike.delete({
-      where: {
-        commentid_userid: { commentid: commentId, userid: userId },
-      },
-    });
+  const newNotification = await prisma.$transaction(async (tx) => {
+    if (reaction === "liked") {
+      await tx.commentLike.create({
+        data: {
+          userid: userId,
+          commentid: commentId,
+        },
+      });
+
+      if (userId === commentAuthorId) return;
+
+      return await tx.notification.create({
+        data: {
+          actorId: userId,
+          recipientid: commentAuthorId,
+          type: "LIKE_COMMENT",
+          postid: postId,
+          commentid: commentId,
+        },
+        include: {
+          actor: {
+            select: {
+              firstName: true,
+            },
+          },
+        },
+      });
+    } else {
+      await tx.commentLike.delete({
+        where: {
+          commentid_userid: { commentid: commentId, userid: userId },
+        },
+      });
+
+      await tx.notification.deleteMany({
+        where: {
+          actorId: userId,
+          recipientid: commentAuthorId,
+          commentid: commentId,
+          type: "LIKE_COMMENT"
+        },
+      });
+
+      return null;
+    }
+  });
+
+  if (newNotification) {
+    await pusherServer.trigger(
+      `private-user-${commentAuthorId}`,
+      "notification:new",
+      newNotification
+    );
   }
 };
 
@@ -1528,6 +1678,7 @@ export const getFollowingStatus = async (
       status: true,
     },
   });
+  
 
   return follow
     ? follow.status === "ACCEPTED"
@@ -1545,7 +1696,7 @@ export const createPost = async (
     imgUrl?: string;
     workoutLogid?: string;
   }
-) => {  
+) => {
   await prisma.post.create({
     data: {
       userid: userId,
@@ -1560,7 +1711,7 @@ export const createPost = async (
 
 export const getPost = async (postId: string, userId: string) => {
   const post = await prisma.post.findUnique({
-    where: { id: postId},
+    where: { id: postId },
     include: {
       user: {
         select: {
@@ -1586,12 +1737,12 @@ export const getPost = async (postId: string, userId: string) => {
       },
     },
   });
-  
-  if(!post) return null;
+
+  if (!post) return null;
 
   const like = await prisma.postLike.findUnique({
     where: {
-      postid_userid: {postid: postId, userid: userId},
+      postid_userid: { postid: postId, userid: userId },
     },
     select: {
       postid: true,
@@ -1600,16 +1751,16 @@ export const getPost = async (postId: string, userId: string) => {
 
   const postWithLikeStatus = {
     ...post,
-    liked: like ? true : false
+    liked: like ? true : false,
   };
 
-  return postWithLikeStatus
-}
+  return postWithLikeStatus;
+};
 
 export const getPostsActivity = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev",
+  direction: "next" | "prev"
 ) => {
   const data = await prisma.post.findMany({
     take: direction === "next" ? 5 : -5,
@@ -1629,12 +1780,12 @@ export const getPostsActivity = async (
   });
 
   return data;
-}
+};
 
 export const getPostLikesActivity = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev",
+  direction: "next" | "prev"
 ) => {
   const data = await prisma.postLike.findMany({
     take: direction === "next" ? 5 : -5,
@@ -1654,21 +1805,21 @@ export const getPostLikesActivity = async (
           user: {
             select: {
               firstName: true,
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
   });
 
   return data;
-}
+};
 
 export const getCommentLikesActivity = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev",
+  direction: "next" | "prev"
 ) => {
   const data = await prisma.commentLike.findMany({
     take: direction === "next" ? 5 : -5,
@@ -1690,29 +1841,29 @@ export const getCommentLikesActivity = async (
             select: {
               user: {
                 select: {
-                  firstName: true
-                }
-              }
-            }
+                  firstName: true,
+                },
+              },
+            },
           },
           user: {
             select: {
-              firstName: true
-            }
-          }
-        }
-      }
+              firstName: true,
+            },
+          },
+        },
+      },
     },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
   });
 
   return data;
-}
+};
 
 export const getCommentsActivity = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev",
+  direction: "next" | "prev"
 ) => {
   const data = await prisma.comment.findMany({
     take: direction === "next" ? 5 : -5,
@@ -1732,9 +1883,9 @@ export const getCommentsActivity = async (
           user: {
             select: {
               firstName: true,
-            }
-          }
-        }
+            },
+          },
+        },
       },
       createdAt: true,
     },
@@ -1742,4 +1893,112 @@ export const getCommentsActivity = async (
   });
 
   return data;
+};
+
+export const getNotifications = async (
+  userId: string,
+  cursor: { createdAt: Date; id: string } | null
+) => {
+  const data = await prisma.notification.findMany({
+    take: 20,
+    ...(cursor && { cursor, skip: 1 }),
+    where: {
+      recipientid: userId,
+    },
+    include: {
+      actor: {
+        select: {
+          firstName: true,
+          id: true,
+        },
+      },
+    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+  });
+
+  return data;
+};
+
+export const updateNotifReadStatus = async (id: string) => {
+  const notification = await prisma.notification.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!notification) return;
+
+  await prisma.notification.update({
+    where: {
+      id,
+    },
+    data: {
+      isRead: true,
+      readAt: new Date(),
+    },
+  });
+};
+
+export const updateFollow = async (notificationId: string, followerId: string, followingId: string) => {
+  const follow = await prisma.follow.findUnique({
+    where: {
+      followerId_followingId: { followerId, followingId },
+    },
+  });
+
+  if (!follow) return;
+
+  const newNotification = await prisma.$transaction(async (tx) => {
+    await tx.follow.update({
+      where: {
+        followerId_followingId: { followerId, followingId },
+      },
+      data: {
+        status: "ACCEPTED",
+      },
+    });
+
+    await tx.notification.updateMany({
+      where: {
+        id: notificationId
+      },
+      data: {
+        type: "FOLLOW",
+        isRead: true
+      }
+    })
+
+    return await tx.notification.create({
+      data: {
+        actorId: followingId,
+        recipientid: followerId,
+        type: "FOLLOW_ACCEPTED",
+      },
+      include: {
+        actor: {
+          select: {
+            firstName: true,
+          },
+        },
+      },
+    });
+  });
+
+  if (newNotification) {
+    await pusherServer.trigger(
+      `private-user-${followerId}`,
+      "notification:new",
+      newNotification
+    );
+  }
+};
+
+export const getUnreadNotificationCount = async (userId: string) => {
+  return await prisma.notification.count({
+    where: {
+      recipientid: userId,
+      isRead: false
+    },
+  });
+
 }

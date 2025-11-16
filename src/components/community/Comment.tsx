@@ -36,7 +36,8 @@ const Comment = ({
   userData: User;
   addComment: (
     text: string,
-    parentId?: string
+    parentId?: string,
+    parentAuthor?: string
   ) => Promise<Omit<CommentType, "user" | "_count" | "liked">>;
   updateLikeCommentQueryData: (
     target: "like" | "comment",
@@ -85,7 +86,7 @@ const Comment = ({
   const saveComment = async (text: string) => {
     setAddingReply(true);
 
-    const newComment = await addComment(text, comment.id);
+    const newComment = await addComment(text, comment.id, comment.userid);
 
     const formattedComment: CommentType = {
       ...newComment,
@@ -197,7 +198,14 @@ const Comment = ({
     if (liked === comment.liked) return;
 
     const timer = setTimeout(() => {
-      saveCommentReaction(comment.id, userData.id, liked ? "liked" : "unliked");
+      
+      saveCommentReaction(
+        comment.id,
+        comment.userid,
+        comment.postid,
+        userData.id,
+        liked ? "liked" : "unliked"
+      );
       setComments((prev) => updateCommentLike(prev, comment.id, liked));
       queryClient.invalidateQueries({
         queryKey: ["activity", "commentLikes"],
@@ -209,6 +217,8 @@ const Comment = ({
   }, [
     comment.id,
     comment.liked,
+    comment.postid,
+    comment.userid,
     liked,
     queryClient,
     setComments,
@@ -255,7 +265,7 @@ const Comment = ({
           const highlightTimer = setTimeout(() => setHighlight(false), 2000);
 
           return () => clearTimeout(highlightTimer);
-        }, 500);
+        }, 1000);
 
         return () => clearTimeout(scrollTimer);
       }

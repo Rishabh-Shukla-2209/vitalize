@@ -112,14 +112,14 @@ const CreatePostPage = () => {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <h1 className="text-3xl font-semibold text-zinc-600 text-center my-5">
+      <h1 className="text-center my-5">
         Create Post
       </h1>
       {postPreview ? (
         <div className="flex flex-col gap-3 max-w-150 min-h-150 bg-zinc-100 p-5 rounded-md mb-5">
           <div className="flex flex-col flex-1 gap-2 mt-5">
-            <p className="text-zinc-600 font-semibold">{title}</p>
-            <p className="text-zinc-600">{body}</p>
+            <p className="font-semibold">{title}</p>
+            <p>{body}</p>
             {workoutMap && workoutLogId && (
               <WorkoutSummary workout={workoutMap.get(workoutLogId)!} />
             )}
@@ -172,7 +172,7 @@ const CreatePostPage = () => {
           <div className="border border-zinc-200 text-zinc-600 rounded px-5 py-2  min-h-100">
             {!imgPreview && !workoutLogId ? (
               <>
-                <p className="text-zinc-600">Select one of these</p>
+                <p>Select one of these</p>
                 <div className="flex gap-2 mt-2">
                   <ImageCropper
                     setPreview={setImgPreview}
@@ -220,7 +220,7 @@ const CreatePostPage = () => {
               </>
             )}
           </div>
-          <p className="flex items-center text-zinc-600 mt-2">
+          <p className="flex items-center mt-2">
             <label
               htmlFor="privacy"
               className="flex-1 font-semibold flex gap-2 items-center"

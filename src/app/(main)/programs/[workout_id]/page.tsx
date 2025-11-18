@@ -31,7 +31,7 @@ const ProgramDetailPage = async ({
 
   return (
     <div className="py-8 px-60">
-      <h1 className="text-3xl font-semibold text-zinc-600">{workout.name}</h1>
+      <h1>{workout.name}</h1>
       <div className="flex items-center gap-1 my-1.5">
         <div
           className={clsx(
@@ -44,7 +44,7 @@ const ProgramDetailPage = async ({
           {workout.level}
         </div>
         <div className="text-2xl">•</div>
-        <p className="text-zinc-600">{workout.duration} minutes</p>
+        <p>{workout.duration} minutes</p>
       </div>
       <div className="h-100 w-full relative mt-3">
         <Image
@@ -58,10 +58,8 @@ const ProgramDetailPage = async ({
 
       <div className="flex w-full mt-5 gap-5">
         <div className="flex-4 bg-zinc-100 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-zinc-700 mb-1.5">
-            Workout Overview
-          </h3>
-          <p className="text-zinc-600">{workout.description}</p>
+          <h3 className="mb-1.5">Workout Overview</h3>
+          <p>{workout.description}</p>
           <div className="flex gap-2 mt-1">
             <h4 className="text-zinc-600 font-semibold">Muscles Involved: </h4>
             {uniqueMuscles.map((muscles, index) => (
@@ -72,14 +70,12 @@ const ProgramDetailPage = async ({
           </div>
         </div>
         <div className="flex-2 bg-zinc-100 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-zinc-700 mb-1.5">
-            Required Equipments
-          </h3>
+          <h3 className="mb-1.5">Required Equipments</h3>
           <div className="flex flex-wrap gap-3 items-center">
             {uniqueEquipments.length > 0 ? (
               uniqueEquipments.map((equipment, index) => (
                 <p key={index} className="flex gap-1 text-zinc-600">
-                  <Icons.dumbell className="text-primary-dark" />
+                  <Icons.dumbell className="text-primary" />
                   {toProperCase(equipment!)}
                 </p>
               ))
@@ -90,7 +86,7 @@ const ProgramDetailPage = async ({
         </div>
       </div>
       <div>
-        <h2 className="text-xl font-semibold text-zinc-700 my-3">Exercises</h2>
+        <h2 className="my-3">Exercises</h2>
         <div className="bg-zinc-100 rounded-lg">
           {workout.exercises.map((planExercise) => (
             <Exercise key={planExercise.id} exercise={planExercise} />

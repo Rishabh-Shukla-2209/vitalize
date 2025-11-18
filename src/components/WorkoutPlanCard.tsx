@@ -24,9 +24,9 @@ const WorkoutPlanCard = ({ workout }: { workout: WorkoutPlanType }) => {
           {workout?.level}
         </div>
       </div>
-      <h3 className="text-zinc-800 font-semibold text-lg">{workout.name}</h3>
-      <p className="text-zinc-600">{workout.description}</p>
-      <p className="flex gap-1 text-zinc-700">
+      <h3>{workout.name}</h3>
+      <p>{workout.description}</p>
+      <p className="flex gap-1">
         <span className="text-sm">
           <Icons.clock />
         </span>{" "}

@@ -48,7 +48,7 @@ const Comments = ({ userId }: { userId: string }) => {
   });
   return (
     <div>
-       <h2 className="text-xl font-semibold text-zinc-700 mb-2">Comments</h2>
+       <h2 className="mb-2">Comments</h2>
       <div className="bg-zinc-50 border border-zinc-200 rounded-md">
         {comments &&
           comments.map((comment) => (

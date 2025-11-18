@@ -45,8 +45,8 @@ const LogWorkoutPage = () => {
 
   return (
     <div className="py-8 px-60">
-      <h1 className="text-3xl font-semibold text-zinc-600 mb-1">Log Workout</h1>
-      <p className="text-zinc-600">
+      <h1 className="mb-1">Log Workout</h1>
+      <p>
         Select from your recent workouts or search for one.
       </p>
       <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 mt-3 rounded-lg w-100">

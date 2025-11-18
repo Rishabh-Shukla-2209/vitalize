@@ -297,7 +297,7 @@ const Comment = ({
           )}
         </Link>
         <div className="flex flex-col flex-1 max-w-full overflow-x-hidden">
-          <p className="text-zinc-600 break-words">
+          <p className="wrap-break-word">
             <span className="cursor-pointer font-semibold">
               <Link href={`/community/user/${comment.userid}`}>
                 {comment.user.firstName} {comment.user.lastName}{" "}
@@ -305,7 +305,7 @@ const Comment = ({
             </span>
             {comment.text}
           </p>
-          <p className="text-zinc-600 text-sm flex gap-2">
+          <p className="text-sm flex gap-2">
             <span>{minutesAgo(comment.createdAt)}</span>
             {comment._count.CommentLike > 0 && (
               <span className="cursor-pointer" onClick={() => setOpen(true)}>
@@ -333,7 +333,7 @@ const Comment = ({
               className="flex-center cursor-pointer mr-1"
             >
               <Icons.like
-                className={clsx({ "text-primary-dark": liked })}
+                className={clsx({ "text-primary": liked })}
                 fill={liked ? "#38e07b" : "transparent"}
                 size={20}
               />

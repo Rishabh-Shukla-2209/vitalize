@@ -71,7 +71,7 @@ const ProfilePage = () => {
         {user ? <Posts userId={user.id} /> : <p>Loading...</p>}
         {user ? (
           <div className="flex flex-col gap-2 p-2">
-            <h2 className="text-xl font-semibold text-zinc-700">Likes</h2>
+            <h2>Likes</h2>
             <PostLikes userId={user.id} />
             <CommentLikes userId={user.id}/>
           </div>

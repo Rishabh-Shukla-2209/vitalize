@@ -137,10 +137,10 @@ const AICoachPage = () => {
   return (
     <div className="px-5 py-7">
       <div className="mb-10">
-        <h1 className="text-3xl font-semibold text-zinc-700 mb-1.5">
+        <h1 className="mb-1.5">
           AI Workout Coach
         </h1>
-        <p className="text-zinc-600">
+        <p>
           Get a personalised workout plan tailored to your goals.
         </p>
       </div>

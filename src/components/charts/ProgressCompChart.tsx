@@ -70,7 +70,7 @@ const ProgressCompChart = ({ userId }: { userId: string }) => {
   const chartName = `${selectedMuscleGroup} - ${progressType} PROGRESS`;
   return (
     <div className="boundary p-5">
-      <h3 className="text-lg text-gray-600 mb-2">Progress by Muscle Type</h3>
+      <h3 className="mb-2">Progress by Muscle Type</h3>
       <div className="flex gap-5">
         <div>
           <Selector

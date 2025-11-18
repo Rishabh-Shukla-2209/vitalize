@@ -48,7 +48,7 @@ const Navbar = () => {
         <Link href={"/home"}>
           <div className="flex-center gap-1.5 cursor-pointer">
             <Logo />
-            <p className="font-bold text-gray-600 text-lg">VitalAIze</p>
+            <p className="font-bold text-lg">VitalAIze</p>
           </div>
         </Link>
         <div className="flex items-center gap-7">
@@ -74,7 +74,7 @@ const Navbar = () => {
           <div
             className={clsx(
               "relative flex-center rounded-4xl cursor-pointer",
-              imageUrl && "p-1 bg-primary-dark",
+              imageUrl && "p-1 bg-primary",
               !imageUrl && "p-2.75 bg-gray-300"
             )}
             onClick={(e) => {
@@ -108,9 +108,9 @@ const Navbar = () => {
                 </Link>
                 <div className="h-0.5 bg-gray-300 my-2" />
                 <SignOutButton>
-                  <div className="flex gap-1 text-red-600 mt-1">
-                    <Icons.logout />
-                    <p>Logout</p>
+                  <div className="flex gap-1 mt-1">
+                    <Icons.logout className="text-red-600"/>
+                    <p className="text-red-600">Logout</p>
                   </div>
                 </SignOutButton>
               </div>

@@ -17,12 +17,12 @@ const PRs = ({ userId }: { userId: string }) => {
 
   return (
     <div className="boundary w-full h-255 px-5 py-3">
-      <h3 className="text-lg text-zinc-700 mb-1.5">Personal Records</h3>
+      <h3 className="mb-1.5">Personal Records</h3>
       <div className="flex flex-col gap-2">
         {prs && prs.length > 0 ? (
           prs.map((pr) => <PR key={pr.id} pR={pr} />)
         ) : (
-          <p className="text-zinc-700">
+          <p>
             {isError
               ? "Error fetching your PRs"
               : "Your personal records will appear here."}

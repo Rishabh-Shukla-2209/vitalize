@@ -83,8 +83,8 @@ const PostWithComments = ({
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex flex-col w-125 gap-3 p-10">
-        <p className="text-zinc-600 font-semibold">{post.title}</p>
-        <p className="text-zinc-600 mb-5">{post.body}</p>
+        <p className="font-semibold">{post.title}</p>
+        <p className="mb-5">{post.body}</p>
         {post.workoutLog && <WorkoutSummary workout={post.workoutLog} />}
       </div>
       <div className="flex flex-col justify-between w-100 bg-zinc-200 p-2 rounded-md">
@@ -104,10 +104,10 @@ const PostWithComments = ({
             <Icons.user width={30} height={30} />
           )}
           <div className="flex flex-col">
-            <p className="text-zinc-600 font-semibold">
+            <p className="font-semibold">
               {post.user.firstName} {post.user.lastName}
             </p>
-            <p className="text-zinc-600">Posted {timeAgo(post.createdAt)}</p>
+            <p>Posted {timeAgo(post.createdAt)}</p>
           </div>
         </Link>
         <div className="flex-1 overflow-scroll">
@@ -134,7 +134,7 @@ const PostWithComments = ({
               className="cursor-pointer"
             >
               <Icons.like
-                className={clsx({ "text-primary-dark": liked })}
+                className={clsx({ "text-primary": liked })}
                 fill={liked ? "#38e07b" : "transparent"}
               />
             </span>

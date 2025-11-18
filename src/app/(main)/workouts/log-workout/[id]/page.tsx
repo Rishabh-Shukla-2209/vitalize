@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import Balance from "@/components/workoutLog/Balance";
 import Cardio from "@/components/workoutLog/Cardio";
 import Core from "@/components/workoutLog/Core";
@@ -31,22 +32,22 @@ const WorkoutLogPage = () => {
   const {
     formState: { errors },
     register,
-    handleSubmit
+    handleSubmit,
   } = methods;
 
   const onSubmit = handleSubmit((data) => {
-    if(isLoaded && isSignedIn){
-      setSubmitting(true);      
+    if (isLoaded && isSignedIn) {
+      setSubmitting(true);
       saveWorkoutLog(user.id, workout!.id, data)
         .then(() => {
-          router.push('/home')
+          router.push("/home");
         })
         .catch((error) => {
           setSubmitting(false);
           console.log(error);
-          
-          window.alert("Error submitting workout details")
-        })
+
+          window.alert("Error submitting workout details");
+        });
     }
   });
 
@@ -172,26 +173,22 @@ const WorkoutLogPage = () => {
   };
 
   return (
-    <div className="py-8 px-60">
+    <div className="py-8 px-60 log-workout-form">
       {workout ? (
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
-            <h1 className="text-3xl font-semibold text-zinc-600">
-              Log Workout
-            </h1>
-            <h2 className="text-xl font-semibold text-zinc-600">
-              {workout.name}
-            </h2>
+            <h1>Log Workout</h1>
+            <h2>{workout.name}</h2>
             <div className="flex justify-between gap-2 w-full">
-              <p className="flex flex-col flex-1">
+              <p className="flex-1">
                 <label>Notes</label>
                 <textarea
                   {...register("notes")}
                   placeholder="You may enter any notes related to this workout here..."
-                  className="p-3 outline-none rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border border border-zinc-200"
+                  className="p-3 h-12 outline-none rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border border border-zinc-200"
                 />
               </p>
-              <p className="flex flex-col">
+              <p>
                 <label>Duration (min)</label>
                 <input
                   type="number"
@@ -305,7 +302,7 @@ const WorkoutLogPage = () => {
           </form>
         </FormProvider>
       ) : (
-        <p>Loading...</p>
+        <Spinner />
       )}
     </div>
   );

@@ -16,6 +16,7 @@ import Goals from "@/components/goal/ActiveGoals";
 import PRs from "@/components/personalRecords/RecentPRs";
 import GoalSkeleton from "@/components/goal/GoalSkeleton";
 import PRSkeleton from "@/components/personalRecords/PRSkeleton";
+import { Button } from "@/components/ui/button";
 
 const Homepage = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -36,36 +37,36 @@ const Homepage = () => {
       <div className="flex justify-between">
         <div>
           <div className="flex items-center gap-2 text-3xl font-semibold">
-            <Icons.home height={30} width={30} /> <p className="">Home</p>
+            <Icons.home height={30} width={30} /> <p>Home</p>
           </div>
         </div>
         <div className="mr-5">
           <Link href={"/workouts/log-workout"}>
-            <button className="bg-primary-dark text-gray-900 px-2.5 py-2 rounded-lg mr-5">
+            <Button className="mr-5">
               <span className="flex-center gap-1">
-                <Icons.add /> <p>Log Workout</p>
+                <Icons.add /> <p className="text-white font-bold">Log Workout</p>
               </span>
-            </button>
+            </Button>
           </Link>
           <Link href={"/programs/ai-coach"}>
-            <button className="bg-zinc-200 text-gray-900 px-3.5 py-2.25 rounded-lg mr-5">
+            <Button variant="secondary" className="mr-5 p-5">
               <span className="flex-center gap-1">
-                <Icons.ai /> <p>AI Coach</p>
+                <Icons.ai /> <p className="font-bold">AI Coach</p>
               </span>
-            </button>
+            </Button>
           </Link>
         </div>
       </div>
       <div className="flex gap-10 mt-8">
         <div className="flex-4 flex flex-col gap-10">
           <div className="relative boundary p-5 overflow-hidden">
-            <h3 className="text-lg text-gray-600">Today</h3>
+            <h3>Today</h3>
             <p className="text-2xl font-bold text-gray-600 my-1">
               {todaysWorkoutComplete
                 ? "Workout Complete"
                 : "Ready to do today's wokout?"}
             </p>
-            <p className="text-gray-600">
+            <p>
               {todaysWorkoutComplete
                 ? "You crushed your workout today. Keep up the good work."
                 : "Do something today that your future self will thank you for."}

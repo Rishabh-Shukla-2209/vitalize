@@ -27,34 +27,34 @@ const About = ({
           </div>
         </div>
         <div className="flex-1 mb-5">
-          <p className="text-2xl text-zinc-700 font-semibold">
+          <p className="text-2xl font-semibold">
             {userData.firstName ? userData.firstName : ""}{" "}
             {userData.lastName ? userData.lastName : ""}
           </p>
           {userData.about ? (
-            <p className="text-zinc-700">{userData.about}</p>
+            <p>{userData.about}</p>
           ) : visitedByOther ? (
             <p />
           ) : (
-            <p className="text-zinc-500">
+            <p>
               Your about section will appear here.
             </p>
           )}
-          <p className="text-zinc-600">
+          <p>
             Joined {format(userData.createdAt, "MMM, yyyy")}
           </p>
         </div>
         <div className="flex-1">
           {userData.bio ? (
-            <p className="text-zinc-600">{userData.bio}</p>
+            <p>{userData.bio}</p>
           ) : visitedByOther ? (
             <p />
           ) : (
-            <p className="text-zinc-500">Your bio section will appear here.</p>
+            <p>Your bio section will appear here.</p>
           )}
         </div>
         <div className="flex-1 flex-center mt-2 mb-5">
-          <p className="text-zinc-600 font-semibold">{toProperCase(userData.privacy)}</p>
+          <p className="font-semibold">{toProperCase(userData.privacy)}</p>
         </div>
       </>
     </div>

@@ -23,10 +23,10 @@ const Like = ({ like }: { like: LikeType }) => {
           <Icons.user width={30} height={30} />
         )}
         <div className="flex flex-col">
-          <p className="text-zinc-600 font-semibold">
+          <p className="font-semibold">
             {like.user.firstName} {like.user.lastName}
           </p>
-          <p className="text-zinc-600">Liked {timeAgo(like.createdAt)}</p>
+          <p>Liked {timeAgo(like.createdAt)}</p>
         </div>
       </div>
       <Button variant="outline" className="mr-1">

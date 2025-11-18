@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useAuth, useSignIn } from '@clerk/nextjs'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/navigation'
+import { Button } from '../ui/button'
 
 const ForgotPasswordForm: NextPage = () => {
   const [email, setEmail] = useState('')
@@ -27,6 +28,10 @@ const ForgotPasswordForm: NextPage = () => {
   // Send the password reset code to the user's email
   async function create(e: React.FormEvent) {
     e.preventDefault()
+    if(!email) {
+      setError("Email is required");
+      return;
+    }
     await signIn
       ?.create({
         strategy: 'reset_password_email_code',
@@ -46,7 +51,7 @@ const ForgotPasswordForm: NextPage = () => {
   // Upon successful reset, the user will be
   // signed in and redirected to the home page
   async function reset(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     await signIn
       ?.attemptFirstFactor({
         strategy: 'reset_password_email_code',
@@ -85,7 +90,7 @@ const ForgotPasswordForm: NextPage = () => {
   return (
     <div className="h-screen w-screen flex items-center justify-center">
       <div className="bg-zinc-100 p-10 shadow-xl rounded-2xl flex flex-col w-md">
-      <h1 className="text-black text-xl font-medium mb-6">Forgot Password?</h1>
+      <h2 className="mb-6">Forgot Password?</h2>
       <form onSubmit={!successfulCreation ? create : reset}>
         {!successfulCreation && (
           <>
@@ -97,12 +102,13 @@ const ForgotPasswordForm: NextPage = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <button
-              className="w-full bg-primary-dark hover:bg-primary py-2.5 font-medium text-lg rounded-3xl mt-1.5"
+            <Button
+              variant="default"
+              className="py-2.5 font-semibold rounded-3xl mt-1.5"
             >
               Send password reset code
-            </button>
-            {error && <p>{error}</p>}
+            </Button>
+            {error && <p className='error'>{error}</p>}
           </>
         )}
 
@@ -114,8 +120,8 @@ const ForgotPasswordForm: NextPage = () => {
             <label htmlFor="code">Enter the password reset code that was sent to your email</label>
             <input type="text" value={code} onChange={(e) => setCode(e.target.value)} />
 
-            <button className="w-full bg-primary-dark hover:bg-primary py-2.5 font-medium text-lg rounded-3xl mt-1.5">Reset</button>
-            {error && <p>{error}</p>}
+            <Button variant="default" className="font-semibold rounded-3xl mt-1.5">Reset</Button>
+            {error && <p className='error'>{error}</p>}
           </>
         )}
 

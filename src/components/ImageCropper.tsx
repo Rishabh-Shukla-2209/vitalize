@@ -89,7 +89,7 @@ export default function ImageCropper({
           </Button>
         </>
       )}
-      {error && <p className="error">{error}</p>}
+      {error && <span className="error">{error}</span>}
       <div onClick={() => setCropping(true)} aria-disabled={updating}>
         <FilePicker onChange={onFileChange} />
       </div>

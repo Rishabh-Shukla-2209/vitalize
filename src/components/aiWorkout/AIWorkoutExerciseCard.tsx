@@ -17,11 +17,11 @@ const AIWorkoutExerciseCard = ({ exercise }: { exercise: Props }) => {
     <div className="bg-zinc-200 rounded-md p-3">
       <div className="flex mb-2">
         <div className="flex-1">
-          <Icons.dumbell size={60} className="bg-zinc-100 text-primary-dark p-2 rounded-md" />
+          <Icons.dumbell size={60} className="bg-zinc-100 text-primary p-2 rounded-md" />
         </div>
         <div className="flex-3">
-          <p className="font-semibold text-zinc-700">{exercise.name}</p>
-          <p className="text-zinc-700">
+          <h3>{exercise.name}</h3>
+          <p>
             {exercise.sets} sets of{" "}
             {exercise.time
               ? `${exercise.time} s`
@@ -32,7 +32,7 @@ const AIWorkoutExerciseCard = ({ exercise }: { exercise: Props }) => {
           </p>
         </div>
       </div>
-      <p className="text-zinc-600 text-justify">{exercise.benefit}</p>
+      <p className="text-justify">{exercise.benefit}</p>
     </div>
   );
 };

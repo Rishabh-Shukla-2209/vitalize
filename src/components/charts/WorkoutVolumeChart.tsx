@@ -36,11 +36,11 @@ const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
 
   return (
     <div className="boundary p-5">
-      <h3 className="text-lg text-gray-600">Total Volume</h3>
-      <p className="text-3xl font-bold text-gray-600 my-1.5">
+      <h3>Total Volume</h3>
+      <p className="text-3xl font-bold my-1.5">
         {totalVolCurrent.toLocaleString("en-US")} kg
       </p>
-      <p className="text-gray-400 text-lg">
+      <p className="text-lg">
         Last 7 days{" "}
         <span
           className={clsx(

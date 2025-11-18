@@ -48,16 +48,14 @@ const UserAIWorkouts = ({ userId }: { userId: string }) => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-zinc-700 mt-5">AI Workouts</h2>
+      <h2 className="mt-5">AI Workouts</h2>
       <div className="flex flex-col gap-2 mt-2">
         {data && data.length > 0 ? (
           data.map((workout) => (
             <AIWorkoutCard key={workout.id} workout={workout} />
           ))
         ) : (
-          <p className="text-zinc-700">
-            Your Generated AI workouts will appear here.
-          </p>
+          <p>Your Generated AI workouts will appear here.</p>
         )}
         <div className="flex justify-between">
           <Button

@@ -94,7 +94,7 @@ export function NotificationsList() {
         <div className="absolute top-12 right-1 min-w-80 max-h-125 overflow-scroll border-2 border-zinc-200 p-1 text-sm bg-zinc-50 rounded-md">
           {notifications.length > 0 ? (
             <div>
-              <h3 className="text-lg text-gray-600 font-semibold p-2 border-b border-b-zinc-400">
+              <h3 className="p-2 border-b border-b-zinc-400">
                 Notifications
               </h3>
               {notifications.map((n) => (
@@ -122,7 +122,7 @@ export function NotificationsList() {
               )}
             </div>
           ) : (
-            <p className="text-zinc-600">No notifications to show</p>
+            <p>No notifications to show</p>
           )}
         </div>
       )}

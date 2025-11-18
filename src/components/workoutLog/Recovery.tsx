@@ -20,11 +20,11 @@ const Recovery = ({
 
   return (
     <div className="mt-5">
-      <h3 className="text-zinc-700 font-semibold text-lg mb-3">
+      <h3 className="mb-3">
         {exerciseName}
       </h3>
       <div className="flex gap-5 flex-wrap text-zinc-600">
-        <p className="flex flex-col">
+        <p>
           <label>Sets</label>
           <input
             type="number"
@@ -41,7 +41,7 @@ const Recovery = ({
             </span>
           )}
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Reps</label>
           <input
             type="number"
@@ -51,7 +51,7 @@ const Recovery = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Rest (s)</label>
           <input
             type="number"
@@ -61,7 +61,7 @@ const Recovery = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Heart Rate Variability</label>
           <input
             type="number"

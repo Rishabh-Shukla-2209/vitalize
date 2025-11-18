@@ -9,6 +9,8 @@ import Link from "next/link";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { useState } from "react";
 import VerifyForm from "./VerifyForm";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
 
 const SignUpForm = () => {
   const {
@@ -78,10 +80,8 @@ const SignUpForm = () => {
           </div>
         </div>
         <div className="text-center">
-          <h1 className="text-black text-3xl font-medium">
-            Create your account
-          </h1>
-          <p className="text-zinc-500 my-2">
+          <h1>Create your account</h1>
+          <p className="my-2">
             Start your journey to a healthier you.
           </p>
         </div>
@@ -107,25 +107,27 @@ const SignUpForm = () => {
             {errors.confirmPassword && (
               <span className="error">{errors.confirmPassword.message}</span>
             )}
-            <button
+            <Button
+              variant="default"
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-primary-dark hover:bg-primary py-2.5 font-medium text-lg rounded-3xl mt-1.5"
+              className="text-lg rounded-3xl mt-1.5"
             >
-              {isSubmitting ? "Creating..." : "Create Account"}
-            </button>
+              {isSubmitting ? <Spinner /> : "Create Account"}
+            </Button>
             {errors.root && (
               <span className="error">{errors.root.message}</span>
             )}
           </form>
           <div>
-            <div className="h-0.25 bg-zinc-500 mt-2.5" />
+            <div className="h-0.5 bg-zinc-500 mt-2.5" />
             <div className="flex-center my-1">
               <p>or</p>
             </div>
-            <button
+            <Button
+              variant="outline"
               onClick={() => signUpWith("oauth_google")}
-              className="w-full flex-center px-4 py-2 border border-zinc-600 flex gap-2 rounded-lg hover:bg-zinc-100"
+              className="w-full flex-center gap-2"
             >
               <Image
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -133,11 +135,11 @@ const SignUpForm = () => {
                 width={24}
                 height={24}
               />
-              <span className="text-black">Signup with Google</span>
-            </button>
-            <p className="text-zinc-800 mt-10 text-center text-md">
+              <p>Signup with Google</p>
+            </Button>
+            <p className="mt-10 text-center text-md">
               Already have an account?{" "}
-              <Link href={"/sign-in"} className="text-primary-dark">
+              <Link href={"/sign-in"} className="text-primary hover:font-medium">
                 Sign in
               </Link>
             </p>

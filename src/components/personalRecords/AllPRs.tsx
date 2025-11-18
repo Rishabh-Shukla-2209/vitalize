@@ -90,9 +90,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
   return (
     <div>
       <div className="flex justify-between mt-5">
-        <h2 className="text-xl font-semibold text-zinc-700">
-          Personal Records
-        </h2>
+        <h2>Personal Records</h2>
         <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 rounded-lg w-85">
           <Icons.search />
           <input
@@ -115,7 +113,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
             </div>
           ))
         ) : (
-          <p className="text-zinc-700">
+          <p>
             Your personal records will appear here.
           </p>
         )}

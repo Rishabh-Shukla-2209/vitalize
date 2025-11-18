@@ -21,7 +21,7 @@ const ProgramsPage = () => {
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const {user} = useUser();
+  const { user } = useUser();
 
   useDebounce(() => setDebouncedSearch(search), 500, [search]);
 
@@ -33,7 +33,7 @@ const ProgramsPage = () => {
       { selectedEquipment },
       { selectedDuration },
       { debouncedSearch },
-      { userId: user ? user.id : null}
+      { userId: user ? user.id : null },
     ],
     queryFn: async () => {
       const data = await getWorkoutPlans(
@@ -78,9 +78,7 @@ const ProgramsPage = () => {
   return (
     <div className="px-5 py-7">
       <div className="flex justify-between items-center mb-2">
-        <h1 className="text-3xl font-semibold text-zinc-700">
-          Workout Library
-        </h1>
+        <h1>Workout Library</h1>
         <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 rounded-lg w-85">
           <Icons.search />
           <input

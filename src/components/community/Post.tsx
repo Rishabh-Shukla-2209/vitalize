@@ -131,15 +131,15 @@ const Post = ({
           <Icons.user width={30} height={30} />
         )}
         <div className="flex flex-col">
-          <p className="text-zinc-600 font-semibold">
+          <p className="font-semibold">
             {post.user.firstName} {post.user.lastName}
           </p>
-          <p className="text-zinc-600">Posted {timeAgo(post.createdAt)}</p>
+          <p>Posted {timeAgo(post.createdAt)}</p>
         </div>
       </Link>
       <div className="flex flex-col flex-1 gap-2 mt-5">
-        <p className="text-zinc-600 font-semibold">{post.title}</p>
-        <p className="text-zinc-600">{post.body}</p>
+        <p className="font-semibold">{post.title}</p>
+        <p>{post.body}</p>
         {post.workoutLog && <WorkoutSummary workout={post.workoutLog} />}
         {post.imgUrl && <div className="relative min-h-120 w-full rounded-md overflow-hidden"><Image src={post.imgUrl} alt="Post Image" fill style={{ objectFit: "cover" }} className="px-3 mt-2 rounded"/></div>}
       </div>
@@ -147,7 +147,7 @@ const Post = ({
         <p className="flex gap-1  cursor-pointer">
           <span onClick={() => setLiked((prev) => !prev)}>
             <Icons.like
-              className={clsx({ "text-primary-dark": liked })}
+              className={clsx({ "text-primary": liked })}
               fill={liked ? "#38e07b" : "transparent"}
             />
           </span>

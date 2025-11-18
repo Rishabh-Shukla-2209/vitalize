@@ -24,7 +24,7 @@ const Endurance = ({
         {exerciseName}
       </h3>
       <div className="flex gap-5 flex-wrap text-zinc-600">
-        <p className="flex flex-col">
+        <p>
           <label>Sets</label>
           <input
             type="number"
@@ -41,7 +41,7 @@ const Endurance = ({
             </span>
           )}
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Reps</label>
           <input
             type="number"
@@ -51,7 +51,7 @@ const Endurance = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Rest (s)</label>
           <input
             type="number"
@@ -61,7 +61,7 @@ const Endurance = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Time to Exhaustion</label>
           <input
             type="number"

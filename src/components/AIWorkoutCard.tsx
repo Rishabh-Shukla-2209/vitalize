@@ -5,7 +5,7 @@ import Link from "next/link";
 const AIWorkoutCard = ({
   workout,
 }: {
-  workout: { name: string; id: string, createdAt: Date };
+  workout: { name: string; id: string; createdAt: Date };
 }) => {
   return (
     <div>
@@ -15,11 +15,11 @@ const AIWorkoutCard = ({
             <Icons.ai className="text-primary" size={40} />
           </div>
           <div>
-            <h3 className="text-zinc-700 font-semibold text-lg">
+            <p className="font-semibold">
               {workout.name.length <= 30
                 ? workout.name
                 : `${workout.name.slice(0, 30)}...`}
-            </h3>
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">

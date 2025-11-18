@@ -25,11 +25,11 @@ const Cardio = ({
 
   return (
     <div className="mt-5">
-      <h3 className="text-zinc-700 font-semibold text-lg mb-3">
+      <h3 className="mb-3">
         {exerciseName}
       </h3>
       <div className="flex gap-5 flex-wrap text-zinc-600">
-        <p className="flex flex-col">
+        <p>
           <label>Sets</label>
           <input
             type="number"
@@ -46,7 +46,7 @@ const Cardio = ({
             </span>
           )}
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Reps</label>
           <input
             type="number"
@@ -56,7 +56,7 @@ const Cardio = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Rest (s)</label>
           <input
             type="number"
@@ -66,7 +66,7 @@ const Cardio = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Calories Burned</label>
           <input
             type="number"
@@ -83,43 +83,43 @@ const Cardio = ({
             </span>
           )}
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Distance</label>
           <input
             type="number"
-            {...(register(distanceFieldName), { valueAsNumber: true })}
+            {...register(distanceFieldName, { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Duration</label>
           <input
             type="number"
-            {...(register(durationFieldName), { valueAsNumber: true })}
+            {...register(durationFieldName, { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Heart Rate</label>
           <input
             type="number"
-            {...(register(heartRateFieldName), { valueAsNumber: true })}
+            {...register(heartRateFieldName, { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>VO2 Max</label>
           <input
             type="number"
-            {...(register(vo2MaxFieldName), { valueAsNumber: true })}
+            {...register(vo2MaxFieldName, { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Speed</label>
           <input
             type="number"
-            {...(register(speedFieldName), { valueAsNumber: true })}
+            {...register(speedFieldName, { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>

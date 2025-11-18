@@ -21,10 +21,10 @@ const UserInfo = ({user}: {user: User}) => {
           <div className="min-w-9"><Icons.user width={30} height={30}/></div>
         )}
         <div className="flex flex-col">
-          <p className="text-zinc-600 font-semibold">
+          <p className="font-semibold">
             {user.firstName} {user.lastName}
           </p>
-          <p className="text-zinc-600">{user.about}</p>
+          <p>{user.about}</p>
         </div>
       </Link>
   )

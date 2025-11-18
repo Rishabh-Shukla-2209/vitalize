@@ -48,7 +48,7 @@ const CommentLikes = ({ userId }: { userId: string }) => {
   });
   return (
     <div>
-      <h3 className="text-gray-700 font-semibol mb-2">Comment Likes</h3>
+      <h3 className="mb-2">Comment Likes</h3>
       <div className="bg-zinc-50 border border-zinc-200 rounded-md">
         {commentLikes &&
           commentLikes.map((like) => (

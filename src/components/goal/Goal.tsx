@@ -16,7 +16,7 @@ const Goal = ({ goal }: { goal: GoalType }) => {
       </div>
       <div className="w-full flex-5 pr-3">
         <h4>{goal.title}</h4>
-        <p className="text-zinc-700">
+        <p>
           {goal.targetExercise.name} -{" "}
           {
             fitnessMetricLabels[

@@ -13,12 +13,12 @@ const PR = ({ pR }: { pR: PRType }) => {
         <div>
           <h4>{pR.exercise.name}</h4>
           <div className="flex gap-2">
-            <p className="text-zinc-700">{fitnessMetricLabels[pR.prField as keyof typeof fitnessMetricLabels]}:</p>
-            <p className="text-zinc-700">{pR.prValue} {fitnessMetricUnits[pR.prField as keyof typeof fitnessMetricUnits]}</p>
+            <p>{fitnessMetricLabels[pR.prField as keyof typeof fitnessMetricLabels]}:</p>
+            <p>{pR.prValue} {fitnessMetricUnits[pR.prField as keyof typeof fitnessMetricUnits]}</p>
           </div>
         </div>
         <div className="flex-center">
-          <p className="text-zinc-700">{timeAgo(pR.createdAt)}</p>
+          <p>{timeAgo(pR.createdAt)}</p>
         </div>
       </div>
     </div>

@@ -50,7 +50,7 @@ const ExerciseCategoryChart = ({ userId }: { userId: string }) => {
 
   return (
     <div className="boundary p-5">
-      <h3 className="text-lg text-gray-600 mb-2">Progress by Workout Type</h3>
+      <h3 className="mb-2">Progress by Workout Type</h3>
       <div className="flex gap-10">
         <div>
           <Selector

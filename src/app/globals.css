@@ -4,22 +4,32 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-primary: #13ec13;
-  --color-primary-dark: #38e07b;
-  --color-primary-light: #a6f9b2;
+  --color-primary: #38e07b;
 }
 
 @layer base {
   input {
-    @apply bg-white text-base border rounded-md border-zinc-200 px-3.5 py-2.5 text-zinc-900 focus:border-primary-dark focus:border-2 outline-none;
-  }
-
-  button {
-    @apply cursor-pointer;
+    @apply bg-white text-base border rounded-md border-zinc-200 px-3.5 py-2.5 text-zinc-900 focus:border-primary focus:border-2 outline-none;
   }
 
   form {
     @apply flex flex-col gap-5;
+  }
+
+  h1 {
+    @apply text-3xl font-semibold text-zinc-600;
+  }
+
+  h2 {
+    @apply text-xl font-semibold text-zinc-700;
+  }
+
+  h3 {
+    @apply text-zinc-700 font-semibold text-lg
+  }
+
+  p {
+    @apply text-zinc-600
   }
 }
 
@@ -44,6 +54,14 @@
 
   .input-no-spinner {
     -moz-appearance: textfield; 
+  }
+}
+
+@layer components {
+  .log-workout-form {
+    & p {
+      @apply flex flex-col
+    }
   }
 }
 

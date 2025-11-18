@@ -34,15 +34,15 @@ const WorkoutHistory = ({ userId }: { userId: string }) => {
 
   return (
     <div className="py-8 px-60">
-      <h1 className="text-3xl font-semibold text-zinc-600 mb-1">
+      <h1 className="mb-1">
         Workout History
       </h1>
-      <p className="text-zinc-600">
+      <p>
         View your past workouts and track your progress.
       </p>
 
       <div className="flex items-center my-5 gap-3">
-        <p className="text-zinc-700">Filter by: </p>
+        <p>Filter by: </p>
         <DatePicker label="" date={date} setDate={setDate} />
         <Selector
           placeholder="Muscle Group"

@@ -45,12 +45,12 @@ const MonthlyWorkouts = ({ userId }: { userId: string }) => {
             <div
               key={index}
               className={clsx(
-                { "bg-primary-light": day },
+                { "bg-primary": day },
                 { "bg-zinc-100": !day },
                 "rounded flex-center"
               )}
             >
-              <p className="text-zinc-700">{index + 1}</p>
+              <p>{index + 1}</p>
             </div>
           ))}
         </div>

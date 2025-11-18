@@ -213,7 +213,7 @@ const AddGoal = ({ userId, setAddGoal, resetSearch }: { userId: string, setAddGo
 
   return (
     <div className="border p-5 rounded-md bg-zinc-100">
-      <h3 className="text-lg text-gray-600 mb-1.5">Goal Details</h3>
+      <h3 className="mb-1.5">Goal Details</h3>
       <div className="flex gap-2 justify-between">
           <div className="flex flex-col gap-4 flex-1">
             <div className="flex gap-5">
@@ -223,7 +223,7 @@ const AddGoal = ({ userId, setAddGoal, resetSearch }: { userId: string, setAddGo
                   placeholder="Enter Goal title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="text-sm py-2 focus:border-1 focus:border-zinc-400"
+                  className="text-sm py-2 focus:border focus:border-zinc-400"
                 />
                 {titleError && <span className="error">{titleError}</span>}
               </div>
@@ -251,7 +251,7 @@ const AddGoal = ({ userId, setAddGoal, resetSearch }: { userId: string, setAddGo
                   placeholder="Current Value"
                   value={currentValue}
                   onChange={(e) => setCurrValue(e.target.value)}
-                  className="text-sm py-2 focus:border-1 focus:border-zinc-400"
+                  className="text-sm py-2 focus:border focus:border-zinc-400"
                 />
                 {currValError && <span className="error">{currValError}</span>}
               </div>
@@ -261,7 +261,7 @@ const AddGoal = ({ userId, setAddGoal, resetSearch }: { userId: string, setAddGo
                   placeholder="Target Value"
                   value={targetValue}
                   onChange={(e) => setTargetValue(e.target.value)}
-                  className="text-sm py-2 focus:border-1 focus:border-zinc-400"
+                  className="text-sm py-2 focus:border focus:border-zinc-400"
                 />
                 {targetValError && <span className="error">{targetValError}</span>}
               </div>

@@ -12,7 +12,10 @@ const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
 
   return (
     <div>
-      <div className="flex justify-between w-full p-5 cursor-pointer" onClick={() => setExpanded((prev) => !prev)}>
+      <div
+        className="flex justify-between w-full p-5 cursor-pointer"
+        onClick={() => setExpanded((prev) => !prev)}
+      >
         <div className="flex gap-3">
           <div className="relative h-15 w-15">
             <Image
@@ -28,9 +31,7 @@ const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
             />
           </div>
           <div>
-            <h3 className="text-zinc-600 font-semibold">
-              {exercise.exercise.name}
-            </h3>
+            <h3>{exercise.exercise.name}</h3>
             <ul className="flex gap-2 text-zinc-600">
               {exercise.sets > 0 && <li>{exercise.sets} sets • </li>}
               {exercise.reps > 0 && <li>{exercise.reps} reps • </li>}
@@ -55,30 +56,26 @@ const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
             transition={{ duration: 0.4 }}
             className="bg-zinc-200 overflow-hidden p-5 flex flex-col gap-2 rounded-lg"
           >
-            <h2 className="text-zinc-700 font-semibold text-lg">
-              {exercise.exercise.name}
-            </h2>
-            <p className="text-zinc-600">{exercise.exercise.instructions}</p>
+            <h2>{exercise.exercise.name}</h2>
+            <p>{exercise.exercise.instructions}</p>
             {exercise.exercise.category && (
               <div className="flex gap-2">
-                <h3 className="text-zinc-600 font-semibold">Category: </h3>
-                <p className="text-zinc-600">
+                <h3>Category: </h3>
+                <p>
                   {toProperCase(exercise.exercise.category)}
                 </p>
               </div>
             )}
             <div className="flex gap-2">
-              <h3 className="text-zinc-600 font-semibold">
-                Muscles Involved:{" "}
-              </h3>
-              <p className="text-zinc-600">
+              <h3>Muscles Involved: </h3>
+              <p>
                 {toProperCase(exercise.exercise.muscleGroup)}
               </p>
             </div>
             {exercise.exercise.equipment && (
               <div className="flex gap-2">
-                <h3 className="text-zinc-600 font-semibold">Equipment: </h3>
-                <p className="text-zinc-600">
+                <h3>Equipment: </h3>
+                <p>
                   {toProperCase(exercise.exercise.equipment)}
                 </p>
               </div>

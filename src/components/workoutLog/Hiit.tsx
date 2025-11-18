@@ -31,11 +31,11 @@ const Hiit = ({
 
   return (
     <div className="mt-5">
-      <h3 className="text-zinc-700 font-semibold text-lg mb-3">
+      <h3 className="mb-3">
         {exerciseName}
       </h3>
       <div className="flex gap-5 flex-wrap text-zinc-600">
-        <p className="flex flex-col">
+        <p>
           <label>Sets</label>
           <input
             type="number"
@@ -50,7 +50,7 @@ const Hiit = ({
             <span className="error">{errors.hiit[formIndex].sets.message}</span>
           )}
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Reps</label>
           <input
             type="number"
@@ -60,7 +60,7 @@ const Hiit = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Rest (s)</label>
           <input
             type="number"
@@ -70,7 +70,7 @@ const Hiit = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Set Duration</label>
           <input
             type="number"
@@ -87,11 +87,11 @@ const Hiit = ({
             </span>
           )}
         </p>
-        <p className="flex flex-col">
+        <p>
           <label>Work-Rest Ratio</label>
           <input
             type="number"
-            {...(register(workToRestFieldName), { valueAsNumber: true })}
+            {...register(workToRestFieldName, { valueAsNumber: true })}
             readOnly
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
           />

@@ -111,7 +111,7 @@ const UpdateAbout = ({
             <ImageCropper setPreview={setPreview} updating={updating} />
           </div>
           <div className="flex-1 mb-5 flex flex-col gap-2">
-            <p className="flex items-center text-zinc-600">
+            <p className="flex items-center">
               <label htmlFor="about" className="flex-1">
                 About
               </label>
@@ -124,7 +124,7 @@ const UpdateAbout = ({
                 className="border border-zinc-200 rounded p-2 text-zinc-600 outline-0 flex-5 bg-white resize-none"
               ></textarea>
             </p>
-            <p className="flex items-center text-zinc-600">
+            <p className="flex items-center">
               <label htmlFor="bio" className="flex-1">
                 Bio
               </label>
@@ -137,7 +137,7 @@ const UpdateAbout = ({
                 className="border border-zinc-200 bg-white rounded p-2 text-zinc-600 outline-0 flex-5 resize-none h-25 "
               ></textarea>
             </p>
-            <p className="flex items-center text-zinc-600 mt-2">
+            <p className="flex items-center mt-2">
               <label htmlFor="privacy" className="flex-1">
                 Visibility
               </label>

@@ -23,12 +23,12 @@ const AIWorkout = ({
     <div className="w-full bg-zinc-100 p-5 rounded-md">
       <div>
         <div className="flex justify-between mb-2">
-          <h2 className="text-2xl font-semibold text-zinc-700 my-3">Your Personalised Workout Plan</h2>
+          <h2 className="my-3">Your Personalised Workout Plan</h2>
           <Button variant="default" onClick={addWorkout} className="text-lg">
             <Icons.add />Add to Workouts
           </Button>
         </div>
-        <p className="text-zinc-700">{workout.description}</p>
+        <p>{workout.description}</p>
         <div className="grid grid-cols-3 auto-rows gap-5 mt-5">
           {workout.exercises.map(ex => (
             <AIWorkoutExerciseCard key={ex.exerciseId} exercise={ex} />

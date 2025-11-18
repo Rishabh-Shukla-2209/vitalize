@@ -3,6 +3,7 @@ import { useRef, useEffect } from "react";
 import Post from "./Post";
 import { getPosts, getUserPosts } from "@/lib/queries";
 import { FeedFetcher } from "@/lib/types";
+import { Spinner } from "../ui/spinner";
 
 const Feed = ({
   userId,
@@ -64,11 +65,11 @@ const Feed = ({
       ))}
 
       {isFetchingNextPage && (
-        <p className="text-center text-gray-500">Loading...</p>
+        <p className="flex-center"><Spinner /></p>
       )}
 
       {!hasNextPage && (
-        <p className="flex-center text-zinc-600">No more Posts</p>
+        <p className="flex-center">No more Posts</p>
       )}
 
       <div ref={sentinelRef} className="h-10" />

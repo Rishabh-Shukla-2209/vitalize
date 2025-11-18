@@ -96,11 +96,11 @@ const AllGoals = ({ userId }: { userId: string }) => {
   return (
     <div>
       <div className="flex justify-between mt-5">
-        <h2 className="text-xl font-semibold text-zinc-700">Goals</h2>
+        <h2>Goals</h2>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            className="hover:bg-primary-dark hover:text-white"
+            className="hover:bg-primary hover:text-white"
             onClick={() => setAddGoal((prev) => !prev)}
           >
             <Icons.add />
@@ -147,7 +147,7 @@ const AllGoals = ({ userId }: { userId: string }) => {
             </div>
           ))
         ) : (
-          <p className="text-zinc-700">Your Goals will appear here.</p>
+          <p>Your Goals will appear here.</p>
         )}
         <div className="flex justify-between">
           <Button

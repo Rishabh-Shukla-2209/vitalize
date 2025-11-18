@@ -10,6 +10,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { toProperCase } from "@/lib/utils";
 import { useWorkoutFlow } from "@/hooks/useWorkoutFlow";
+import { Button } from "@/components/ui/button";
 
 const WorkoutPage = () => {
   const params = useParams();
@@ -64,10 +65,10 @@ const WorkoutPage = () => {
       {workoutPlan ? (
         <div className="flex flex-col items-center min-w-100 gap-5">
           <div className="bg-zinc-100 flex-5 mt-10 p-5 text-center w-full rounded-lg">
-            <h1 className="text-3xl font-semibold text-zinc-600 mb-1">
+            <h1 className="mb-1">
               {workoutPlan.name}
             </h1>
-            <p className="text-zinc-600">
+            <p>
               <span>{toProperCase(workoutPlan.level)} </span>
               <span>•</span>
               <span> {workoutPlan.duration} minutes</span>
@@ -78,13 +79,13 @@ const WorkoutPage = () => {
               <div className="bg-zinc-400 h-1.5 w-full rounded-l-full rounded-r-full" />
             </div>
             <div className="bg-zinc-300 rounded-lg p-5 ">
-              <p className="text-zinc-700 text-lg">Current Exercise</p>
+              <h3>Current Exercise</h3>
               {currWorkoutItem && (
                 <>
-                  <h2 className="text-4xl font-semibold text-zinc-600 mb-1">
+                  <h2 className="text-4xl mb-1">
                     {currWorkoutItem.exercise!.exercise.name}
                   </h2>
-                  <p className="text-zinc-700 text-lg">
+                  <h3>
                     {currWorkoutItem.exercise!.sets > 0 && (
                       <span>{currWorkoutItem.exercise!.sets} sets • </span>
                     )}
@@ -100,13 +101,11 @@ const WorkoutPage = () => {
                     {currWorkoutItem.exercise!.rest > 0 && (
                       <span>{currWorkoutItem.exercise!.rest}s rest</span>
                     )}
-                  </p>
+                  </h3>
                 </>
               )}
             </div>
-            <h3 className="text-lg font-semibold text-zinc-600 my-1">
-              {status === "work" ? "Work" : "Rest"}
-            </h3>
+            <h3 className="my-1">{status === "work" ? "Work" : "Rest"}</h3>
             <h2
               className={clsx(
                 "font-bold text-zinc-600",
@@ -135,57 +134,61 @@ const WorkoutPage = () => {
                   }${timeRemaining % 60}`}
             </h2>
             <div className="flex justify-between gap-5 mt-3">
-              <button
-                className="flex-1 flex-center bg-zinc-300 text-zinc-700 py-3 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:text-zinc-800 disabled:bg-zinc-200 disabled:text-zinc-500 disabled:hover:cursor-default"
+              <Button
+                variant="secondary"
+                className="flex-1 flex-center bg-zinc-300 text-zinc-700 py-6 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:text-zinc-800 disabled:bg-zinc-200 disabled:text-zinc-500 disabled:hover:cursor-default"
                 onClick={prevWorkoutItem}
                 disabled={!workoutStarted || hasEnded}
               >
                 <Icons.left />
-              </button>
-              <button
-                className="flex-1 flex-center bg-zinc-300 text-zinc-700 py-3 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:text-zinc-800 disabled:bg-zinc-200 disabled:text-zinc-500 disabled:hover:cursor-default"
+              </Button>
+              <Button
+                variant="secondary"
+                className="flex-1 flex-center bg-zinc-300 text-zinc-700 py-6 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:text-zinc-800 disabled:bg-zinc-200 disabled:text-zinc-500 disabled:hover:cursor-default"
                 onClick={nextWorkoutItem}
                 disabled={!workoutStarted || hasEnded}
               >
                 <Icons.right />
-              </button>
+              </Button>
             </div>
           </div>
-          <button
+          <Button
+            variant="secondary"
             className="flex-1 flex-center w-full bg-zinc-300 font-semibold text-lg text-zinc-800 py-4 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:text-zinc-800 disabled:bg-zinc-200 disabled:text-zinc-500 disabled:hover:cursor-default"
             onClick={pauseWorkout}
             disabled={!workoutStarted || hasEnded}
           >
             {isPaused ? <Icons.play /> : <Icons.pause />} {"  "}
             {isPaused ? "Resume" : "Pause"} workout
-          </button>
+          </Button>
           {workoutStarted ? (
             hasEnded ? (
               <Link
                 href={`/workouts/log-workout/${workoutPlan.id}`}
                 className="w-full"
               >
-                <button className="flex-1 flex-center w-full text-white font-semibold text-lg py-4 px-10 rounded-l-full rounded-r-full bg-primary-dark hover:bg-green-500">
+                <Button className="flex-1 flex-center text-lg w-full py-7 px-10 rounded-l-full rounded-r-full">
                   {" "}
                   Log Workout
-                </button>
+                </Button>
               </Link>
             ) : (
-              <button
-                className="flex-1 flex-center w-full text-white font-semibold text-lg py-4 px-10 rounded-l-full rounded-r-full bg-red-500 hover:bg-red-700"
+              <Button
+                variant="default"
+                className="flex-1 w-full flex-center text-lg py-4 px-10 rounded-l-full rounded-r-full bg-red-500 hover:bg-red-700"
                 onClick={handleEndWorkout}
               >
                 {" "}
                 End Workout
-              </button>
+              </Button>
             )
           ) : (
-            <button
-              className="flex-1 flex-center w-full text-white font-semibold text-lg py-4 px-10 rounded-l-full rounded-r-full bg-primary-dark hover:bg-green-500"
+            <Button
+              className="flex-1 flex-center text-lg w-full py-4 px-10 rounded-l-full rounded-r-full"
               onClick={() => setWorkoutStarted(true)}
             >
               Start Workout
-            </button>
+            </Button>
           )}
         </div>
       ) : (

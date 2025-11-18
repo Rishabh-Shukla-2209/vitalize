@@ -32,7 +32,7 @@ const Goals = ({ userId }: { userId: string }) => {
 
   return (
     <div className="boundary w-full h-65 px-5 py-3">
-      <h3 className="text-lg text-zinc-700 mb-1.5">Goals</h3>
+      <h3 className="mb-1.5">Goals</h3>
       {data && data.length > 0 ? (
         <Carousel className="relative">
           <CarouselContent>
@@ -49,7 +49,7 @@ const Goals = ({ userId }: { userId: string }) => {
           <CarouselNext className="-top-5 right-2" />
         </Carousel>
       ) : (
-          <p className="text-zinc-700">
+          <p>
             {isError
               ? "Error fetching your Goals"
               : "Your goals will appear here."}

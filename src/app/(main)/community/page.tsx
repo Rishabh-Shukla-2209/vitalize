@@ -25,7 +25,7 @@ const CommunityPage = () => {
     };
 
     if (user && debouncedSearch) fetchUsers(user.id);
-    if(!debouncedSearch) setSearchedUsers([]);
+    if (!debouncedSearch) setSearchedUsers([]);
   }, [user, debouncedSearch]);
 
   useDebounce(() => setDebouncedSearch(search), 500, [search]);
@@ -67,9 +67,7 @@ const CommunityPage = () => {
           </div>
         )}
         <div className="bg-zinc-100 rounded-md px-3 py-2 mt-5">
-          <h3 className="text-lg text-gray-600 font-semibold border-b border-b-zinc-400">
-            Suggestions
-          </h3>
+          <h3 className="border-b border-b-zinc-400">Suggestions</h3>
           <div className="flex flex-col">
             {suggestions &&
               suggestions.length > 0 &&
@@ -78,13 +76,11 @@ const CommunityPage = () => {
           </div>
         </div>
       </div>
-      {user && <Feed userId={user.id} type="general"/>}
+      {user && <Feed userId={user.id} type="general" />}
       <div>
         <div className="bg-zinc-100 p-5 rounded-md">
-          <h3 className="text-lg text-gray-600 font-semibold">
-            Share Your Progress
-          </h3>
-          <Link href='/community/create-post'>
+          <h3>Share Your Progress</h3>
+          <Link href="/community/create-post">
             <Button
               variant="secondary"
               className="bg-zinc-200 w-full text-md rounded-l-full rounded-r-full mt-2 hover:bg-zinc-300"

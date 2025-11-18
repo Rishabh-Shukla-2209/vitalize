@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { OAuthStrategy } from "@clerk/types";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
 
 const SignInForm = () => {
   const {
@@ -75,8 +77,8 @@ const SignInForm = () => {
           </div>
         </div>
         <div className="text-center">
-          <h1 className="text-black text-3xl font-medium">Welcome back</h1>
-          <p className="text-zinc-500 my-2">
+          <h1>Welcome back</h1>
+          <p className="my-2">
             Log in to continue your fitness journey.
           </p>
         </div>
@@ -98,31 +100,33 @@ const SignInForm = () => {
             <div className="flex justify-end">
               <Link
                 href="/forgot-password"
-                className="text-right text-sm text-zinc-600 cursor-pointer"
+                className="text-right text-sm text-zinc-600 cursor-pointer hover:text-zinc-800"
               >
                 Forgot Password?
               </Link>
             </div>
 
-            <button
+            <Button
+              variant="default"
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-primary-dark hover:bg-primary-light py-2.5 font-medium text-lg rounded-3xl mt-1.5"
+              className="text-lg rounded-3xl mt-1.5"
             >
-              {isSubmitting ? "Logging in..." : "Login"}
-            </button>
+              {isSubmitting ? <Spinner /> : "Login"}
+            </Button>
             {errors.root && (
               <span className="error">{errors.root.message}</span>
             )}
           </form>
           <div>
-            <div className="h-0.25 bg-zinc-500 mt-4.5" />
+            <div className="h-0.5 bg-zinc-500 mt-4.5" />
             <div className="flex-center my-1">
               <p>or</p>
             </div>
-            <button
+            <Button
+              variant="outline"
               onClick={() => SignInWith("oauth_google")}
-              className="w-full flex-center px-4 py-2 border border-zinc-600 flex gap-2 rounded-lg hover:bg-zinc-100"
+              className="w-full flex-center gap-2"
             >
               <Image
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -130,11 +134,11 @@ const SignInForm = () => {
                 width={24}
                 height={24}
               />
-              <span className="text-black">SignIn with Google</span>
-            </button>
-            <p className="text-zinc-800 mt-10 text-center text-md">
+              <p>Login with Google</p>
+            </Button>
+            <p className="mt-10 text-center text-md">
               Don&apos;t have an account?{" "}
-              <Link href={"/sign-up"} className="text-primary-dark">
+              <Link href={"/sign-up"} className="text-primary hover:font-medium">
                 Sign up
               </Link>
             </p>

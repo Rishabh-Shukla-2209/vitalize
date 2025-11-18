@@ -241,10 +241,10 @@ const OnboardingPage = () => {
   return isLoaded && isSignedIn ? (
     <div className="h-screen w-screen flex justify-center">
       <div className="flex flex-col w-xl rounded-3xl p-10">
-        <h1 className="text-3xl font-semibold text-zinc-600 text-center">
+        <h1 className="text-center">
           Tell Us About Yourself
         </h1>
-        <p className="text-zinc-600 my-2 text-center">
+        <p className=" my-2 text-center">
           Please fill below details so that your progress can be tracked more
           accurately.
         </p>
@@ -278,7 +278,7 @@ const OnboardingPage = () => {
             {lastNameError && <span className="error">{lastNameError}</span>}
           </p>
           <p className="flex items-center gap-5">
-            <label className="text-zinc-600">Gender</label>
+            <label>Gender</label>
             <Selector
               choices={GenderOptions}
               setChoice={setGender}

@@ -56,8 +56,8 @@ const VerifyForm = ({
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center">
-      <div className="bg-zinc-50 p-10 shadow-xl rounded-2xl flex flex-col w-md">
+    <div className="h-full w-full mt-15 flex items-center justify-center">
+      <div className="bg-zinc-50 p-10 lg:shadow-xl rounded-2xl flex flex-col w-md">
         <h1>Verify your email</h1>
         <form onSubmit={handleVerify}>
           <label id="code" className="text-zinc-500 my-2">Enter your verification code</label>

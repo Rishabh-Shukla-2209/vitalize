@@ -1,10 +1,11 @@
 import Icons from "@/components/icons/appIcons";
 import { Button } from "@/components/ui/button";
 import { getPostsActivity } from "@/lib/queries";
-import { timeAgo } from "@/lib/utils";
+import { minutesAgo } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import ActivitySkeleton from "../skeletons/ActivitySkeleton";
 
 const Posts = ({ userId }: { userId: string }) => {
   const [pageCursors, setPageCursors] = useState<
@@ -41,7 +42,7 @@ const Posts = ({ userId }: { userId: string }) => {
     return data;
   }, [userId, currIndex, direction, pageCursors]);
 
-  const { data: posts } = useQuery({
+  const { data: posts, isLoading } = useQuery({
     queryKey: ["activity", "posts", userId, currIndex],
     queryFn: getData,
     staleTime: Infinity,
@@ -50,7 +51,7 @@ const Posts = ({ userId }: { userId: string }) => {
     <div>
       <h2 className="mb-2">Posts</h2>
       <div className="bg-zinc-50 border border-zinc-200 rounded-md">
-        {posts &&
+        {isLoading ? <ActivitySkeleton /> : posts && posts.length > 0 ?
           posts.map((post) => (
             <div
               key={post.id}
@@ -58,7 +59,7 @@ const Posts = ({ userId }: { userId: string }) => {
             >
               <p>{post.title.slice(0, 20)}...</p>
               <p className="flex-center">
-                <span className="mr-2 text-sm">{timeAgo(post.createdAt)}</span>
+                <span className="mr-2 text-sm">{minutesAgo(post.createdAt)}</span>
                 <Button variant="outline">
                   <Icons.view />
                   <Link
@@ -69,7 +70,7 @@ const Posts = ({ userId }: { userId: string }) => {
                 </Button>
               </p>
             </div>
-          ))}
+          )) : <p className="p-2">Your posts will appear here.</p>}
       </div>
       <div className="flex justify-between">
         <Button

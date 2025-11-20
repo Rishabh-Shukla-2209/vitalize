@@ -347,7 +347,7 @@ const Comment = ({
                     </span>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Delete Comment</p>
+                    <p className="text-white">Delete Comment</p>
                   </TooltipContent>
                 </Tooltip>
               </span>

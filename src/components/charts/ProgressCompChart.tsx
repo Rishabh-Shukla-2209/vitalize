@@ -71,7 +71,7 @@ const ProgressCompChart = ({ userId }: { userId: string }) => {
   return (
     <div className="boundary p-5">
       <h3 className="mb-2">Progress by Muscle Type</h3>
-      <div className="flex gap-5">
+      <div className="flex flex-wrap gap-2 md:gap-5">
         <div>
           <Selector
             setChoice={setSelectedMuscleGroup}
@@ -96,7 +96,7 @@ const ProgressCompChart = ({ userId }: { userId: string }) => {
           Go
         </Button>
       </div>
-      <div className="h-90 w-170 mx-auto mt-5 flex-center">
+      <div className="h-60 sm:h-70 md:h-80 lg:h-90 m-auto mx-auto mt-5 flex-center">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             width={500}

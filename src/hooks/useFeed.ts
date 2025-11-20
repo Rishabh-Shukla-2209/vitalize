@@ -2,7 +2,7 @@ import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { FeedFetcher, GetPostsResponse, PageParam } from "@/lib/types";
 
 export const useFeed = ( userId: string, fetcher: FeedFetcher, specificUserId?: string) => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, isLoading } =
     useInfiniteQuery<
       GetPostsResponse,
       Error,
@@ -32,6 +32,7 @@ export const useFeed = ( userId: string, fetcher: FeedFetcher, specificUserId?: 
 
   return {
     posts,
+    isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

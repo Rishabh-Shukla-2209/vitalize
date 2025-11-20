@@ -16,7 +16,7 @@ const PRs = ({ userId }: { userId: string }) => {
   }
 
   return (
-    <div className="boundary w-full h-255 px-5 py-3">
+    <div className="boundary w-full px-5 py-3">
       <h3 className="mb-1.5">Personal Records</h3>
       <div className="flex flex-col gap-2">
         {prs && prs.length > 0 ? (
@@ -28,7 +28,7 @@ const PRs = ({ userId }: { userId: string }) => {
               : "Your personal records will appear here."}
           </p>
         )}
-        {countOfTotalPRs && countOfTotalPRs > 11 && (
+        {(countOfTotalPRs ?? 0) > 11 && (
           <Link href="/profile" className="text-red-500 text-center mt-2">
             See more...
           </Link>

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { toProperCase } from "@/lib/utils";
 import { useWorkoutFlow } from "@/hooks/useWorkoutFlow";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 const WorkoutPage = () => {
   const params = useParams();
@@ -63,7 +64,7 @@ const WorkoutPage = () => {
   return (
     <div className="flex-center">
       {workoutPlan ? (
-        <div className="flex flex-col items-center min-w-100 gap-5">
+        <div className="flex flex-col items-center min-w-80 md:min-w-100 px-3 gap-5">
           <div className="bg-zinc-100 flex-5 mt-10 p-5 text-center w-full rounded-lg">
             <h1 className="mb-1">
               {workoutPlan.name}
@@ -192,7 +193,7 @@ const WorkoutPage = () => {
           )}
         </div>
       ) : (
-        <p>Loading...</p>
+        <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
       )}
     </div>
   );

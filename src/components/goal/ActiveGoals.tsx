@@ -31,7 +31,7 @@ const Goals = ({ userId }: { userId: string }) => {
   }
 
   return (
-    <div className="boundary w-full h-65 px-5 py-3">
+    <div className="boundary w-full px-5 py-3">
       <h3 className="mb-1.5">Goals</h3>
       {data && data.length > 0 ? (
         <Carousel className="relative">
@@ -45,8 +45,8 @@ const Goals = ({ userId }: { userId: string }) => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="-top-5 left-80" />
-          <CarouselNext className="-top-5 right-2" />
+          <CarouselPrevious className="-top-4 left-65 md:-top-5 md:left-80" />
+          <CarouselNext className="-top-4 -right-2 md:-top-5 md:right-2" />
         </Carousel>
       ) : (
           <p>

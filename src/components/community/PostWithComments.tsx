@@ -1,4 +1,4 @@
-import { CommentType, PostType } from "@/lib/types";
+import { CommentType, LikeType, PostType } from "@/lib/types";
 import WorkoutSummary from "./WorkoutSummary";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,8 +8,10 @@ import clsx from "clsx";
 import Comment from "./Comment";
 import { Button } from "../ui/button";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { getComments, getUser } from "@/lib/queries";
+import { getComments, getPostLikes, getUser } from "@/lib/queries";
 import { useQuery } from "@tanstack/react-query";
+import Like from "./Like";
+import { Spinner } from "../ui/spinner";
 
 const PostWithComments = ({
   post,
@@ -39,14 +41,18 @@ const PostWithComments = ({
     target: "like" | "comment",
     commentsToAdd?: number
   ) => void;
-  targetCommentId?: string
+  targetCommentId?: string;
 }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
-
+  const [open, setOpen] = useState(false);
+  const [likes, setLikes] = useState<LikeType[]>([]);
+  const [loading, setLoading] = useState(true);
+  
   useEffect(() => {
     const fetchComments = async () => {
       const data = await getComments(userId, post.id);
       setComments(data);
+      setLoading(false);
     };
 
     fetchComments();
@@ -57,6 +63,15 @@ const PostWithComments = ({
     queryFn: () => getUser(userId),
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    const getLikes = async () => {
+      const data = await getPostLikes(post.id);
+      setLikes(data);
+    };
+
+    if (open && likes.length === 0) getLikes();
+  }, [likes.length, open, post.id]);
 
   const saveComment = async (text: string) => {
     const newComment = await addComment(text);
@@ -79,15 +94,23 @@ const PostWithComments = ({
 
   return (
     <div
-      className="flex rounded-md bg-zinc-100 min-h-175 max-h-175 w-225"
+      className="
+        flex flex-col md:flex-row 
+        bg-zinc-100 rounded-md 
+        max-h-[85vh] overflow-y-auto 
+        md:min-h-175 md:max-h-175 md:max-w-225 md:overflow-visible
+        pb-5 md:pb-0
+      "
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="flex flex-col w-125 gap-3 p-10">
+      <div className="flex flex-col max-w-125 gap-3 p-10">
         <p className="font-semibold">{post.title}</p>
         <p className="mb-5">{post.body}</p>
         {post.workoutLog && <WorkoutSummary workout={post.workoutLog} />}
+        {post.imgUrl && <div className="relative w-full h-60 min-h-60 md:h-auto md:min-h-120 rounded-md overflow-hidden"><Image src={post.imgUrl} alt="Post Image" fill style={{ objectFit: "cover" }}/></div>}
+        
       </div>
-      <div className="flex flex-col justify-between w-100 bg-zinc-200 p-2 rounded-md">
+      <div className="flex flex-col self-center md:self-auto justify-between w-90 md:w-100 bg-zinc-200 p-2 rounded-md">
         <Link
           href={`/community/user/${post.userid}`}
           className="flex gap-3 items-center cursor-pointer pb-2 border-b border-b-zinc-400"
@@ -110,7 +133,7 @@ const PostWithComments = ({
             <p>Posted {timeAgo(post.createdAt)}</p>
           </div>
         </Link>
-        <div className="flex-1 overflow-scroll">
+        <div className="flex-1 overflow-y-auto max-h-60 md:max-h-none md:overflow-scroll">
           {comments.length > 0 && userData ? (
             comments.map((c) => (
               <Comment
@@ -124,7 +147,7 @@ const PostWithComments = ({
               />
             ))
           ) : (
-            <p>No comments to show</p>
+            loading ? <div className="w-full h-full flex-center"><Spinner /></div> : <p>No comments to show</p>
           )}
         </div>
         <div className="flex gap-3 justify-between text-zinc-600 text-sm font-semibold mt-5">
@@ -138,8 +161,36 @@ const PostWithComments = ({
                 fill={liked ? "#38e07b" : "transparent"}
               />
             </span>
-            <span>{optimisticLikesCount} Likes</span>
+            <span onClick={() => setOpen(true)} className="cursor-pointer">
+            {optimisticLikesCount} Likes
+          </span>
           </p>
+          {open && (
+            <div
+              className="fixed w-full h-full bg-black/70 top-0 left-0 flex-center"
+              onClick={() => setOpen(false)}
+            >
+              <div
+                className="bg-zinc-200 border border-zinc-400 w-80 md:w-120 max-h-100 overflow-scroll rounded-lg p-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex border-b-2 border-b-zinc-400 pb-1">
+                  <Icons.uncheck
+                    onClick={() => setOpen(false)}
+                    className="cursor-pointer"
+                  />
+                  <h3 className="flex-1 text-center">Likes</h3>
+                </div>
+                <div className="flex flex-col w-full">
+                  {likes.length > 0 ? (
+                    likes.map((like) => <Like key={like.id} like={like} />)
+                  ) : (
+                    <p>No likes to show</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           <p className="flex gap-1">
             <span>
               <Icons.comment className="hover:text-black" />

@@ -89,7 +89,7 @@ const PostPage = () => {
   return (
     <div className="w-full h-full flex-center py-5">
       {post === undefined ? (
-        <Spinner />
+        <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
       ) : post ? (
         <PostWithComments
           post={post}

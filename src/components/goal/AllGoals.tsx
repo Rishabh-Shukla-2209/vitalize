@@ -11,6 +11,7 @@ import Selector from "../Selector";
 import { GoalStatus } from "@/lib/utils";
 import AddGoal from "./AddGoal";
 import GoalEdit from "./GoalEdit";
+import GoalsSkeleton from "../profile/skeletons/GoalsSkeleton";
 
 const AllGoals = ({ userId }: { userId: string }) => {
   const [pageCursors, setPageCursors] = useState<
@@ -60,7 +61,7 @@ const AllGoals = ({ userId }: { userId: string }) => {
     return data as unknown as GoalType[];
   }, [direction, pageCursors, currIndex, userId, debouncedSearch, status]);
 
-  const { data: goals } = useQuery({
+  const { data: goals, isLoading } = useQuery({
     queryKey: ["Goals", userId, currIndex, debouncedSearch, status],
     queryFn: getData,
     staleTime: 5 * 60 * 1000,
@@ -95,9 +96,9 @@ const AllGoals = ({ userId }: { userId: string }) => {
 
   return (
     <div>
-      <div className="flex justify-between mt-5">
+      <div className="flex flex-wrap gap-2 justify-between mt-5">
         <h2>Goals</h2>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-4">
           <Button
             variant="outline"
             className="hover:bg-primary hover:text-white"
@@ -132,7 +133,7 @@ const AllGoals = ({ userId }: { userId: string }) => {
             resetSearch={resetSearch}
           />
         )}
-        {goals && goals.length > 0 ? (
+        {isLoading ? <GoalsSkeleton /> : goals && goals.length > 0 ? (
           goals.map((goal) => (
             <div
               key={goal.id}

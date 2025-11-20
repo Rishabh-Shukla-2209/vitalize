@@ -66,7 +66,7 @@ const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
                 </p>
               </div>
             )}
-            <div className="flex gap-2">
+            <div className="flex gap-1 md:gap-2">
               <h3>Muscles Involved: </h3>
               <p>
                 {toProperCase(exercise.exercise.muscleGroup)}

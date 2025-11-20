@@ -7,6 +7,7 @@ import PR from "./PR";
 import { Button } from "../ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PREdit from "./PREdit";
+import PRSkeleton from "../profile/skeletons/PRSkeleton";
 
 const AllPRs = ({ userId }: { userId: string }) => {
   const [pageCursors, setPageCursors] = useState<
@@ -70,7 +71,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
     );
   };
 
-  const { data: prs } = useQuery({
+  const { data: prs, isLoading } = useQuery({
     queryKey: ["PRs", userId, currIndex, debouncedSearch],
     queryFn: getData,
     staleTime: 5 * 60 * 1000,
@@ -89,7 +90,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
 
   return (
     <div>
-      <div className="flex justify-between mt-5">
+      <div className="flex flex-wrap gap-2 justify-between mt-5">
         <h2>Personal Records</h2>
         <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 rounded-lg w-85">
           <Icons.search />
@@ -103,7 +104,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
         </p>
       </div>
       <div className="flex flex-col gap-2 mt-2">
-        {prs && prs.length > 0 ? (
+        {isLoading ? <PRSkeleton /> : prs && prs.length > 0 ? (
           prs.map((pr) => (
             <div key={pr.id} className="flex gap-2 bg-zinc-50 rounded-md pr-2">
               <PR pR={pr} />

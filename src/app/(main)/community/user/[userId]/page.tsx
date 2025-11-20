@@ -20,7 +20,7 @@ import { Spinner } from "@/components/ui/spinner";
 const SocialProfile = () => {
   const [followStatus, setFollowStatus] =
     useState<FollowStatus>("Not Following");
-  const {userId: id} = useParams();
+  const { userId: id } = useParams();
   const { user } = useUser();
   const queryClient = useQueryClient();
 
@@ -90,36 +90,44 @@ const SocialProfile = () => {
   };
 
   return (
-    <div className="w-full flex gap-10 px-10 py-7">
+    <div className="w-full flex flex-col lg:flex-row lg:flex-wrap gap-10 px-10 py-7">
       {data ? (
         <>
           <div className="flex-1">
             <div className="border border-zinc-300 rounded-md bg-zinc-100 p-5 text-center">
-            {data.profileUser && (
-              <>
-                <About userData={data.profileUser} visitedByOther={true}/>
-                <Button
-                  variant={
-                    followStatus === "Accepted" || followStatus === "Requested"
-                      ? "outline"
-                      : "default"
-                  }
-                  className="w-full text-lg"
-                  onClick={changeFollowStatus}
-                >
-                  {followStatus === "Accepted"
-                    ? "Following"
-                    : followStatus === "Requested"
-                    ? "Requested"
-                    : "Follow"}
-                </Button>
-              </>
-              
-            )}
+              {data.profileUser && (
+                <>
+                  <About userData={data.profileUser} visitedByOther={true} />
+                  <Button
+                    variant={
+                      followStatus === "Accepted" ||
+                      followStatus === "Requested"
+                        ? "outline"
+                        : "default"
+                    }
+                    className="w-full text-lg"
+                    onClick={changeFollowStatus}
+                  >
+                    {followStatus === "Accepted"
+                      ? "Following"
+                      : followStatus === "Requested"
+                      ? "Requested"
+                      : "Follow"}
+                  </Button>
+                </>
+              )}
+            </div>
+            <div className="lg:hidden flex flex-wrap justify-between gap-5 w-full mt-5">
+              <Stats value={data?.prCount || 0} title="PRs" />
+              <Stats value={data?.workoutCount || 0} title="Workouts" />
+              <Stats
+                value={data?.profileUser?.longestStreakDays || 0}
+                title="Streak"
+              />
             </div>
           </div>
-          <div className="flex-2">
-            <div className="flex justify-between gap-5 w-full">
+          <div className="flex-2 flex flex-col">
+            <div className="hidden lg:flex flex-wrap justify-between gap-5 w-full">
               <Stats value={data?.prCount || 0} title="PRs" />
               <Stats value={data?.workoutCount || 0} title="Workouts" />
               <Stats
@@ -128,8 +136,8 @@ const SocialProfile = () => {
               />
             </div>
             {user && typeof id === "string" && (
-              <div className="w-full mt-5 px-35">
-                  <Feed userId={user.id} type="specific" specificUserId={id} />
+              <div className="w-full lg:mt-5">
+                <Feed userId={user.id} type="specific" specificUserId={id} />
               </div>
             )}
           </div>

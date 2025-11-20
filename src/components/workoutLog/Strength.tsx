@@ -35,10 +35,8 @@ const Strength = ({
 
   return (
     <div className="mt-5">
-      <h3 className="mb-3">
-        {exerciseName}
-      </h3>
-      <div className="flex gap-5 flex-wrap text-zinc-600">
+      <h3 className="mb-3">{exerciseName}</h3>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] auto-rows items-end gap-5">
         <p>
           <label>Sets</label>
           <input

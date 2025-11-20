@@ -3,7 +3,7 @@ import { monthDays } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { getMonth } from "date-fns";
-import MonthlyWorkoutsSkeleton from "./MonthlyWorkoutsSkeleton";
+import ChartSkeleton from "./ChartSkeleton";
 
 const MonthlyWorkouts = ({ userId }: { userId: string }) => {
   const { data, isLoading, isError } = useQuery({
@@ -19,7 +19,7 @@ const MonthlyWorkouts = ({ userId }: { userId: string }) => {
   });
 
   if (isLoading || isError || !data) {
-    return <MonthlyWorkoutsSkeleton />;
+    return <ChartSkeleton />;
   }
 
   const workedOutOnDays: boolean[] = [];
@@ -37,10 +37,10 @@ const MonthlyWorkouts = ({ userId }: { userId: string }) => {
   const longestStreak = data.streaks?.longestStreakDays;
 
   return (
-    <div className="boundary w-full h-95 flex flex-col p-5">
+    <div className="boundary w-full flex flex-col p-5">
       <h3 className="text-center">Workouts This Month</h3>
       <div className="flex-center my-6">
-        <div className="h-60 w-80 grid grid-rows-5 grid-cols-7">
+        <div className="h-45 w-60 md:h-60 md:w-80 grid grid-rows-5 grid-cols-7">
           {workedOutOnDays.map((day, index) => (
             <div
               key={index}

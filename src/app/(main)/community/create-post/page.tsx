@@ -111,12 +111,12 @@ const CreatePostPage = () => {
   }, [title]);
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center px-5">
       <h1 className="text-center my-5">
         Create Post
       </h1>
       {postPreview ? (
-        <div className="flex flex-col gap-3 max-w-150 min-h-150 bg-zinc-100 p-5 rounded-md mb-5">
+        <div className="flex flex-col gap-3 max-w-120 min-h-150 bg-zinc-100 p-5 rounded-md mb-5">
           <div className="flex flex-col flex-1 gap-2 mt-5">
             <p className="font-semibold">{title}</p>
             <p>{body}</p>
@@ -153,7 +153,7 @@ const CreatePostPage = () => {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-5 min-w-150 mb-5">
+        <div className="flex flex-col gap-5 min-w-80 md:min-w-150 mb-5">
           <p className="flex flex-col gap-1">
             <input
               type="text"
@@ -220,7 +220,7 @@ const CreatePostPage = () => {
               </>
             )}
           </div>
-          <p className="flex items-center mt-2">
+          <div className="flex items-center mt-2">
             <label
               htmlFor="privacy"
               className="flex-1 font-semibold flex gap-2 items-center"
@@ -231,7 +231,7 @@ const CreatePostPage = () => {
                   <Icons.info size={20} className="cursor-pointer"/>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>
+                  <p className="text-white">
                     The post visibility is different from your profile
                     visibility.
                   </p>
@@ -252,7 +252,7 @@ const CreatePostPage = () => {
                 <Label htmlFor="private">Private</Label>
               </div>
             </RadioGroup>
-          </p>
+          </div>
           <div>
             <Button
               variant="default"

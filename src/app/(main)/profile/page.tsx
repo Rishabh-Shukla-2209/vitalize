@@ -8,6 +8,8 @@ import CommentLikes from "@/components/profile/activity/CommentLikes";
 import Comments from "@/components/profile/activity/Comments";
 import PostLikes from "@/components/profile/activity/PostLikes";
 import Posts from "@/components/profile/activity/Posts";
+import ActivitySkeleton from "@/components/profile/skeletons/ActivitySkeleton";
+import ProfileSkeleton from "@/components/profile/skeletons/ProfileSkeleton";
 import Stats from "@/components/profile/Stats";
 import UpdateAbout from "@/components/profile/UpdateAbout";
 import { Button } from "@/components/ui/button";
@@ -45,7 +47,7 @@ const ProfilePage = () => {
   });
 
   return (
-    <div className="w-full flex gap-10 px-10 py-7">
+    <div className="w-full flex flex-col lg:flex-row lg:flex-wrap gap-10 px-10 py-7">
       <div className="flex-1 flex flex-col gap-5">
         {edit ? (
           <UpdateAbout setEdit={setEdit} />
@@ -64,11 +66,16 @@ const ProfilePage = () => {
                 </Button>
               </>
             ) : (
-              <Spinner />
+              <ProfileSkeleton />
             )}
           </div>
         )}
-        {user ? <Posts userId={user.id} /> : <p>Loading...</p>}
+        <div className="lg:hidden flex flex-wrap justify-between gap-5 w-full">
+          <Stats value={data?.prCount || 0} title="PRs" />
+          <Stats value={data?.workoutCount || 0} title="Workouts" />
+          <Stats value={userData?.longestStreakDays || 0} title="Streak" />
+        </div>
+        {user ? <Posts userId={user.id} /> : <ActivitySkeleton />}
         {user ? (
           <div className="flex flex-col gap-2 p-2">
             <h2>Likes</h2>
@@ -76,19 +83,21 @@ const ProfilePage = () => {
             <CommentLikes userId={user.id}/>
           </div>
         ) : (
-          <p>Loading...</p>
+          <ActivitySkeleton />
         )}
-        {user ? <Comments userId={user.id} /> : <p>Loading...</p>}
+        {user ? <Comments userId={user.id} /> : <ActivitySkeleton />}
       </div>
       <div className="flex-2">
-        <div className="flex justify-between gap-5 w-full">
+        <div className="hidden lg:flex flex-wrap justify-between gap-5 w-full">
           <Stats value={data?.prCount || 0} title="PRs" />
           <Stats value={data?.workoutCount || 0} title="Workouts" />
           <Stats value={userData?.longestStreakDays || 0} title="Streak" />
         </div>
-        {user ? <AllPRs userId={user.id} /> : <p>Loading...</p>}
-        {user ? <AllGoals userId={user.id} /> : <p>Loading...</p>}
-        {user ? <UserAIWorkouts userId={user.id} /> : <p>Loading...</p>}
+        {user ? <AllPRs userId={user.id} /> : <div className="w-full h-20 flex-center">
+          <Spinner />
+        </div>}
+        {user ? <AllGoals userId={user.id} /> : <div className="w-full h-20 flex-center"><Spinner /></div>}
+        {user ? <UserAIWorkouts userId={user.id} /> : <div className="w-full h-20 flex-center"><Spinner /></div>}
       </div>
     </div>
   );

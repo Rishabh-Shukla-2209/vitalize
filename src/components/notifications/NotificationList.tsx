@@ -11,6 +11,8 @@ import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
 import { getNotificationDetails } from "@/lib/utils";
 import { Badge } from "../ui/badge";
+import { AnimatePresence, motion } from "framer-motion";
+import clsx from "clsx";
 
 export function NotificationsList() {
   const { user } = useUser();
@@ -50,7 +52,7 @@ export function NotificationsList() {
 
     channel.bind("notification:new", (payload: NotificationPayload) => {
       setNotifications((prev) => [payload, ...prev]);
-      setUnreadCount(prev => prev + 1);
+      setUnreadCount((prev) => prev + 1);
       toast("New Notification", {
         description: getNotificationDetails(payload).text,
         action: {
@@ -81,51 +83,72 @@ export function NotificationsList() {
   return (
     <div className="relative">
       <Icons.bell
+        fill="white"
         className="cursor-pointer text-gray-500 hover:text-gray-900"
         onClick={() => setOpen((prev) => !prev)}
-        fill="white"
-      />
+      />{" "}
       {unreadCount > 0 && (
         <Badge variant="secondary" className="absolute -top-3 -right-3 -z-1">
           {unreadCount}
         </Badge>
       )}
-      {open && (
-        <div className="absolute top-12 right-1 min-w-80 max-h-125 overflow-scroll border-2 border-zinc-200 p-1 text-sm bg-zinc-50 rounded-md">
-          {notifications.length > 0 ? (
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ x: "200%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "200%" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className={clsx(
+              // MOBILE FIRST (full screen drawer)
+              "fixed inset-0 h-full max-w-full bg-zinc-50 p-4 z-50 overflow-y-auto",
+
+              // DESKTOP (md+) OVERRIDE → absolute small panel
+              "md:absolute md:top-12 md:right-1 md:inset-auto md:w-auto md:h-auto md:min-w-80 md:max-h-125 md:rounded-md md:p-1 md:shadow-xl"
+            )}
+          >
             <div>
-              <h3 className="p-2 border-b border-b-zinc-400">
-                Notifications
-              </h3>
-              {notifications.map((n) => (
-                <Notification
-                  key={n.id}
-                  notification={n}
-                  setOpen={setOpen}
-                  setNotifications={setNotifications}
-                  setUnreadCount={setUnreadCount}
-                />
-              ))}
-              {hasMore && (
-                <div className="flex-center">
-                  {loading ? (
-                    <Spinner />
-                  ) : (
-                    <span
-                      className="text-red-500 cursor-pointer py-2"
-                      onClick={loadMoreNotifications}
-                    >
-                      See more...
-                    </span>
-                  )}
+                <div className="flex justify-between p-2 border-b border-b-zinc-400">
+                  <h3>Notifications</h3>
+                  <Icons.uncheck
+                    onClick={() => setOpen(false)}
+                    className="cursor-pointer"
+                  />
                 </div>
-              )}
-            </div>
-          ) : (
-            <p>No notifications to show</p>
-          )}
-        </div>
-      )}
+            {notifications.length > 0 ? (
+                <>
+                  {notifications.map((n) => (
+                    <Notification
+                      key={n.id}
+                      notification={n}
+                      setOpen={setOpen}
+                      setNotifications={setNotifications}
+                      setUnreadCount={setUnreadCount}
+                    />
+                  ))}
+                
+                  {hasMore && (
+                    <div className="flex-center">
+                      {loading ? (
+                        <Spinner />
+                      ) : (
+                        <span
+                          className="text-red-500 cursor-pointer py-2"
+                          onClick={loadMoreNotifications}
+                        >
+                          See more...
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </>
+            ) : (
+              <p className="p-4">No notifications to show</p>
+            )}
+              </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

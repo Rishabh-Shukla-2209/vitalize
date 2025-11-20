@@ -4,12 +4,14 @@ import Icons from "@/components/icons/appIcons";
 import WorkoutHistoryCard from "@/components/WorkoutHistoryCard";
 import WorkoutPlanCard from "@/components/WorkoutPlanCard";
 import { getPastWorkouts, getWorkoutPlans } from "@/lib/queries";
-import { WorkoutLogType, WorkoutPlanType } from "@/lib/types";
+import { WorkoutPlanType } from "@/lib/types";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDebounce } from "react-use";
 import { motion, AnimatePresence } from "framer-motion";
+import WorkoutSkeleton from "@/components/profile/skeletons/WorkoutSkeleton";
+import { useQuery } from "@tanstack/react-query";
 
 const LogWorkoutPage = () => {
   const [search, setSearch] = useState("");
@@ -17,11 +19,8 @@ const LogWorkoutPage = () => {
   const [searchedWorkouts, setSearchedWorkouts] = useState<
     Array<WorkoutPlanType>
   >([]);
-  const [recentWorkouts, setRecentWorkouts] = useState<Array<WorkoutLogType>>(
-    []
-  );
 
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { user } = useUser();
 
   useDebounce(() => setDebouncedSearch(search), 500, [search]);
 
@@ -34,22 +33,20 @@ const LogWorkoutPage = () => {
     if (debouncedSearch) getData();
   }, [debouncedSearch, user]);
 
-  useEffect(() => {
-    async function getData(userId: string) {
-      const res = await getPastWorkouts(userId);
-      setRecentWorkouts(res);
-    }
-
-    if (isLoaded && isSignedIn) getData(user.id);
-  }, [isLoaded, isSignedIn, user]);
+  const { data: recentWorkouts, isLoading } = useQuery({
+    queryKey: [user?.id, "past-workouts"],
+    queryFn: () => getPastWorkouts(user!.id),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!user
+  });
 
   return (
-    <div className="py-8 px-60">
+    <div className="p-5 md:px-15 lg:py-8 xl:px-60">
       <h1 className="mb-1">Log Workout</h1>
       <p>
         Select from your recent workouts or search for one.
       </p>
-      <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 mt-3 rounded-lg w-100">
+      <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 mt-3 rounded-lg w-85 md:w-100">
         <Icons.search />
         <input
           type="text"
@@ -67,7 +64,7 @@ const LogWorkoutPage = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="grid grid-cols-3 auto-rows gap-5 mt-5"
+            className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] auto-rows gap-5 mt-5"
           >
             {searchedWorkouts.length > 0 &&
               searchedWorkouts.map((workout) => (
@@ -83,14 +80,14 @@ const LogWorkoutPage = () => {
       </AnimatePresence>
 
       <div className="flex flex-col gap-5 mt-5">
-        {recentWorkouts.length > 0 ?
+        {recentWorkouts && recentWorkouts.length > 0 ?
           recentWorkouts.map((workout) => (
             <WorkoutHistoryCard
               key={workout.id}
               workout={workout}
               action="log"
             />
-          )) : <p>Loading...</p>}
+          )) : isLoading ? <WorkoutSkeleton /> : <p>No workouts to show right now.</p>}
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ const Selector = ({
 ) => {
   return (
     <Select value={selectedValue} onValueChange={setChoice}>
-      <SelectTrigger className={clsx("min-w-40", classes)}>
+      <SelectTrigger className={clsx(classes)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

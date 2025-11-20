@@ -10,7 +10,7 @@ import {
   LabelList,
   ResponsiveContainer,
 } from "recharts";
-import WorkoutVolumeChartSkeleton from "./WorkoutVolumeChartSkeleton";
+import ChartSkeleton from "./ChartSkeleton";
 
 const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
   const { data, isLoading, isError } = useQuery({
@@ -19,7 +19,7 @@ const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
     staleTime: 12 * 60 * 60 * 1000,
   });
   if (isLoading || isError || !data) {
-    return <WorkoutVolumeChartSkeleton />;
+    return <ChartSkeleton />;
   }
 
   const totalVolCurrent = data.totalVolCurrent;
@@ -51,13 +51,15 @@ const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
           {change}%
         </span>
       </p>
-      <div className="h-90 w-170 m-auto flex-center">
+      <div
+        className="h-60 sm:h-70 md:h-80 lg:h-90 m-auto flex-center"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             width={500}
             height={250}
             data={data.lastWeekVolData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
           >
             <XAxis dataKey="name" />
             <Legend />

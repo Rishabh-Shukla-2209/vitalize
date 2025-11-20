@@ -1,10 +1,11 @@
 import Icons from "@/components/icons/appIcons";
 import { Button } from "@/components/ui/button";
 import { getPostLikesActivity } from "@/lib/queries";
-import { timeAgo } from "@/lib/utils";
+import { minutesAgo } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import ActivitySkeleton from "../skeletons/ActivitySkeleton";
 
 const Likes = ({ userId }: { userId: string }) => {
   const [pageCursors, setPageCursors] = useState<
@@ -41,7 +42,7 @@ const Likes = ({ userId }: { userId: string }) => {
     return data;
   }, [userId, currIndex, direction, pageCursors]);
 
-  const { data: postLikes } = useQuery({
+  const { data: postLikes, isLoading } = useQuery({
     queryKey: ["activity", "postLikes", userId, currIndex],
     queryFn: getData,
     staleTime: Infinity,
@@ -50,19 +51,19 @@ const Likes = ({ userId }: { userId: string }) => {
     <div>
       <h3 className="mb-2">Post Likes</h3>
       <div className="bg-zinc-50 border border-zinc-200 rounded-md">
-        {postLikes &&
+        {isLoading ? <ActivitySkeleton/> : postLikes && postLikes.length > 0 ? 
           postLikes.map((like) => (
             <div key={like.id} className="border border-b-zinc-100 p-2 flex justify-between items-center text-zinc-600">
               <p>Liked {`${like.post.user.firstName}'s post.`}</p>
               <p className="flex-center">
-                <span className="mr-2 text-sm">{timeAgo(like.createdAt)}</span>
+                <span className="mr-2 text-sm">{minutesAgo(like.createdAt)}</span>
                 <Button variant="outline">
                   <Icons.view />
                   <Link href={`/community/post/${like.postid}`}>View</Link>
                 </Button>
               </p>
             </div>
-          ))}
+          )): <p className="p-2">Your post likes will appear here.</p>}
       </div>
       <div className="flex justify-between">
         <Button

@@ -26,7 +26,7 @@ export function DatePicker({label, date, setDate}: {label: string, date: Date | 
           <Button
             variant="outline"
             id="date"
-            className={clsx("w-35 justify-between font-normal", {"text-zinc-500": !date})}
+            className={clsx("justify-between font-normal", {"text-zinc-500": !date})}
           >
             {date ? date.toLocaleDateString() : "Select date"}
             <ChevronDownIcon />

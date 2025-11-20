@@ -32,11 +32,19 @@ import {
   SendHorizonal,
   Trash,
   Info,
+  Menu,
+  Funnel,
+  FunnelX,
+  UserSearch,
+  UserPlus,
 } from "lucide-react";
 
 const Icons = {
   bell: Bell,
   user: UserRound,
+  menu: Menu,
+  filter: Funnel,
+  removeFilter: FunnelX,
   copyright: Copyright,
   logout: LogOut,
   check: CircleCheck,
@@ -67,7 +75,9 @@ const Icons = {
   share: Share2,
   send: SendHorizonal,
   delete: Trash,
-  info: Info
+  info: Info,
+  userSearch: UserSearch,
+  userSuggestion: UserPlus
 };
 
 export default Icons;

@@ -69,8 +69,8 @@ const SignInForm = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center">
-      <div className="flex flex-col w-md shadow-xl rounded-3xl">
+    <div className="h-full w-full mt-15 flex items-center justify-center">
+      <div className="flex flex-col w-md lg:shadow-xl rounded-3xl">
         <div className="flex-center my-3">
           <div className="h-15 w-15 bg-black flex-center rounded-4xl">
             <Logo />
@@ -126,7 +126,7 @@ const SignInForm = () => {
             <Button
               variant="outline"
               onClick={() => SignInWith("oauth_google")}
-              className="w-full flex-center gap-2"
+              className="w-full flex-center gap-2 py-5"
             >
               <Image
                 src="https://www.svgrepo.com/show/475656/google-color.svg"

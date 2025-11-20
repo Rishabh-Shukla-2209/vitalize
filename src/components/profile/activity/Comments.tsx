@@ -5,6 +5,7 @@ import { minutesAgo } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import ActivitySkeleton from "../skeletons/ActivitySkeleton";
 
 const Comments = ({ userId }: { userId: string }) => {
   const [pageCursors, setPageCursors] = useState<
@@ -41,7 +42,7 @@ const Comments = ({ userId }: { userId: string }) => {
     return data;
   }, [userId, currIndex, direction, pageCursors]);
 
-  const { data: comments } = useQuery({
+  const { data: comments, isLoading } = useQuery({
     queryKey: ["activity", "comments", userId, currIndex],
     queryFn: getData,
     staleTime: Infinity,
@@ -50,7 +51,7 @@ const Comments = ({ userId }: { userId: string }) => {
     <div>
        <h2 className="mb-2">Comments</h2>
       <div className="bg-zinc-50 border border-zinc-200 rounded-md">
-        {comments &&
+        {isLoading ? <ActivitySkeleton/> : comments && comments.length > 0 ?
           comments.map((comment) => (
             <div
               key={comment.id}
@@ -69,7 +70,7 @@ const Comments = ({ userId }: { userId: string }) => {
                 </Button>
               </p>
             </div>
-          ))}
+          )): <p className="p-2">Your comments will appear here.</p>}
       </div>
       <div className="flex justify-between">
         <Button

@@ -51,7 +51,7 @@ const ExerciseCategoryChart = ({ userId }: { userId: string }) => {
   return (
     <div className="boundary p-5">
       <h3 className="mb-2">Progress by Workout Type</h3>
-      <div className="flex gap-10">
+      <div className="flex flex-wrap gap-2 md:gap-5">
         <div>
           <Selector
             choices={categories}
@@ -65,7 +65,7 @@ const ExerciseCategoryChart = ({ userId }: { userId: string }) => {
         <DatePicker label="To:" date={dateTo} setDate={setDateTo} />
         <Button variant='default' onClick={() => updateData(userId)}>Go</Button>
       </div>
-      <div className="h-90 w-170 mx-auto mt-2.5 flex-center">
+      <div className="h-60 sm:h-70 md:h-80 lg:h-90 m-auto mx-auto mt-2.5 flex-center">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             width={500}

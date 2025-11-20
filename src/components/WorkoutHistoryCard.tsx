@@ -17,7 +17,7 @@ const WorkoutHistoryCard = ({
   const [expanded, setExpanded] = useState(false);
   return (
     <div>
-      <div className="flex justify-between p-5 bg-zinc-100 rounded-lg">
+      <div className="flex justify-between p-5 gap-2 bg-zinc-100 rounded-lg">
         <div
           className="flex items-center gap-3 cursor-pointer"
           onClick={() => setExpanded((prev) => !prev)}
@@ -27,8 +27,8 @@ const WorkoutHistoryCard = ({
           </div>
           <div>
             <h3>{workout.plan.name}</h3>
-            <ul className="flex gap-2 text-zinc-600">
-              <li>{workout.duration} minutes •</li>
+            <ul className="flex flex-wap gap-2 text-zinc-600">
+              <li>{workout.duration} minutes</li>
               <li>{workout.exercises.length} exercises</li>
             </ul>
           </div>
@@ -38,14 +38,14 @@ const WorkoutHistoryCard = ({
             <Link href={`/workouts/${workout.planid}`}>
               <Button variant="default" className="text-lg">
                 <Icons.repeat />
-                Repeat
+                <span className="hidden md:inline">Repeat</span>
               </Button>
             </Link>
           ) : (
             <Link href={`/workouts/log-workout/${workout.planid}`}>
-              <Button variant="default" className="text-lg">
+              <Button variant="default" className="text-sm md:text-lg">
                 <Icons.log />
-                Log Workout
+                <span className="hidden md:inline">Log Workout</span>
               </Button>
             </Link>
           )}

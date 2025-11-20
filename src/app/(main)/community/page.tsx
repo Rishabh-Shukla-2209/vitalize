@@ -3,11 +3,13 @@
 import Feed from "@/components/community/Feed";
 import UserInfo from "@/components/community/UserInfo";
 import Icons from "@/components/icons/appIcons";
+import ActivitySkeleton from "@/components/profile/skeletons/ActivitySkeleton";
 import { Button } from "@/components/ui/button";
 import { User } from "@/generated/prisma";
 import { getSuggestions, searchUsers } from "@/lib/queries";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDebounce } from "react-use";
@@ -17,6 +19,8 @@ const CommunityPage = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<User[]>([]);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async (userId: string) => {
@@ -47,9 +51,35 @@ const CommunityPage = () => {
   });
 
   return (
-    <div className="flex justify-around mt-5 w-full">
+    <div className="flex flex-col items-center xl:flex-row xl:justify-around xl:items-start mt-5 w-full px-5">
       <div>
-        <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 rounded-lg w-85">
+        <div className="flex xl:hidden justify-center gap-5 w-full mb-5">
+          <Button
+            variant="secondary"
+            onClick={() => setShowSearch((prev) => !prev)}
+          >
+            <Icons.userSearch /> Search
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => setShowSuggestions((prev) => !prev)}
+          >
+            <Icons.userSuggestion /> Suggestions
+          </Button>
+          <Link href="/community/create-post">
+            <Button
+              variant="secondary"
+            >
+              <Icons.share /> Share
+            </Button>
+          </Link>
+        </div>
+        <p
+          className={clsx(
+            "items-center text-zinc-400 bg-zinc-100 px-2.5 rounded-lg w-full xl:w-85 mb-5",
+            showSearch ? "flex" : "hidden xl:flex"
+          )}
+        >
           <Icons.search />
           <input
             type="text"
@@ -60,24 +90,29 @@ const CommunityPage = () => {
           />
         </p>
         {searchedUsers.length > 0 && (
-          <div className="bg-zinc-100 rounded-md px-3 py-2 mt-5">
+          <div className="bg-zinc-100 rounded-md px-3 py-2 my-5">
             {searchedUsers.map((u) => (
               <UserInfo key={u.id} user={u} />
             ))}
           </div>
         )}
-        <div className="bg-zinc-100 rounded-md px-3 py-2 mt-5">
+        <div
+          className={clsx(
+            "bg-zinc-100 rounded-md px-3 py-2 my-5",
+            showSuggestions ? "block" : "hidden xl:block"
+          )}
+        >
           <h3 className="border-b border-b-zinc-400">Suggestions</h3>
           <div className="flex flex-col">
             {suggestions &&
               suggestions.length > 0 &&
               suggestions.map((u) => <UserInfo key={u.id} user={u} />)}
-            {isLoading && <p>Loading...</p>}
+            {isLoading && <ActivitySkeleton />}
           </div>
         </div>
       </div>
       {user && <Feed userId={user.id} type="general" />}
-      <div>
+      <div className="hidden xl:block">
         <div className="bg-zinc-100 p-5 rounded-md">
           <h3>Share Your Progress</h3>
           <Link href="/community/create-post">

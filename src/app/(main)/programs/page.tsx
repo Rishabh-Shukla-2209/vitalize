@@ -2,7 +2,7 @@
 
 import Icons from "@/components/icons/appIcons";
 import Selector from "@/components/Selector";
-import { Button } from "@/components/ui/button";
+import WorkoutPlanSkeleton from "@/components/WorkoutPlanSkeleton";
 import WorkoutPlanCard from "@/components/WorkoutPlanCard";
 import { getWorkoutPlans } from "@/lib/queries";
 import { DifficultyType, EquipmentType, MuscleGroupType } from "@/lib/types";
@@ -77,9 +77,9 @@ const ProgramsPage = () => {
 
   return (
     <div className="px-5 py-7">
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex flex-wrap gap-5 justify-between items-center mb-2">
         <h1>Workout Library</h1>
-        <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 rounded-lg w-85">
+        <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 rounded-lg w-75 lg:w-85">
           <Icons.search />
           <input
             type="text"
@@ -91,42 +91,38 @@ const ProgramsPage = () => {
         </p>
       </div>
       <div className="flex gap-3 my-5">
-        <Selector
-          placeholder="Muscle Group"
-          choices={MuscleGroups}
-          setChoice={setSelectedMuscleGroup}
-          selectedValue={selectedMuscleGroup}
-        />
-        <Selector
-          placeholder="Equipment"
-          choices={Equipment}
-          setChoice={setSelectedEquipment}
-          selectedValue={selectedEquipment}
-        />
-        <Selector
-          placeholder="Difficulty"
-          choices={Difficulty}
-          setChoice={setSelectedDifficulty}
-          selectedValue={selectedDifficulty}
-        />
-        <Selector
-          placeholder="Duration"
-          choices={Duration}
-          setChoice={setSelectedDuration}
-          selectedValue={selectedDuration}
-        />
-        <Button
-          variant="default"
-          disabled={!filtersApplied}
-          onClick={clearFilters}
-        >
-          Clear Filters
-        </Button>
+        <div className="pt-1">{filtersApplied ? <Icons.removeFilter color="#38e07b" onClick={clearFilters} className="cursor-pointer"/> : <Icons.filter className="text-zinc-500"/>}</div>
+        <div className="flex flex-wrap gap-3 ">
+          <Selector
+            placeholder="Muscle Group"
+            choices={MuscleGroups}
+            setChoice={setSelectedMuscleGroup}
+            selectedValue={selectedMuscleGroup}
+          />
+          <Selector
+            placeholder="Equipment"
+            choices={Equipment}
+            setChoice={setSelectedEquipment}
+            selectedValue={selectedEquipment}
+          />
+          <Selector
+            placeholder="Difficulty"
+            choices={Difficulty}
+            setChoice={setSelectedDifficulty}
+            selectedValue={selectedDifficulty}
+          />
+          <Selector
+            placeholder="Duration"
+            choices={Duration}
+            setChoice={setSelectedDuration}
+            selectedValue={selectedDuration}
+          />
+        </div>
       </div>
       {isLoading || !data ? (
-        <p>Loading...</p>
+        <WorkoutPlanSkeleton />
       ) : (
-        <div className="grid grid-cols-4 auto-rows gap-5">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] auto-rows gap-5">
           {data.length > 0 ? (
             data.map((workout) => (
               <Link href={`/programs/${workout.id}`} key={workout.id}>

@@ -173,19 +173,19 @@ const WorkoutLogPage = () => {
   };
 
   return (
-    <div className="py-8 px-60 log-workout-form">
+    <div className="p-5 md:px-15 lg:py-8 xl:px-60 log-workout-form">
       {workout ? (
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <h1>Log Workout</h1>
             <h2>{workout.name}</h2>
-            <div className="flex justify-between gap-2 w-full">
+            <div className="flex flex-col md:flex-row justify-between gap-2 w-full">
               <p className="flex-1">
                 <label>Notes</label>
                 <textarea
                   {...register("notes")}
                   placeholder="You may enter any notes related to this workout here..."
-                  className="p-3 h-12 outline-none rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border border border-zinc-200"
+                  className="p-3 h-20 md:h-12 outline-none rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border border border-zinc-200"
                 />
               </p>
               <p>
@@ -302,7 +302,7 @@ const WorkoutLogPage = () => {
           </form>
         </FormProvider>
       ) : (
-        <Spinner />
+        <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
       )}
     </div>
   );

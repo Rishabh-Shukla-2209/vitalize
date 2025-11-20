@@ -4,6 +4,7 @@ import Post from "./Post";
 import { getPosts, getUserPosts } from "@/lib/queries";
 import { FeedFetcher } from "@/lib/types";
 import { Spinner } from "../ui/spinner";
+import PostSkeleton from "./PostSkeleton";
 
 const Feed = ({
   userId,
@@ -31,7 +32,7 @@ const Feed = ({
     };
   };
 
-  const { posts, fetchNextPage, hasNextPage, isFetchingNextPage } = useFeed(
+  const { posts, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFeed(
     userId,
     type === "general" ? adaptedGetPosts : adaptedGetUserPosts,
     specificUserId,
@@ -59,16 +60,18 @@ const Feed = ({
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col items-center gap-5">
       {posts.map((post) => (
         <Post key={post.id} post={post} userId={userId} specificUserId={specificUserId}/>
       ))}
+
+      {isLoading && <><PostSkeleton /><PostSkeleton /></>}
 
       {isFetchingNextPage && (
         <p className="flex-center"><Spinner /></p>
       )}
 
-      {!hasNextPage && (
+      {!isLoading && !hasNextPage && (
         <p className="flex-center">No more Posts</p>
       )}
 

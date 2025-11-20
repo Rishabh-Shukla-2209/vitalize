@@ -9,7 +9,7 @@ const AIWorkoutCard = ({
 }) => {
   return (
     <div>
-      <div className="flex justify-between p-5 bg-zinc-50 rounded-lg">
+      <div className="flex gap-2 justify-between p-5 bg-zinc-50 rounded-lg">
         <div className="flex items-center gap-3">
           <div className="flex-center bg-zinc-100 h-15 w-15 rounded-lg">
             <Icons.ai className="text-primary" size={40} />
@@ -22,23 +22,23 @@ const AIWorkoutCard = ({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Link href={`/programs/${workout.id}`}>
             <Button variant="outline">
               <Icons.view />
-              View
+              <span className="hidden md:inline">View</span>
             </Button>
           </Link>
           <Link href={`/workouts/${workout.id}`}>
             <Button variant="outline">
               <Icons.repeat />
-              Repeat
+              <span className="hidden md:inline">Repeat</span>
             </Button>
           </Link>
           <Link href={`/workouts/log-workout/${workout.id}`}>
             <Button variant="outline">
               <Icons.log />
-              Log Workout
+              <span className="hidden md:inline">Log Workout</span>
             </Button>
           </Link>
         </div>

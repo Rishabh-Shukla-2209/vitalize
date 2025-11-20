@@ -16,7 +16,7 @@ const AIWorkoutExerciseCard = ({ exercise }: { exercise: Props }) => {
   return (
     <div className="bg-zinc-200 rounded-md p-3">
       <div className="flex mb-2">
-        <div className="flex-1">
+        <div className="flex-1 mr-1">
           <Icons.dumbell size={60} className="bg-zinc-100 text-primary p-2 rounded-md" />
         </div>
         <div className="flex-3">
@@ -32,7 +32,7 @@ const AIWorkoutExerciseCard = ({ exercise }: { exercise: Props }) => {
           </p>
         </div>
       </div>
-      <p className="text-justify">{exercise.benefit}</p>
+      <p>{exercise.benefit}</p>
     </div>
   );
 };

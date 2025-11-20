@@ -214,9 +214,9 @@ const AddGoal = ({ userId, setAddGoal, resetSearch }: { userId: string, setAddGo
   return (
     <div className="border p-5 rounded-md bg-zinc-100">
       <h3 className="mb-1.5">Goal Details</h3>
-      <div className="flex gap-2 justify-between">
+      <div className="flex flex-col md:flex-row md:flex-wrap gap-2 justify-between">
           <div className="flex flex-col gap-4 flex-1">
-            <div className="flex gap-5">
+            <div className="flex flex-col md:flex-row gap-5">
               <div className="flex flex-col gap-1">
                 <input
                   type="text"
@@ -244,7 +244,7 @@ const AddGoal = ({ userId, setAddGoal, resetSearch }: { userId: string, setAddGo
                 {fieldError && <span className="error">{fieldError}</span>}
               </div>
             </div>
-            <div className="flex gap-5">
+            <div className="flex flex-col md:flex-row md:flex-wrap gap-5">
               <div className="flex flex-col gap-1">
                 <input
                   type="text"
@@ -271,9 +271,9 @@ const AddGoal = ({ userId, setAddGoal, resetSearch }: { userId: string, setAddGo
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 w-40">
-            <Button variant="default" disabled={submitting} onClick={onAdd}>{submitting ? "Adding":"Add"}</Button>
-            <Button variant="outline" disabled={submitting} onClick={() => setAddGoal(false)}>Cancel</Button>
+          <div className="flex flex-col gap-4 md:w-40 mt-5 items-center w-full md:mt-0">
+            <Button variant="default" className="w-full" disabled={submitting} onClick={onAdd}>{submitting ? "Adding":"Add"}</Button>
+            <Button variant="outline" className="w-full" disabled={submitting} onClick={() => setAddGoal(false)}>Cancel</Button>
           </div>
       </div>
     </div>

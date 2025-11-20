@@ -144,7 +144,7 @@ const AICoachPage = () => {
           Get a personalised workout plan tailored to your goals.
         </p>
       </div>
-      <div className="flex gap-10">
+      <div className="flex flex-col lg:flex-row gap-10">
         <div className="flex flex-col gap-5 flex-1">
           <h3>Select your requirements.</h3>
           <Selector

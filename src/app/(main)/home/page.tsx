@@ -2,21 +2,18 @@
 import { hasWorkedOutToday } from "@/lib/queries";
 import ExerciseCategoryChart from "@/components/charts/ExerciseCategoryChart";
 import MonthlyWorkouts from "@/components/charts/MonthlyWorkouts";
-import MonthlyWorkoutsSkeleton from "@/components/charts/MonthlyWorkoutsSkeleton";
 import ProgressCompChart from "@/components/charts/ProgressCompChart";
 import WorkoutVolumeChart from "@/components/charts/WorkoutVolumeChart";
-import WorkoutVolumeChartSkeleton from "@/components/charts/WorkoutVolumeChartSkeleton";
 import Icons from "@/components/icons/appIcons";
 import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
-import ExerciseCategoryChartSkeleton from "@/components/charts/ExerciseCategoryChartSkeleton";
-import ProgressCompChartSkeleton from "@/components/charts/ProgressCompChartSkeleton";
 import Link from "next/link";
 import Goals from "@/components/goal/ActiveGoals";
 import PRs from "@/components/personalRecords/RecentPRs";
 import GoalSkeleton from "@/components/goal/GoalSkeleton";
 import PRSkeleton from "@/components/personalRecords/PRSkeleton";
 import { Button } from "@/components/ui/button";
+import ChartSkeleton from "@/components/charts/ChartSkeleton";
 
 const Homepage = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -34,22 +31,22 @@ const Homepage = () => {
 
   return (
     <div className="p-8 scroll-smooth">
-      <div className="flex justify-between">
+      <div className="flex flex-wrap gap-5 justify-between">
         <div>
           <div className="flex items-center gap-2 text-3xl font-semibold">
             <Icons.home height={30} width={30} /> <p>Home</p>
           </div>
         </div>
-        <div className="mr-5">
+        <div className="flex flex-wrap gap-5 mr-5">
           <Link href={"/workouts/log-workout"}>
-            <Button className="mr-5">
+            <Button>
               <span className="flex-center gap-1">
                 <Icons.add /> <p className="text-white font-bold">Log Workout</p>
               </span>
             </Button>
           </Link>
           <Link href={"/programs/ai-coach"}>
-            <Button variant="secondary" className="mr-5 p-5">
+            <Button variant="secondary" className="p-5">
               <span className="flex-center gap-1">
                 <Icons.ai /> <p className="font-bold">AI Coach</p>
               </span>
@@ -57,7 +54,7 @@ const Homepage = () => {
           </Link>
         </div>
       </div>
-      <div className="flex gap-10 mt-8">
+      <div className="flex flex-wrap gap-10 mt-8">
         <div className="flex-4 flex flex-col gap-10">
           <div className="relative boundary p-5 overflow-hidden">
             <h3>Today</h3>
@@ -87,9 +84,9 @@ const Homepage = () => {
             </>
           ) : (
             <>
-              <WorkoutVolumeChartSkeleton />
-              <ExerciseCategoryChartSkeleton />
-              <ProgressCompChartSkeleton />
+              <ChartSkeleton />
+              <ChartSkeleton />
+              <ChartSkeleton />
             </>
           )}
         </div>
@@ -103,7 +100,7 @@ const Homepage = () => {
             </>
           ) : (
             <>
-              <MonthlyWorkoutsSkeleton />
+              <ChartSkeleton />
               <GoalSkeleton />
               <PRSkeleton />
             </>

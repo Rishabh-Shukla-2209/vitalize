@@ -1,10 +1,11 @@
 import Icons from "@/components/icons/appIcons";
 import { Button } from "@/components/ui/button";
 import { getCommentLikesActivity } from "@/lib/queries";
-import { timeAgo } from "@/lib/utils";
+import { minutesAgo } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import ActivitySkeleton from "../skeletons/ActivitySkeleton";
 
 const CommentLikes = ({ userId }: { userId: string }) => {
   const [pageCursors, setPageCursors] = useState<
@@ -41,7 +42,7 @@ const CommentLikes = ({ userId }: { userId: string }) => {
     return data;
   }, [userId, currIndex, direction, pageCursors]);
 
-  const { data: commentLikes } = useQuery({
+  const { data: commentLikes, isLoading } = useQuery({
     queryKey: ["activity", "commentLikes", userId, currIndex],
     queryFn: getData,
     staleTime: Infinity,
@@ -50,19 +51,19 @@ const CommentLikes = ({ userId }: { userId: string }) => {
     <div>
       <h3 className="mb-2">Comment Likes</h3>
       <div className="bg-zinc-50 border border-zinc-200 rounded-md">
-        {commentLikes &&
+        {isLoading ? <ActivitySkeleton/> : commentLikes && commentLikes.length > 0 ?
           commentLikes.map((like) => (
             <div key={like.id} className="border border-b-zinc-100 p-2 flex justify-between items-center text-zinc-600">
               <p>Liked {`${like.comment.user.firstName}'s comment.`}</p>
               <p className="flex-center">
-                <span className="mr-2 text-sm">{timeAgo(like.createdAt)}</span>
+                <span className="mr-2 text-sm">{minutesAgo(like.createdAt)}</span>
                 <Button variant="outline">
                   <Icons.view />
                   <Link href={`/community/post/${like.comment.postid}?commentId=${like.commentid}`}>View</Link>
                 </Button>
               </p>
             </div>
-          ))}
+          )): <p className="p-2">Your comment likes will appear here.</p>}
       </div>
       <div className="flex justify-between">
         <Button

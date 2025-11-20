@@ -49,9 +49,9 @@ const Notification = ({
   };
 
   return (
-    <div className="border-b border-b-zinc-200 p-3 flex flex-2 gap-2 justify-between items-center text-zinc-600">
+    <div className="border-b border-b-zinc-200 p-3 flex flex-col flex-2 gap-2 text-zinc-600">
       <p className={clsx({ "font-semibold": !notification.isRead })}>{text}</p>
-      <p className="flex items-center justify-end flex-1">
+      <p className="flex items-center">
         <span className="mr-2 text-sm">
           {minutesAgo(notification.createdAt)}
         </span>

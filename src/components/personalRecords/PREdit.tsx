@@ -6,6 +6,7 @@ import { useState } from "react";
 import Selector from "../Selector";
 import { validCategoryFields } from "@/lib/utils";
 import { changePRField } from "@/lib/queries";
+import { Spinner } from "../ui/spinner";
 
 const PREdit = ({ pr, userId, prUpdater }: { pr: PRType, userId: string, prUpdater: (prId: string, updatedField: string, updatedVal: number) => void }) => {
   const [edit, setEdit] = useState(false);
@@ -26,7 +27,7 @@ const PREdit = ({ pr, userId, prUpdater }: { pr: PRType, userId: string, prUpdat
 
   const category = pr.exercise.category as ExerciseCategoryType;
   return edit ? (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col md:flex-row items-center gap-2">
       <Selector
         choices={validCategoryFields[category]}
         selectedValue={newField}
@@ -37,10 +38,11 @@ const PREdit = ({ pr, userId, prUpdater }: { pr: PRType, userId: string, prUpdat
         variant="default"
         onClick={onEdit}
         disabled={submitting}
+        className="w-full md:w-auto"
       >
-        {submitting ? "Updating" : "Done"}
+        {submitting ? <Spinner /> : "Done"}
       </Button>
-      <Button variant="outline" onClick={() => setEdit(false)} disabled={submitting}>
+      <Button variant="outline" className="w-full md:w-auto" onClick={() => setEdit(false)} disabled={submitting}>
         Cancel
       </Button>
     </div>
@@ -52,7 +54,7 @@ const PREdit = ({ pr, userId, prUpdater }: { pr: PRType, userId: string, prUpdat
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Change what you want to track</p>
+        <p className="text-white">Change what you want to track</p>
       </TooltipContent>
     </Tooltip>
   );

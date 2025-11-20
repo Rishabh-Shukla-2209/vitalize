@@ -3,6 +3,7 @@
 import { DatePicker } from "@/components/DatePicker";
 import Selector from "@/components/Selector";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Gender } from "@/generated/prisma";
 import { completeOnboarding } from "@/lib/actions/user";
 import { saveOnboardingData } from "@/lib/queries";
@@ -239,8 +240,8 @@ const OnboardingPage = () => {
   };
 
   return isLoaded && isSignedIn ? (
-    <div className="h-screen w-screen flex justify-center">
-      <div className="flex flex-col w-xl rounded-3xl p-10">
+    <div className="w-full flex justify-center">
+      <div className="flex flex-col w-xl rounded-3xl px-10 py-5">
         <h1 className="text-center">
           Tell Us About Yourself
         </h1>
@@ -316,7 +317,7 @@ const OnboardingPage = () => {
             {weightError && <span className="error">{weightError}</span>}
           </p>
           <div className="flex items-center">
-            <label className="text-zinc-600">Date of Birth</label>
+            <label className="text-zinc-600 mr-5">Date of Birth</label>
             <DatePicker label="" date={dob} setDate={setDob} />
             {dobError && <span className="error ml-5">{dobError}</span>}
           </div>
@@ -326,13 +327,13 @@ const OnboardingPage = () => {
             className="text-lg py-2"
             disabled={submitting}
           >
-            {submitting ? "Submitting..." : "Submit"}
+            {submitting ? <Spinner /> : "Submit"}
           </Button>
         </form>
       </div>
     </div>
   ) : (
-    <p>Loading...</p>
+    <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
   );
 };
 

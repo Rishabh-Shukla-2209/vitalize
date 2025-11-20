@@ -88,8 +88,8 @@ const ForgotPasswordForm: NextPage = () => {
   }
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center">
-      <div className="bg-zinc-100 p-10 shadow-xl rounded-2xl flex flex-col w-md">
+    <div className="h-full w-full mt-15 mx-4 flex items-center justify-center">
+      <div className="bg-zinc-100 p-10 lg:shadow-xl rounded-2xl flex flex-col w-100 md:w-md">
       <h2 className="mb-6">Forgot Password?</h2>
       <form onSubmit={!successfulCreation ? create : reset}>
         {!successfulCreation && (

@@ -112,7 +112,7 @@ const Post = ({
   }, [likes.length, open, post.id]);
 
   return (
-    <div className="flex justify-between flex-col bg-zinc-100 rounded-md p-5 min-h-160">
+    <div className="flex justify-between flex-col bg-zinc-100 rounded-md p-5 min-h-160 min-w-95 max-w-95 lg:min-w-125 lg:max-w-125">
       <Link
         href={`/community/user/${post.userid}`}
         className={clsx("flex gap-3 items-center cursor-pointer", {
@@ -141,7 +141,7 @@ const Post = ({
         <p className="font-semibold">{post.title}</p>
         <p>{post.body}</p>
         {post.workoutLog && <WorkoutSummary workout={post.workoutLog} />}
-        {post.imgUrl && <div className="relative min-h-120 w-full rounded-md overflow-hidden"><Image src={post.imgUrl} alt="Post Image" fill style={{ objectFit: "cover" }} className="px-3 mt-2 rounded"/></div>}
+        {post.imgUrl && <div className="relative h-60 min-h-120 w-full rounded-md overflow-hidden px-3 mt-2"><Image src={post.imgUrl} alt="Post Image" fill style={{ objectFit: "cover" }}/></div>}
       </div>
       <div className="flex gap-3 justify-between text-zinc-600 text-sm font-semibold mt-5">
         <p className="flex gap-1  cursor-pointer">
@@ -214,6 +214,7 @@ const Post = ({
           )}
 
           {open === "comments" && (
+            <><Icons.uncheck color="#38e07b" size={30} onClick={() => setOpen("none")} className="fixed right-5 top-4 cursor-pointer"/>
             <PostWithComments
               post={post}
               userId={userId}
@@ -225,6 +226,7 @@ const Post = ({
               optimisticLikesCount={optimisticLikesCount}
               updateLikeCommentQueryData={updateLikeCommentQueryData}
             />
+            </>
           )}
         </div>
       )}

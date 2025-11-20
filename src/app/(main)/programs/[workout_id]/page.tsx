@@ -30,7 +30,7 @@ const ProgramDetailPage = async ({
   const uniqueMuscles = [...new Set(muscles)];
 
   return (
-    <div className="py-8 px-60">
+    <div className="p-5 md:px-15 lg:py-8 xl:px-60">
       <h1>{workout.name}</h1>
       <div className="flex items-center gap-1 my-1.5">
         <div
@@ -56,17 +56,18 @@ const ProgramDetailPage = async ({
         />
       </div>
 
-      <div className="flex w-full mt-5 gap-5">
+      <div className="flex flex-col md:flex-row flex-wrap w-full mt-5 gap-5">
         <div className="flex-4 bg-zinc-100 rounded-lg p-4">
           <h3 className="mb-1.5">Workout Overview</h3>
           <p>{workout.description}</p>
-          <div className="flex gap-2 mt-1">
+          <div className="flex flex-col md:flex-row gap-2 mt-1">
             <h4 className="text-zinc-600 font-semibold">Muscles Involved: </h4>
-            {uniqueMuscles.map((muscles, index) => (
+            <ul className="flex flex-wrap gap-1">{uniqueMuscles.map((muscles, index) => (
               <p key={index} className="flex gap-1 text-zinc-600">
                 • {toProperCase(muscles)}
               </p>
             ))}
+            </ul>
           </div>
         </div>
         <div className="flex-2 bg-zinc-100 rounded-lg p-4">

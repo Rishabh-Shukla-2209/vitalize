@@ -5,9 +5,9 @@ import Icons from '../icons/appIcons'
 
 const Footer = () => {
   return (
-    <div>
+    <div className='pb-10 md:pb-0'>
       <div className="h-0.5 bg-gray-300" />
-      <div className="p-3.5 flex items-center justify-around text-sm">
+      <div className="p-3.5 flex flex-wrap gap-2 items-center justify-around text-sm">
         <Link href={"/home"}>
           <div className="flex-center gap-1.5 cursor-pointer">
             <Logo />

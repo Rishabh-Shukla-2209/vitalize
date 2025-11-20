@@ -4,6 +4,7 @@ import Icons from "./icons/appIcons";
 import { Button } from "./ui/button";
 import { useQuery } from "@tanstack/react-query";
 import AIWorkoutCard from "./AIWorkoutCard";
+import AIWorkoutSkeleton from "./profile/skeletons/WorkoutSkeleton";
 
 const UserAIWorkouts = ({ userId }: { userId: string }) => {
   const [pageCursors, setPageCursors] = useState<
@@ -40,7 +41,7 @@ const UserAIWorkouts = ({ userId }: { userId: string }) => {
     return data;
   }, [userId, currIndex, direction, pageCursors]);
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["UserAIWorkouts", userId, currIndex],
     queryFn: getData,
     staleTime: 5 * 60 * 1000,
@@ -50,7 +51,7 @@ const UserAIWorkouts = ({ userId }: { userId: string }) => {
     <div>
       <h2 className="mt-5">AI Workouts</h2>
       <div className="flex flex-col gap-2 mt-2">
-        {data && data.length > 0 ? (
+        {isLoading ? <AIWorkoutSkeleton /> : data && data.length > 0 ? (
           data.map((workout) => (
             <AIWorkoutCard key={workout.id} workout={workout} />
           ))

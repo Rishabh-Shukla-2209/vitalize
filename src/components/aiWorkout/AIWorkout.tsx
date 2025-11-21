@@ -20,7 +20,7 @@ const AIWorkout = ({
   };
 
   return (
-    <div className="w-full bg-zinc-100 p-5 rounded-md">
+    <div className="w-full bg-zinc-100 dark:bg-sage-400 p-5 rounded-md">
       <div>
         <div className="flex flex-wrap justify-between mb-2 ">
           <h2 className="my-3">Your Personalised Workout Plan</h2>

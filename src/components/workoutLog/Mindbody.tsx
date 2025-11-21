@@ -31,7 +31,7 @@ const Mindbody = ({
               min: { value: 1, message: "Sets must be at least 1" },
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
           {errors.mindbody && errors.mindbody[formIndex]?.sets && (
             <span className="error">
@@ -46,7 +46,7 @@ const Mindbody = ({
             {...register(repsFieldName, {
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -56,7 +56,7 @@ const Mindbody = ({
             {...register(restFieldName, {
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -68,7 +68,7 @@ const Mindbody = ({
               min: { value: 1, message: "Duration must be at least 1" },
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
           {errors.mindbody && errors.mindbody[formIndex]?.duration && (
             <span className="error">

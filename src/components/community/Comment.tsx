@@ -9,6 +9,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import clsx from "clsx";
@@ -22,6 +23,7 @@ import {
 } from "@/lib/queries";
 import Like from "./Like";
 import { useQueryClient } from "@tanstack/react-query";
+import { useKeyboardAvoidance } from "@/hooks/useKeyboardAvoidance";
 
 const Comment = ({
   comment,
@@ -55,7 +57,10 @@ const Comment = ({
   const [deleting, setDeleting] = useState(false);
   const [highlight, setHighlight] = useState(false);
   const queryClient = useQueryClient();
-
+  
+  const inputRef = useRef<HTMLInputElement>(null);
+  useKeyboardAvoidance(inputRef);
+  
   const isTarget = comment.id === targetCommentId;
 
   const addReplyToTree = (
@@ -119,12 +124,10 @@ const Comment = ({
 
       for (const node of nodes) {
         if (node.id === targetId) {
-          // Count this node + all its nested replies
           deletedCount += 1 + countReplies(node);
-          continue; // don't include this node in the result
+          continue; 
         }
 
-        // If it has replies, process them
         let newNode = node;
         if (node.replies && node.replies.length > 0) {
           const updatedReplies = walk(node.replies);
@@ -276,8 +279,8 @@ const Comment = ({
     <div className="flex flex-col gap-2" id={comment.id}>
       <div
         className={clsx(
-          "flex gap-1 py-1 border-b border-b-zinc-300 transition-colors duration-700",
-          { "bg-yellow-100 border-amber-600": highlight }
+          "flex gap-1 py-1 border-b border-b-zinc-300 dark:border-b-sage-700 transition-colors duration-700",
+          { "bg-yellow-100 border-amber-600 dark:bg-sage-200 dark:border-sage-800": highlight }
         )}
       >
         <Link
@@ -346,7 +349,7 @@ const Comment = ({
                       <Icons.delete className="text-red-500" size={20} />
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent>
+                  <TooltipContent className="dark:bg-sage-500">
                     <p className="text-white">Delete Comment</p>
                   </TooltipContent>
                 </Tooltip>
@@ -356,7 +359,7 @@ const Comment = ({
         )}
       </div>
       {viewReplies && (
-        <div className="ml-3 border-l border-l-zinc-300">
+        <div className="ml-3 border-l border-l-zinc-300 dark:border-l-sage-700">
           {comment.replies &&
             comment.replies.map((c) => (
               <Comment
@@ -372,13 +375,14 @@ const Comment = ({
         </div>
       )}
       {addReply && (
-        <div className="flex justify-between ml-3 border-l border-l-zinc-300">
+        <div className="flex justify-between ml-3 border-l border-l-zinc-300 dark:border-l-sage-700">
           <input
+            ref={inputRef}
             type="text"
             placeholder="Add a reply..."
             value={reply}
             onChange={(e) => setReply(e.target.value)}
-            className="w-full bg-zinc-200 border-0 px-0.5 text-sm flex-1"
+            className="w-full bg-zinc-200 dark:bg-sage-500 border-0 px-0.5 text-sm flex-1"
           />
           {reply && (
             <Button
@@ -409,10 +413,10 @@ const Comment = ({
           onClick={() => setOpen(false)}
         >
           <div
-            className="bg-zinc-200 border border-zinc-400 w-120 max-h-100 overflow-scroll rounded-lg p-2"
+            className="bg-zinc-200 dark:bg-sage-400 border border-zinc-400 dark:border-sage-700 w-120 max-h-100 overflow-scroll rounded-lg p-2"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex border-b-2 border-b-zinc-400 pb-1">
+            <div className="flex border-b-2 border-b-zinc-400 dark:border-b-sage-700 pb-1">
               <Icons.uncheck
                 onClick={() => setOpen(false)}
                 className="cursor-pointer"

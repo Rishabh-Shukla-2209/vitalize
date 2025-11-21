@@ -7,7 +7,7 @@ const UserInfo = ({user}: {user: User}) => {
   return (
     <Link
         href={`/community/user/${user.id}`}
-        className="flex gap-3 py-2 items-center cursor-pointer text-sm border-b border-b-zinc-400"
+        className="flex gap-3 py-2 items-center cursor-pointer text-sm border-b border-b-zinc-400 dark:border-b-sage-700"
       >
         {user.imgUrl ? (
           <Image

@@ -116,7 +116,7 @@ const CreatePostPage = () => {
         Create Post
       </h1>
       {postPreview ? (
-        <div className="flex flex-col gap-3 max-w-120 min-h-150 bg-zinc-100 p-5 rounded-md mb-5">
+        <div className="flex flex-col gap-3 max-w-120 min-h-150 bg-zinc-100 dark:bg-sage-400 p-5 rounded-md mb-5">
           <div className="flex flex-col flex-1 gap-2 mt-5">
             <p className="font-semibold">{title}</p>
             <p>{body}</p>
@@ -167,9 +167,9 @@ const CreatePostPage = () => {
             placeholder="Content"
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            className="border min-h-30 border-zinc-200 rounded p-2 text-zinc-600 outline-0 flex-5 bg-white resize-none"
+            className="border min-h-30 dark:bg-sage-400 dark:text-zinc-200 border-zinc-200 dark:border-sage-700 rounded p-2 text-zinc-600 outline-0 flex-5 bg-white resize-none"
           />
-          <div className="border border-zinc-200 text-zinc-600 rounded px-5 py-2  min-h-100">
+          <div className="border border-zinc-200 dark:border-sage-700 dark:bg-sage-400 text-zinc-600 rounded px-5 py-2  min-h-100">
             {!imgPreview && !workoutLogId ? (
               <>
                 <p>Select one of these</p>
@@ -209,6 +209,7 @@ const CreatePostPage = () => {
                 <div className="flex-center mt-3">
                   <Button
                     variant="outline"
+                    className="dark:text-zinc-200"
                     onClick={() => {
                       setImgPreview(null);
                       setWorkoutLogId("");

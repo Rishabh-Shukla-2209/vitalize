@@ -26,7 +26,7 @@ const Selector = ({
 ) => {
   return (
     <Select value={selectedValue} onValueChange={setChoice}>
-      <SelectTrigger className={clsx(classes)}>
+      <SelectTrigger className={clsx(classes, "cursor-pointer")}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

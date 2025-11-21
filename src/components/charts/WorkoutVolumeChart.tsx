@@ -35,7 +35,7 @@ const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
         ).toFixed(0);
 
   return (
-    <div className="boundary p-5">
+    <div className="boundary p-5 dark:bg-sage-400">
       <h3>Total Volume</h3>
       <p className="text-3xl font-bold my-1.5">
         {totalVolCurrent.toLocaleString("en-US")} kg

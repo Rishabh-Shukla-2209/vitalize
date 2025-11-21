@@ -36,7 +36,7 @@ const Cardio = ({
               min: { value: 1, message: "Sets must be at least 1" },
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
           {errors.cardio && errors.cardio[formIndex]?.sets && (
             <span className="error">
@@ -51,7 +51,7 @@ const Cardio = ({
             {...register(repsFieldName, {
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -61,7 +61,7 @@ const Cardio = ({
             {...register(restFieldName, {
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -73,7 +73,7 @@ const Cardio = ({
               min: { value: 1, message: "Calories must be at least 1" },
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
           {errors.cardio && errors.cardio[formIndex]?.caloriesBurned && (
             <span className="error">
@@ -86,7 +86,7 @@ const Cardio = ({
           <input
             type="number"
             {...register(distanceFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -94,7 +94,7 @@ const Cardio = ({
           <input
             type="number"
             {...register(durationFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -102,7 +102,7 @@ const Cardio = ({
           <input
             type="number"
             {...register(heartRateFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -110,7 +110,7 @@ const Cardio = ({
           <input
             type="number"
             {...register(vo2MaxFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -118,7 +118,7 @@ const Cardio = ({
           <input
             type="number"
             {...register(speedFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
       </div>

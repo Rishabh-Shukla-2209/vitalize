@@ -16,6 +16,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const links = [
+  { name: "Home", href: "/home" },
+  { name: "Workouts", href: "/workouts" },
+  { name: "Programs", href: "/programs" },
+  { name: "Community", href: "/community" },
+];
+
 export const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 export const dayName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

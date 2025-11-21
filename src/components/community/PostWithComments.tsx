@@ -7,11 +7,12 @@ import Icons from "../icons/appIcons";
 import clsx from "clsx";
 import Comment from "./Comment";
 import { Button } from "../ui/button";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { getComments, getPostLikes, getUser } from "@/lib/queries";
 import { useQuery } from "@tanstack/react-query";
 import Like from "./Like";
 import { Spinner } from "../ui/spinner";
+import { useKeyboardAvoidance } from "@/hooks/useKeyboardAvoidance";
 
 const PostWithComments = ({
   post,
@@ -47,6 +48,9 @@ const PostWithComments = ({
   const [open, setOpen] = useState(false);
   const [likes, setLikes] = useState<LikeType[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  useKeyboardAvoidance(inputRef);
   
   useEffect(() => {
     const fetchComments = async () => {
@@ -96,7 +100,7 @@ const PostWithComments = ({
     <div
       className="
         flex flex-col md:flex-row 
-        bg-zinc-100 rounded-md 
+        bg-zinc-100 dark:bg-sage-400 rounded-md 
         max-h-[85vh] overflow-y-auto 
         md:min-h-175 md:max-h-175 md:max-w-225 md:overflow-visible
         pb-5 md:pb-0
@@ -110,10 +114,10 @@ const PostWithComments = ({
         {post.imgUrl && <div className="relative w-full h-60 min-h-60 md:h-auto md:min-h-120 rounded-md overflow-hidden"><Image src={post.imgUrl} alt="Post Image" fill style={{ objectFit: "cover" }}/></div>}
         
       </div>
-      <div className="flex flex-col self-center md:self-auto justify-between w-90 md:w-100 bg-zinc-200 p-2 rounded-md">
+      <div className="flex flex-col self-center md:self-auto justify-between w-90 md:w-100 bg-zinc-200 dark:bg-sage-500 p-2 rounded-md">
         <Link
           href={`/community/user/${post.userid}`}
-          className="flex gap-3 items-center cursor-pointer pb-2 border-b border-b-zinc-400"
+          className="flex gap-3 items-center cursor-pointer pb-2 border-b border-b-zinc-400 dark:border-b-sage-700"
         >
           {post.user.imgUrl ? (
             <Image
@@ -171,13 +175,13 @@ const PostWithComments = ({
               onClick={() => setOpen(false)}
             >
               <div
-                className="bg-zinc-200 border border-zinc-400 w-80 md:w-120 max-h-100 overflow-scroll rounded-lg p-2"
+                className="bg-zinc-200 dark:bg-sage-400 border border-zinc-400 dark:border-sage-700 w-80 md:w-120 max-h-100 overflow-scroll rounded-lg p-2"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex border-b-2 border-b-zinc-400 pb-1">
+                <div className="flex border-b-2 border-b-zinc-400 dark:border-b-sage-700 pb-1">
                   <Icons.uncheck
                     onClick={() => setOpen(false)}
-                    className="cursor-pointer"
+                    className="cursor-pointer dark:text-sage-200"
                   />
                   <h3 className="flex-1 text-center">Likes</h3>
                 </div>
@@ -200,11 +204,12 @@ const PostWithComments = ({
         </div>
         <div className="flex justify-between">
           <input
+            ref={inputRef}
             type="text"
             placeholder="Add a comment..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="w-full bg-zinc-200 border-0 px-0.5 text-sm flex-1"
+            className="w-full bg-zinc-200 dark:bg-sage-500 border-0 px-0.5 text-sm flex-1"
           />
           {comment && (
             <Button

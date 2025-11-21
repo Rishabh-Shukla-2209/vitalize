@@ -84,7 +84,7 @@ export default function ImageCropper({
               onCropComplete={onCropComplete}
             />
           </div>
-          <Button variant="outline" onClick={showCroppedImage}>
+          <Button variant="outline" className="dark:text-zinc-200" onClick={showCroppedImage}>
             Done
           </Button>
         </>

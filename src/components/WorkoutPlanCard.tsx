@@ -5,7 +5,7 @@ import clsx from "clsx";
 
 const WorkoutPlanCard = ({ workout }: { workout: WorkoutPlanType }) => {
   return (
-    <div className="h-full flex flex-col gap-3 p-4 rounded-lg bg-zinc-100 cursor-pointer">
+    <div className="h-full flex flex-col gap-3 p-4 rounded-lg bg-zinc-100 dark:bg-sage-400 cursor-pointer">
       <div className="relative w-full h-55 rounded-xl overflow-hidden">
         <Image
           src={workout.imgUrl ? workout.imgUrl : "/workoutPlanImg.png"}

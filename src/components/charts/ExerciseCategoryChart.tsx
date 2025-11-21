@@ -49,7 +49,7 @@ const ExerciseCategoryChart = ({ userId }: { userId: string }) => {
   const chartName = `${selectedCategory} PROGRESS`;
 
   return (
-    <div className="boundary p-5">
+    <div className="boundary p-5 dark:bg-sage-400">
       <h3 className="mb-2">Progress by Workout Type</h3>
       <div className="flex flex-wrap gap-2 md:gap-5">
         <div>

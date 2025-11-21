@@ -37,16 +37,16 @@ const MonthlyWorkouts = ({ userId }: { userId: string }) => {
   const longestStreak = data.streaks?.longestStreakDays;
 
   return (
-    <div className="boundary w-full flex flex-col p-5">
+    <div className="boundary w-full flex flex-col p-5 dark:bg-sage-400">
       <h3 className="text-center">Workouts This Month</h3>
       <div className="flex-center my-6">
-        <div className="h-45 w-60 md:h-60 md:w-80 grid grid-rows-5 grid-cols-7">
+        <div className="h-45 w-60 md:h-60 md:w-80 grid grid-rows-5 grid-cols-7 bg-zinc-100 dark:bg-sage-700 rounded-md">
           {workedOutOnDays.map((day, index) => (
             <div
               key={index}
               className={clsx(
-                { "bg-primary": day },
-                { "bg-zinc-100": !day },
+                { "bg-primary dark:text-black": day },
+                { "bg-zinc-100 dark:bg-sage-700": !day },
                 "rounded flex-center"
               )}
             >

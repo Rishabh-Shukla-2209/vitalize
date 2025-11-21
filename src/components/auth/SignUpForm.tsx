@@ -73,7 +73,7 @@ const SignUpForm = () => {
 
   return (
     <div className="h-full w-full mt-15 flex items-center justify-center">
-      <div className="flex flex-col w-md lg:shadow-xl rounded-3xl">
+      <div className="flex flex-col w-md lg:shadow-xl dark:shadow-zinc-900 rounded-3xl">
         <div className="flex-center my-3">
           <div className="h-15 w-15 bg-black flex-center rounded-4xl">
             <Logo />
@@ -85,7 +85,7 @@ const SignUpForm = () => {
             Start your journey to a healthier you.
           </p>
         </div>
-        <div className="rounded-2xl bg-zinc-50 p-8 mt-10">
+        <div className="rounded-2xl bg-zinc-50 dark:bg-sage-400 p-8 mt-10">
           <form onSubmit={handleSubmit(onSubmit)}>
             <input {...register("email")} type="email" placeholder="Email" />
             {errors.email && (
@@ -120,7 +120,7 @@ const SignUpForm = () => {
             )}
           </form>
           <div>
-            <div className="h-0.5 bg-zinc-500 mt-2.5" />
+            <div className="h-0.5 bg-zinc-500 mt-3.5" />
             <div className="flex-center my-1">
               <p>or</p>
             </div>

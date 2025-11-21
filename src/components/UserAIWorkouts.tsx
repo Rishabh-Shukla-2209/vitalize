@@ -61,7 +61,7 @@ const UserAIWorkouts = ({ userId }: { userId: string }) => {
         <div className="flex justify-between">
           <Button
             variant="ghost"
-            className="text-red-500 text-center mt-2 cursor-pointer"
+            className="text-primary text-center mt-2 cursor-pointer"
             disabled={currIndex < 1}
             onClick={() => {
               setCurrIndex((prev) => prev - 1);
@@ -72,7 +72,7 @@ const UserAIWorkouts = ({ userId }: { userId: string }) => {
           </Button>
           <Button
             variant="ghost"
-            className="text-red-500 text-center mt-2 cursor-pointer"
+            className="text-primary text-center mt-2 cursor-pointer"
             disabled={!data || data.length < 5}
             onClick={() => {
               setCurrIndex((prev) => prev + 1);

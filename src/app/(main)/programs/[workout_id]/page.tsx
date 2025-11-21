@@ -57,25 +57,25 @@ const ProgramDetailPage = async ({
       </div>
 
       <div className="flex flex-col md:flex-row flex-wrap w-full mt-5 gap-5">
-        <div className="flex-4 bg-zinc-100 rounded-lg p-4">
+        <div className="flex-4 bg-zinc-100 dark:bg-sage-400 rounded-lg p-4">
           <h3 className="mb-1.5">Workout Overview</h3>
           <p>{workout.description}</p>
           <div className="flex flex-col md:flex-row gap-2 mt-1">
-            <h4 className="text-zinc-600 font-semibold">Muscles Involved: </h4>
+            <h4 className="text-zinc-600 dark:text-zinc-100 font-semibold">Muscles Involved: </h4>
             <ul className="flex flex-wrap gap-1">{uniqueMuscles.map((muscles, index) => (
-              <p key={index} className="flex gap-1 text-zinc-600">
+              <p key={index} className="flex gap-1">
                 • {toProperCase(muscles)}
               </p>
             ))}
             </ul>
           </div>
         </div>
-        <div className="flex-2 bg-zinc-100 rounded-lg p-4">
+        <div className="flex-2 bg-zinc-100 dark:bg-sage-400 rounded-lg p-4">
           <h3 className="mb-1.5">Required Equipments</h3>
           <div className="flex flex-wrap gap-3 items-center">
             {uniqueEquipments.length > 0 ? (
               uniqueEquipments.map((equipment, index) => (
-                <p key={index} className="flex gap-1 text-zinc-600">
+                <p key={index} className="flex gap-1">
                   <Icons.dumbell className="text-primary" />
                   {toProperCase(equipment!)}
                 </p>
@@ -88,7 +88,7 @@ const ProgramDetailPage = async ({
       </div>
       <div>
         <h2 className="my-3">Exercises</h2>
-        <div className="bg-zinc-100 rounded-lg">
+        <div className="bg-zinc-100 dark:bg-sage-400 rounded-lg">
           {workout.exercises.map((planExercise) => (
             <Exercise key={planExercise.id} exercise={planExercise} />
           ))}

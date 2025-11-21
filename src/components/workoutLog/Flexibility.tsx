@@ -33,7 +33,7 @@ const Flexibility = ({
               min: { value: 1, message: "Sets must be at least 1" },
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
           {errors.flexibility && errors.flexibility[formIndex]?.sets && (
             <span className="error">
@@ -48,7 +48,7 @@ const Flexibility = ({
             {...register(repsFieldName, {
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -58,7 +58,7 @@ const Flexibility = ({
             {...register(restFieldName, {
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -70,7 +70,7 @@ const Flexibility = ({
               min: { value: 1, message: "ROM must be at least 1" },
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
           {errors.flexibility &&
             errors.flexibility[formIndex]?.rangeOfMotion && (
@@ -84,7 +84,7 @@ const Flexibility = ({
           <input
             type="number"
             {...register(staticFlexibilityFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
@@ -92,7 +92,7 @@ const Flexibility = ({
           <input
             type="number"
             {...register(dynamicFlexibilityFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
       </div>

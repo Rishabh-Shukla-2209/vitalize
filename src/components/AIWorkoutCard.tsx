@@ -9,9 +9,9 @@ const AIWorkoutCard = ({
 }) => {
   return (
     <div>
-      <div className="flex gap-2 justify-between p-5 bg-zinc-50 rounded-lg">
+      <div className="flex gap-2 justify-between p-5 bg-zinc-50 dark:bg-sage-400 rounded-lg">
         <div className="flex items-center gap-3">
-          <div className="flex-center bg-zinc-100 h-15 w-15 rounded-lg">
+          <div className="flex-center bg-zinc-100 dark:bg-sage-500 h-15 w-15 rounded-lg">
             <Icons.ai className="text-primary" size={40} />
           </div>
           <div>

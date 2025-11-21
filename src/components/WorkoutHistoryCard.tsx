@@ -17,17 +17,17 @@ const WorkoutHistoryCard = ({
   const [expanded, setExpanded] = useState(false);
   return (
     <div>
-      <div className="flex justify-between p-5 gap-2 bg-zinc-100 rounded-lg">
+      <div className="flex justify-between p-5 gap-2 bg-zinc-100 dark:bg-sage-400 rounded-lg">
         <div
           className="flex items-center gap-3 cursor-pointer"
           onClick={() => setExpanded((prev) => !prev)}
         >
-          <div className="flex-center bg-zinc-200 h-15 w-15 rounded-lg">
+          <div className="flex-center bg-zinc-200 dark:bg-sage-500 h-15 w-15 rounded-lg">
             <Icons.calendar className="text-primary" size={40} />
           </div>
           <div>
             <h3>{workout.plan.name}</h3>
-            <ul className="flex flex-wap gap-2 text-zinc-600">
+            <ul className="flex flex-wap gap-2 text-zinc-600 dark:text-zinc-100">
               <li>{workout.duration} minutes</li>
               <li>{workout.exercises.length} exercises</li>
             </ul>
@@ -66,7 +66,7 @@ const WorkoutHistoryCard = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-zinc-200 overflow-hidden p-5 flex flex-col gap-2 rounded-lg"
+            className="bg-zinc-200 dark:bg-sage-500 overflow-hidden p-5 flex flex-col gap-2 rounded-lg"
           >
             <div className="flex justify-between">
               <h2>

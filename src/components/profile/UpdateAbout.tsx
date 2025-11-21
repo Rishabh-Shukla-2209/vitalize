@@ -78,7 +78,7 @@ const UpdateAbout = ({
       if (uploadUrl) updatedData.imgUrl = uploadUrl;
       if (bio !== (userData.bio ?? "")) updatedData.bio = bio;
       if (about !== (userData.about ?? "")) updatedData.about = about;
-      if( privacy !== userData.privacy) updatedData.privacy = privacy as PrivacyType
+      if (privacy && privacy !== userData.privacy) updatedData.privacy = privacy as PrivacyType
 
       if (Object.keys(updatedData).length !== 0) {
         await updateUser(userData.id, updatedData);
@@ -93,7 +93,7 @@ const UpdateAbout = ({
   };
 
   return (
-    <div className="border border-zinc-300 rounded-md bg-zinc-100 p-5">
+    <div className="border border-zinc-300 dark:border-sage-700 rounded-md bg-zinc-100 dark:bg-sage-400 p-5">
       {userData ? (
         <>
           <div className="flex flex-col items-center gap-3 mb-5">
@@ -121,7 +121,7 @@ const UpdateAbout = ({
                 placeholder="Enter your about here..."
                 value={about}
                 onChange={(e) => setAbout(e.target.value)}
-                className="border border-zinc-200 rounded p-2 text-zinc-600 outline-0 flex-5 bg-white resize-none"
+                className="border border-zinc-200 dark:border-sage-700 rounded p-2 text-zinc-600 dark:text-zinc-200 outline-0 flex-5 bg-white dark:bg-sage-500 resize-none"
               ></textarea>
             </p>
             <p className="flex items-center">
@@ -134,10 +134,10 @@ const UpdateAbout = ({
                 placeholder="Enter your bio here..."
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                className="border border-zinc-200 bg-white rounded p-2 text-zinc-600 outline-0 flex-5 resize-none h-25 "
+                className="border border-zinc-200 dark:border-sage-700 bg-white dark:bg-sage-500 rounded p-2 text-zinc-600 dark:text-zinc-200 outline-0 flex-5 resize-none h-25 "
               ></textarea>
             </p>
-            <p className="flex items-center mt-2">
+            <div className="flex items-center mt-2">
               <label htmlFor="privacy" className="flex-1">
                 Visibility
               </label>
@@ -151,7 +151,7 @@ const UpdateAbout = ({
                   <Label htmlFor="private">Private</Label>
                 </div>
               </RadioGroup>
-            </p>
+            </div>
           </div>
           <Button
             variant="default"

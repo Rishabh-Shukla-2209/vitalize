@@ -185,7 +185,7 @@ const WorkoutLogPage = () => {
                 <textarea
                   {...register("notes")}
                   placeholder="You may enter any notes related to this workout here..."
-                  className="p-3 h-20 md:h-12 outline-none rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border border border-zinc-200"
+                  className="p-3 h-20 md:h-12 outline-none rounded-sm text-zinc-600 bg-zinc-50 dark:bg-sage-500 dark:text-zinc-200 focus:border-zinc-800 focus:border border border-zinc-200 dark:border-sage-700"
                 />
               </p>
               <p>
@@ -197,7 +197,7 @@ const WorkoutLogPage = () => {
                     min: { value: 1, message: "Duration must be at least 1" },
                     valueAsNumber: true,
                   })}
-                  className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border max-w-25"
+                  className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 dark:bg-sage-500 dark:text-zinc-200 focus:border-zinc-800 focus:border max-w-25"
                 />
                 {errors.duration && (
                   <span className="error">{errors.duration.message}</span>

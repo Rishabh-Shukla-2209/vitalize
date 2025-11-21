@@ -1,7 +1,7 @@
 
 const ProfileSkeleton = () => {
   return (
-    <div className="w-80 h-100 rounded-md shimmer" />
+    <div className="w-full h-100 rounded-md shimmer" />
   )
 }
 

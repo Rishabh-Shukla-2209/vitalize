@@ -5,11 +5,22 @@
 
 @theme {
   --color-primary: #38e07b;
+  --color-sage-200: #38e07b;
+  --color-sage-400: #1a221d;
+  --color-sage-500: #27332a;
+  --color-sage-700: #3d5245;
+  --color-sage-800: #4a6a57;
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
 }
 
 @layer base {
   input {
-    @apply bg-white text-base border rounded-md border-zinc-200 px-3.5 py-2.5 text-zinc-900 focus:border-primary focus:border-2 outline-none;
+    @apply bg-white dark:bg-sage-500 dark:border-0 text-base dark:text-zinc-100 border rounded-md border-zinc-200 dark:border-sage-700 px-3.5 py-2.5 text-zinc-900 focus:border-primary focus:border-2 dark:focus:border-0 outline-none;
   }
 
   form {
@@ -17,19 +28,19 @@
   }
 
   h1 {
-    @apply text-3xl font-semibold text-zinc-600;
+    @apply text-3xl font-semibold text-zinc-600 dark:text-zinc-100;
   }
 
   h2 {
-    @apply text-xl font-semibold text-zinc-700;
+    @apply text-xl font-semibold text-zinc-700 dark:text-zinc-100;
   }
 
   h3 {
-    @apply text-zinc-700 font-semibold text-lg;
+    @apply text-zinc-700 font-semibold text-lg dark:text-zinc-100;
   }
 
   p {
-    @apply text-zinc-600;
+    @apply text-zinc-600 dark:text-zinc-100;
   }
 }
 
@@ -43,7 +54,7 @@
   }
 
   .boundary {
-    @apply border border-gray-400 rounded-md;
+    @apply border border-gray-400 dark:border-sage-700 rounded-md;
   }
 
   .input-no-spinner::-webkit-inner-spin-button,
@@ -59,7 +70,7 @@
   .shimmer {
     position: relative;
     overflow: hidden;
-    background-color: rgb(244, 244, 245);
+    background-color: rgb(244 244 245);
   }
 
   .shimmer::after {
@@ -67,23 +78,29 @@
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
-
     background-image: linear-gradient(
       90deg,
       transparent 0%,
       rgba(255, 255, 255, 0.65) 20%,
-      transparent 20%
+      transparent 40%
     );
-
     animation: shimmer 1.6s infinite;
   }
 
-  @keyframes shimmer {
-    100% {
-      transform: translateX(100%);
-    }
+  .dark .shimmer {
+    background-color: rgb(31 41 43);
   }
+
+  .dark .shimmer::after {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0,0,0,0.30) 20%,       
+    transparent 40%
+  );
 }
+}
+
 
 @layer components {
   .log-workout-form {

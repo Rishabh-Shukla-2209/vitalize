@@ -23,6 +23,7 @@ export function FilePicker({
       <Button
         variant="outline"
         onClick={() => inputRef.current?.click()}
+        className="dark:text-zinc-400 dark:font-light"
       >
         Select Photo
       </Button>

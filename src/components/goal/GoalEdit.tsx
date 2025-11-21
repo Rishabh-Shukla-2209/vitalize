@@ -22,7 +22,7 @@ const GoalEdit = ({ goal, goalUpdater }: { goal: GoalType, goalUpdater: (goalId:
           <Icons.abandon className="text-red-500"/>
         </Button>
       </TooltipTrigger>
-      <TooltipContent>
+      <TooltipContent className="dark:bg-sage-500">
         <p className="text-white">Abandon Goal</p>
       </TooltipContent>
     </Tooltip>

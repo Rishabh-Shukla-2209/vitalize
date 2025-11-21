@@ -251,7 +251,7 @@ const OnboardingPage = () => {
         </p>
         <form onSubmit={onSubmit} className="flex flex-col">
           <p className="flex flex-col gap-1">
-            <label htmlFor="firstName" className="text-zinc-600">
+            <label htmlFor="firstName" className="text-zinc-600 dark:text-zinc-200">
               First Name
             </label>
             <input
@@ -260,12 +260,12 @@ const OnboardingPage = () => {
               placeholder="Enter first name..."
               defaultValue={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="bg-zinc-50"
+              className="bg-zinc-50 dark:bg-sage-400"
             />
             {firstNameError && <span className="error">{firstNameError}</span>}
           </p>
           <p className="flex flex-col gap-1">
-            <label htmlFor="lastName" className="text-zinc-600">
+            <label htmlFor="lastName" className="text-zinc-600 dark:text-zinc-200">
               Last Name
             </label>
             <input
@@ -274,7 +274,7 @@ const OnboardingPage = () => {
               placeholder="Enter last name..."
               defaultValue={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="bg-zinc-50"
+              className="bg-zinc-50 dark:bg-sage-400"
             />
             {lastNameError && <span className="error">{lastNameError}</span>}
           </p>
@@ -289,7 +289,7 @@ const OnboardingPage = () => {
             {genderError && <span className="error">{genderError}</span>}
           </p>
           <p className="flex flex-col gap-1">
-            <label htmlFor="height" className="text-zinc-600">
+            <label htmlFor="height" className="text-zinc-600 dark:text-zinc-200">
               Height (cm)
             </label>
             <input
@@ -298,12 +298,12 @@ const OnboardingPage = () => {
               placeholder="Enter your height..."
               defaultValue={height}
               onChange={(e) => setHeight(e.target.value)}
-              className="bg-zinc-50"
+              className="bg-zinc-50 dark:bg-sage-400"
             />
             {heightError && <span className="error">{heightError}</span>}
           </p>
           <p className="flex flex-col gap-1">
-            <label htmlFor="weight" className="text-zinc-600">
+            <label htmlFor="weight" className="text-zinc-600 dark:text-zinc-200">
               Weight (kg)
             </label>
             <input
@@ -312,12 +312,12 @@ const OnboardingPage = () => {
               placeholder="Enter your weight..."
               defaultValue={weight}
               onChange={(e) => setWeight(e.target.value)}
-              className="bg-zinc-50"
+              className="bg-zinc-50 dark:bg-sage-400"
             />
             {weightError && <span className="error">{weightError}</span>}
           </p>
           <div className="flex items-center">
-            <label className="text-zinc-600 mr-5">Date of Birth</label>
+            <label className="text-zinc-600 dark:text-zinc-200 mr-5">Date of Birth</label>
             <DatePicker label="" date={dob} setDate={setDob} />
             {dobError && <span className="error ml-5">{dobError}</span>}
           </div>

@@ -5,9 +5,9 @@ import { fitnessMetricUnits, fitnessMetricLabels, timeAgo } from "@/lib/utils";
 const PR = ({ pR }: { pR: PRType }) => {
 
   return (
-    <div className="flex gap-2 w-full py-2 bg-zinc-50 rounded-lg my-1">
+    <div className="flex gap-2 w-full py-2 bg-zinc-50 dark:bg-sage-400 rounded-lg my-1">
       <div className="flex-center ml-2.5">
-        <Icons.trophy className="text-primary rounded-lg bg-zinc-100 p-2" size={50} />
+        <Icons.trophy className="text-primary rounded-lg bg-zinc-100 dark:bg-sage-500 p-2" size={50} />
       </div>
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 w-full flex-5 pr-3">
         <div>

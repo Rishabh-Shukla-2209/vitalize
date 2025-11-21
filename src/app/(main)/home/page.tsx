@@ -41,7 +41,7 @@ const Homepage = () => {
           <Link href={"/workouts/log-workout"}>
             <Button>
               <span className="flex-center gap-1">
-                <Icons.add /> <p className="text-white font-bold">Log Workout</p>
+                <Icons.add /> <p className="text-white dark:text-zinc-900 font-bold">Log Workout</p>
               </span>
             </Button>
           </Link>
@@ -56,9 +56,9 @@ const Homepage = () => {
       </div>
       <div className="flex flex-wrap gap-10 mt-8">
         <div className="flex-4 flex flex-col gap-10">
-          <div className="relative boundary p-5 overflow-hidden">
+          <div className="relative boundary p-5 overflow-hidden dark:bg-sage-400">
             <h3>Today</h3>
-            <p className="text-2xl font-bold text-gray-600 my-1">
+            <p className="text-2xl font-bold text-gray-600 dark:text-zinc-50 my-1">
               {todaysWorkoutComplete
                 ? "Workout Complete"
                 : "Ready to do today's wokout?"}
@@ -69,10 +69,10 @@ const Homepage = () => {
                 : "Do something today that your future self will thank you for."}
             </p>
             {todaysWorkoutComplete && (
-              <Icons.check className="absolute -right-12 -bottom-12 h-40 w-40 opacity-20 text-zinc-400" />
+              <Icons.check className="absolute -right-12 -bottom-12 h-40 w-40 opacity-20 text-zinc-400 dark:text-sage-200" />
             )}
             {!todaysWorkoutComplete && (
-              <Icons.uncheck className="absolute -right-12 -bottom-12 h-40 w-40 opacity-20 text-zinc-400" />
+              <Icons.uncheck className="absolute -right-12 -bottom-12 h-40 w-40 opacity-20 text-zinc-400 dark:text-sage-200" />
             )}
           </div>
 

@@ -5,7 +5,7 @@ const ExerciseLog = ({ exercise, name }: { exercise: ExerciseLogType, name: stri
   return (
     <div className="flex gap-2">
       <p className="flex-1 font-semibold">{name}</p>
-      <ul className="flex gap-3 flex-wrap gap-y-0.5 text-zinc-600 flex-5">
+      <ul className="flex gap-3 flex-wrap gap-y-0.5 text-zinc-600 dark:text-zinc-100 flex-5">
         {Object.entries(fitnessMetricUnits).map(([key, unit]) => {
           const value = exercise[key as keyof typeof fitnessMetricUnits];
 

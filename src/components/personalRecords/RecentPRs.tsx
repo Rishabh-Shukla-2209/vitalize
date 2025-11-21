@@ -29,7 +29,7 @@ const PRs = ({ userId }: { userId: string }) => {
           </p>
         )}
         {(countOfTotalPRs ?? 0) > 11 && (
-          <Link href="/profile" className="text-red-500 text-center mt-2">
+          <Link href="/profile" className="text-primary text-center mt-2">
             See more...
           </Link>
         )}

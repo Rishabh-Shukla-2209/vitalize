@@ -10,7 +10,7 @@ const Goal = ({ goal }: { goal: GoalType }) => {
     100;
 
   return (
-    <div className="flex gap-2 w-full py-2 bg-zinc-50 rounded-lg my-1">
+    <div className="flex gap-2 w-full py-2 bg-zinc-50 dark:bg-sage-400 rounded-lg my-1">
       <div className="flex-center ml-2.5">
         <Icons.goal className="text-primary rounded-lg" size={45} />
       </div>
@@ -25,10 +25,10 @@ const Goal = ({ goal }: { goal: GoalType }) => {
           }
         </p>
         <p className="flex justify-between">
-          <span className="text-sm text-zinc-600">
+          <span className="text-sm text-zinc-600 dark:text-zinc-200">
             Current: {goal.currentValue}
           </span>
-          <span className="text-sm text-zinc-600">
+          <span className="text-sm text-zinc-600 dark:text-zinc-200">
             Goal: {goal.targetValue}
           </span>
         </p>

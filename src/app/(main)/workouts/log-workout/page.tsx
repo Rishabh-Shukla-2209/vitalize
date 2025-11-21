@@ -46,11 +46,11 @@ const LogWorkoutPage = () => {
       <p>
         Select from your recent workouts or search for one.
       </p>
-      <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 mt-3 rounded-lg w-85 md:w-100">
+      <p className="flex items-center text-zinc-400 bg-zinc-100 dark:bg-sage-400 px-2.5 mt-3 rounded-lg w-85 md:w-100">
         <Icons.search />
         <input
           type="text"
-          className="border-0 bg-zinc-100 text-zinc-600 flex-1"
+          className="border-0 bg-zinc-100 dark:bg-sage-400 text-zinc-600 dark:text-zinc-100 flex-1"
           placeholder="Search all workouts..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

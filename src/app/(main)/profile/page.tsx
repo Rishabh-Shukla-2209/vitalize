@@ -52,7 +52,7 @@ const ProfilePage = () => {
         {edit ? (
           <UpdateAbout setEdit={setEdit} />
         ) : (
-          <div className="border border-zinc-300 rounded-md bg-zinc-100 p-5 text-center">
+          <div className="border border-zinc-300 dark:border-sage-700 rounded-md bg-zinc-100 dark:bg-sage-400 p-5 text-center">
             {userData ? (
               <>
                 <About userData={userData} />

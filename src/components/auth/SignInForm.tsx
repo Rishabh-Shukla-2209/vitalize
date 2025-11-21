@@ -70,7 +70,7 @@ const SignInForm = () => {
 
   return (
     <div className="h-full w-full mt-15 flex items-center justify-center">
-      <div className="flex flex-col w-md lg:shadow-xl rounded-3xl">
+      <div className="flex flex-col w-md lg:shadow-xl dark:shadow-zinc-900 rounded-3xl">
         <div className="flex-center my-3">
           <div className="h-15 w-15 bg-black flex-center rounded-4xl">
             <Logo />
@@ -82,9 +82,9 @@ const SignInForm = () => {
             Log in to continue your fitness journey.
           </p>
         </div>
-        <div className="rounded-2xl bg-zinc-50 p-8 mt-10">
+        <div className="rounded-2xl bg-zinc-50 dark:bg-sage-400 p-8 mt-10">
           <form onSubmit={handleSubmit(onSubmit)}>
-            <input {...register("email")} type="email" placeholder="Email" />
+            <input {...register("email")} type="email" placeholder="Email"/>
             {errors.email && (
               <span className="error">{errors.email.message}</span>
             )}
@@ -100,7 +100,7 @@ const SignInForm = () => {
             <div className="flex justify-end">
               <Link
                 href="/forgot-password"
-                className="text-right text-sm text-zinc-600 cursor-pointer hover:text-zinc-800"
+                className="text-right text-sm text-zinc-600 dark:text-zinc-100 cursor-pointer hover:text-zinc-800 dark:hover:text-zinc-300"
               >
                 Forgot Password?
               </Link>

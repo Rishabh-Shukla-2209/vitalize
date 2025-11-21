@@ -4,13 +4,14 @@ import Image from "next/image";
 import { timeAgo } from "@/lib/utils";
 import { Button } from "../ui/button";
 import WorkoutSummary from "./WorkoutSummary";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { getPostLikes, saveComment, savePostReaction } from "@/lib/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Like from "./Like";
 import PostWithComments from "./PostWithComments";
+import { useKeyboardAvoidance } from "@/hooks/useKeyboardAvoidance";
 
 const Post = ({
   post,
@@ -25,6 +26,9 @@ const Post = ({
   const [liked, setLiked] = useState(post.liked);
   const [open, setOpen] = useState<"likes" | "comments" | "none">("none");
   const [likes, setLikes] = useState<LikeType[]>([]);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  useKeyboardAvoidance(inputRef);
 
   const queryClient = useQueryClient();
   const optimisticLikesCount =
@@ -112,7 +116,7 @@ const Post = ({
   }, [likes.length, open, post.id]);
 
   return (
-    <div className="flex justify-between flex-col bg-zinc-100 rounded-md p-5 min-h-160 min-w-95 max-w-95 lg:min-w-125 lg:max-w-125">
+    <div className="flex justify-between flex-col bg-zinc-100 dark:bg-sage-400 rounded-md p-5 min-h-160 min-w-95 max-w-95 lg:min-w-125 lg:max-w-125">
       <Link
         href={`/community/user/${post.userid}`}
         className={clsx("flex gap-3 items-center cursor-pointer", {
@@ -167,11 +171,12 @@ const Post = ({
       </div>
       <div className="flex justify-between">
         <input
+          ref={inputRef}
           type="text"
           placeholder="Add a comment..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          className="w-full bg-zinc-100 border-0 px-0 py-0.1 text-sm mt-1 flex-1"
+          className="w-full bg-zinc-100 dark:bg-sage-400 border-0 px-0 py-0.1 text-sm mt-1 flex-1"
         />
         {comment && (
           <Button
@@ -193,13 +198,13 @@ const Post = ({
         >
           {open === "likes" && (
             <div
-              className="bg-zinc-200 border border-zinc-400 w-120 max-h-100 overflow-scroll rounded-lg p-2"
+              className="bg-zinc-200 dark:bg-sage-400 border border-zinc-400 dark:border-sage-700 w-120 max-h-100 overflow-scroll rounded-lg p-2"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex border-b-2 border-b-zinc-400 pb-1">
+              <div className="flex border-b-2 border-b-zinc-400 dark:border-b-sage-700 pb-1">
                 <Icons.uncheck
                   onClick={() => setOpen("none")}
-                  className="cursor-pointer"
+                  className="cursor-pointer dark:text-sage-200"
                 />
                 <h3 className="flex-1 text-center">Likes</h3>
               </div>

@@ -84,7 +84,7 @@ export function NotificationsList() {
     <div className="relative">
       <Icons.bell
         fill="white"
-        className="cursor-pointer text-gray-500 hover:text-gray-900"
+        className="cursor-pointer text-gray-500 dark:text-white hover:text-gray-900"
         onClick={() => setOpen((prev) => !prev)}
       />{" "}
       {unreadCount > 0 && (
@@ -101,14 +101,14 @@ export function NotificationsList() {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className={clsx(
               // MOBILE FIRST (full screen drawer)
-              "fixed inset-0 h-full max-w-full bg-zinc-50 p-4 z-50 overflow-y-auto",
+              "fixed inset-0 h-full max-w-full bg-zinc-50 dark:bg-sage-400 p-4 z-50 overflow-y-auto",
 
               // DESKTOP (md+) OVERRIDE → absolute small panel
               "md:absolute md:top-12 md:right-1 md:inset-auto md:w-auto md:h-auto md:min-w-80 md:max-h-125 md:rounded-md md:p-1 md:shadow-xl"
             )}
           >
             <div>
-                <div className="flex justify-between p-2 border-b border-b-zinc-400">
+                <div className="flex justify-between p-2 border-b border-b-zinc-400 dark:border-sage-700">
                   <h3>Notifications</h3>
                   <Icons.uncheck
                     onClick={() => setOpen(false)}
@@ -133,7 +133,7 @@ export function NotificationsList() {
                         <Spinner />
                       ) : (
                         <span
-                          className="text-red-500 cursor-pointer py-2"
+                          className="text-primary cursor-pointer py-2"
                           onClick={loadMoreNotifications}
                         >
                           See more...

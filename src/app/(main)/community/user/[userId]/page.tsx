@@ -94,7 +94,7 @@ const SocialProfile = () => {
       {data ? (
         <>
           <div className="flex-1">
-            <div className="border border-zinc-300 rounded-md bg-zinc-100 p-5 text-center">
+            <div className="border border-zinc-300 dark:border-sage-700 rounded-md bg-zinc-100 dark:bg-sage-400 p-5 text-center">
               {data.profileUser && (
                 <>
                   <About userData={data.profileUser} visitedByOther={true} />
@@ -143,7 +143,7 @@ const SocialProfile = () => {
           </div>
         </>
       ) : (
-        <Spinner />
+        <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
       )}
     </div>
   );

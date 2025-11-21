@@ -76,14 +76,14 @@ const CommunityPage = () => {
         </div>
         <p
           className={clsx(
-            "items-center text-zinc-400 bg-zinc-100 px-2.5 rounded-lg w-full xl:w-85 mb-5",
+            "items-center text-zinc-400 bg-zinc-100 dark:bg-sage-400 px-2.5 rounded-lg w-full xl:w-85 mb-5",
             showSearch ? "flex" : "hidden xl:flex"
           )}
         >
           <Icons.search />
           <input
             type="text"
-            className="border-0 bg-zinc-100 text-zinc-600 flex-1"
+            className="border-0 bg-zinc-100 dark:bg-sage-400 text-zinc-600 dark:text-zinc-100 flex-1"
             placeholder="Search for a friend..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -98,11 +98,11 @@ const CommunityPage = () => {
         )}
         <div
           className={clsx(
-            "bg-zinc-100 rounded-md px-3 py-2 my-5",
+            "bg-zinc-100 dark:bg-sage-400 rounded-md px-3 py-2 my-5",
             showSuggestions ? "block" : "hidden xl:block"
           )}
         >
-          <h3 className="border-b border-b-zinc-400">Suggestions</h3>
+          <h3 className="border-b border-b-zinc-400 dark:border-b-sage-700">Suggestions</h3>
           <div className="flex flex-col">
             {suggestions &&
               suggestions.length > 0 &&
@@ -113,12 +113,12 @@ const CommunityPage = () => {
       </div>
       {user && <Feed userId={user.id} type="general" />}
       <div className="hidden xl:block">
-        <div className="bg-zinc-100 p-5 rounded-md">
+        <div className="bg-zinc-100 dark:bg-sage-400 p-5 rounded-md">
           <h3>Share Your Progress</h3>
           <Link href="/community/create-post">
             <Button
               variant="secondary"
-              className="bg-zinc-200 w-full text-md rounded-l-full rounded-r-full mt-2 hover:bg-zinc-300"
+              className="bg-zinc-200 dark:bg-sage-500 w-full text-md rounded-l-full rounded-r-full mt-2 hover:bg-zinc-300 hover:dark:bg-sage-700"
             >
               <Icons.share /> Share
             </Button>

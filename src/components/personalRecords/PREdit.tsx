@@ -53,7 +53,7 @@ const PREdit = ({ pr, userId, prUpdater }: { pr: PRType, userId: string, prUpdat
           <Icons.edit />
         </Button>
       </TooltipTrigger>
-      <TooltipContent>
+      <TooltipContent className="dark:bg-sage-500">
         <p className="text-white">Change what you want to track</p>
       </TooltipContent>
     </Tooltip>

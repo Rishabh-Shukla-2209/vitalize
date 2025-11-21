@@ -113,11 +113,11 @@ const AllGoals = ({ userId }: { userId: string }) => {
             placeholder="Filter by type"
             selectedValue={status}
           />
-          <p className="flex items-center text-zinc-400 bg-zinc-100 px-2.5 rounded-lg w-85">
+          <p className="flex items-center text-zinc-400 bg-zinc-100 dark:bg-sage-400 px-2.5 rounded-lg min-w-65 max-w-85 md:w-85">
             <Icons.search />
             <input
               type="text"
-              className="border-0 bg-zinc-100 text-zinc-600 flex-1"
+              className="border-0 bg-zinc-100 dark:bg-sage-400 text-zinc-600 dark:text-zinc-100 flex-1"
               placeholder="Search by exercise..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -137,7 +137,7 @@ const AllGoals = ({ userId }: { userId: string }) => {
           goals.map((goal) => (
             <div
               key={goal.id}
-              className="flex gap-2 bg-zinc-50 rounded-md pr-2 relative"
+              className="flex gap-2 bg-zinc-50 dark:bg-sage-400 rounded-md pr-2 relative"
             >
               <Goal goal={goal} />
               {goal.status === "IN_PROGRESS" && (
@@ -153,7 +153,7 @@ const AllGoals = ({ userId }: { userId: string }) => {
         <div className="flex justify-between">
           <Button
             variant="ghost"
-            className="text-red-500 text-center mt-2 cursor-pointer"
+            className="text-primary text-center mt-2 cursor-pointer"
             disabled={currIndex < 1}
             onClick={() => {
               setCurrIndex((prev) => prev - 1);
@@ -164,7 +164,7 @@ const AllGoals = ({ userId }: { userId: string }) => {
           </Button>
           <Button
             variant="ghost"
-            className="text-red-500 text-center mt-2 cursor-pointer"
+            className="text-primary text-center mt-2 cursor-pointer"
             disabled={!goals || goals.length < 5}
             onClick={() => {
               setCurrIndex((prev) => prev + 1);

@@ -65,7 +65,7 @@ const WorkoutPage = () => {
     <div className="flex-center">
       {workoutPlan ? (
         <div className="flex flex-col items-center min-w-80 md:min-w-100 px-3 gap-5">
-          <div className="bg-zinc-100 flex-5 mt-10 p-5 text-center w-full rounded-lg">
+          <div className="bg-zinc-100 dark:bg-sage-400 flex-5 mt-10 p-5 text-center w-full rounded-lg">
             <h1 className="mb-1">
               {workoutPlan.name}
             </h1>
@@ -75,11 +75,11 @@ const WorkoutPage = () => {
               <span> {workoutPlan.duration} minutes</span>
             </p>
             <div className="flex justify-between gap-1.5 my-3">
-              <div className="bg-zinc-400 h-1.5 w-full rounded-l-full rounded-r-full" />
-              <div className="bg-zinc-400 h-1.5 w-full rounded-l-full rounded-r-full" />
-              <div className="bg-zinc-400 h-1.5 w-full rounded-l-full rounded-r-full" />
+              <div className="bg-zinc-400 dark:bg-sage-500 h-1.5 w-full rounded-l-full rounded-r-full" />
+              <div className="bg-zinc-400 dark:bg-sage-500 h-1.5 w-full rounded-l-full rounded-r-full" />
+              <div className="bg-zinc-400 dark:bg-sage-500 h-1.5 w-full rounded-l-full rounded-r-full" />
             </div>
-            <div className="bg-zinc-300 rounded-lg p-5 ">
+            <div className="bg-zinc-300 dark:bg-sage-500 rounded-lg p-5 ">
               <h3>Current Exercise</h3>
               {currWorkoutItem && (
                 <>
@@ -109,7 +109,7 @@ const WorkoutPage = () => {
             <h3 className="my-1">{status === "work" ? "Work" : "Rest"}</h3>
             <h2
               className={clsx(
-                "font-bold text-zinc-600",
+                "font-bold text-zinc-600 dark:text-zinc-200",
                 { "text-6xl": status === "rest" },
                 { "text-4xl mb-8": status === "work" }
               )}
@@ -137,7 +137,7 @@ const WorkoutPage = () => {
             <div className="flex justify-between gap-5 mt-3">
               <Button
                 variant="secondary"
-                className="flex-1 flex-center bg-zinc-300 text-zinc-700 py-6 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:text-zinc-800 disabled:bg-zinc-200 disabled:text-zinc-500 disabled:hover:cursor-default"
+                className="flex-1 flex-center bg-zinc-300 dark:bg-sage-700 dark:text-zinc-200 text-zinc-700 py-6 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:dark:bg-sage-800 hover:text-zinc-800 disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:cursor-default"
                 onClick={prevWorkoutItem}
                 disabled={!workoutStarted || hasEnded}
               >
@@ -145,7 +145,7 @@ const WorkoutPage = () => {
               </Button>
               <Button
                 variant="secondary"
-                className="flex-1 flex-center bg-zinc-300 text-zinc-700 py-6 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:text-zinc-800 disabled:bg-zinc-200 disabled:text-zinc-500 disabled:hover:cursor-default"
+                className="flex-1 flex-center bg-zinc-300 dark:bg-sage-700 dark:text-zinc-200 text-zinc-700 py-6 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:dark:bg-sage-800 hover:text-zinc-800 disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:cursor-default"
                 onClick={nextWorkoutItem}
                 disabled={!workoutStarted || hasEnded}
               >
@@ -155,7 +155,7 @@ const WorkoutPage = () => {
           </div>
           <Button
             variant="secondary"
-            className="flex-1 flex-center w-full bg-zinc-300 font-semibold text-lg text-zinc-800 py-4 px-10 rounded-l-full rounded-r-full hover:bg-zinc-400 hover:text-zinc-800 disabled:bg-zinc-200 disabled:text-zinc-500 disabled:hover:cursor-default"
+            className="flex-1 flex-center w-full bg-zinc-300 dark:bg-sage-700 dark:text-zinc-200 font-semibold text-lg text-zinc-800 py-4 px-10 rounded-l-full rounded-r-full hover:bg-zinc-500 hover:text-zinc-800 hover:dark:bg-sage-800 disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:cursor-default"
             onClick={pauseWorkout}
             disabled={!workoutStarted || hasEnded}
           >

@@ -32,7 +32,7 @@ const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
           </div>
           <div>
             <h3>{exercise.exercise.name}</h3>
-            <ul className="flex gap-2 text-zinc-600">
+            <ul className="flex gap-2 text-zinc-600 dark:text-zinc-100">
               {exercise.sets > 0 && <li>{exercise.sets} sets • </li>}
               {exercise.reps > 0 && <li>{exercise.reps} reps • </li>}
               {exercise.distance && <li>{exercise.distance} km • </li>}
@@ -54,7 +54,7 @@ const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-zinc-200 overflow-hidden p-5 flex flex-col gap-2 rounded-lg"
+            className="bg-zinc-200 dark:bg-sage-500 overflow-hidden p-5 flex flex-col gap-2 rounded-lg"
           >
             <h2>{exercise.exercise.name}</h2>
             <p>{exercise.exercise.instructions}</p>

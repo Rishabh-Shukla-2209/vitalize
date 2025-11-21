@@ -50,12 +50,12 @@ const Comments = ({ userId }: { userId: string }) => {
   return (
     <div>
        <h2 className="mb-2">Comments</h2>
-      <div className="bg-zinc-50 border border-zinc-200 rounded-md">
+      <div className="bg-zinc-50 dark:bg-sage-400 border border-zinc-200 dark:border-sage-700 overflow-cliprounded-md">
         {isLoading ? <ActivitySkeleton/> : comments && comments.length > 0 ?
           comments.map((comment) => (
             <div
               key={comment.id}
-              className="border border-b-zinc-100 p-2 flex justify-between items-center text-zinc-600"
+              className="border border-b-zinc-100 dark:border-sage-700 p-2 flex justify-between items-center text-zinc-600"
             >
               <p>{comment.text.slice(0, 10)}... on {comment.post.user.firstName}&apos;s post.</p>
               <p className="flex-center">
@@ -75,7 +75,7 @@ const Comments = ({ userId }: { userId: string }) => {
       <div className="flex justify-between">
         <Button
           variant="ghost"
-          className="text-red-500 text-center mt-2 cursor-pointer"
+          className="text-primary text-center mt-2 cursor-pointer"
           disabled={currIndex < 1}
           onClick={() => {
             setCurrIndex((prev) => prev - 1);
@@ -86,7 +86,7 @@ const Comments = ({ userId }: { userId: string }) => {
         </Button>
         <Button
           variant="ghost"
-          className="text-red-500 text-center mt-2 cursor-pointer"
+          className="text-primary text-center mt-2 cursor-pointer"
           disabled={!comments || comments.length < 5}
           onClick={() => {
             setCurrIndex((prev) => prev + 1);

@@ -1,5 +1,6 @@
 import { WorkoutLogDataType } from "@/lib/types";
-import { useFormContext, FieldPath } from "react-hook-form";
+import { useFormContext, FieldPath, Controller } from "react-hook-form";
+import { DurationInput } from "../DurationInput";
 
 const Core = ({
   formIndex,
@@ -10,6 +11,7 @@ const Core = ({
 }) => {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<WorkoutLogDataType>();
 
@@ -47,33 +49,43 @@ const Core = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
-        <p>
-          <label>Rest (s)</label>
-          <input
-            type="number"
-            {...register(restFieldName, {
-              valueAsNumber: true,
-            })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+        <div>
+          <label>Rest</label>
+          <Controller
+            name={restFieldName}
+            control={control}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
-        </p>
-        <p>
+        </div>
+        <div>
           <label>Plank Hold Time</label>
-          <input
-            type="number"
-            {...register(plankHoldTimeFieldName, {
+
+          <Controller
+            name={plankHoldTimeFieldName}
+            control={control}
+            rules={{
               required: "PHT is required",
               min: { value: 1, message: "PHT must be at least 1" },
-              valueAsNumber: true,
-            })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+            }}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
+
           {errors.core && errors.core[formIndex]?.plankHoldTime && (
             <span className="error">
               {errors.core[formIndex].plankHoldTime.message}
             </span>
           )}
-        </p>
+        </div>
       </div>
     </div>
   );

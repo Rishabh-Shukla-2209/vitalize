@@ -1,5 +1,7 @@
 import { WorkoutLogDataType } from "@/lib/types";
-import { useFormContext, FieldPath } from "react-hook-form";
+import { useFormContext, FieldPath, Controller } from "react-hook-form";
+import { DurationInput } from "../DurationInput";
+import { DistanceInput } from "../DistanceInput";
 
 const Cardio = ({
   formIndex,
@@ -10,6 +12,7 @@ const Cardio = ({
 }) => {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<WorkoutLogDataType>();
 
@@ -54,16 +57,19 @@ const Cardio = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
-        <p>
-          <label>Rest (s)</label>
-          <input
-            type="number"
-            {...register(restFieldName, {
-              valueAsNumber: true,
-            })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+       <div>
+          <label>Rest</label>
+          <Controller
+            name={restFieldName}
+            control={control}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
-        </p>
+        </div>
         <p>
           <label>Calories Burned</label>
           <input
@@ -81,22 +87,32 @@ const Cardio = ({
             </span>
           )}
         </p>
-        <p>
+        <div>
           <label>Distance</label>
-          <input
-            type="number"
-            {...register(distanceFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+          <Controller
+            name={distanceFieldName}
+            control={control}
+            render={({ field }) => (
+              <DistanceInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
-        </p>
-        <p>
+        </div>
+        <div>
           <label>Duration</label>
-          <input
-            type="number"
-            {...register(durationFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+          <Controller
+            name={durationFieldName}
+            control={control}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
-        </p>
+        </div>
         <p>
           <label>Heart Rate</label>
           <input

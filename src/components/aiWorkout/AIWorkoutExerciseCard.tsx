@@ -1,3 +1,4 @@
+import { formatDistance, formatDuration } from "@/lib/utils";
 import Icons from "../icons/appIcons";
 
 type Props = {
@@ -24,11 +25,11 @@ const AIWorkoutExerciseCard = ({ exercise }: { exercise: Props }) => {
           <p>
             {exercise.sets} sets of{" "}
             {exercise.time
-              ? `${exercise.time} s`
+              ? formatDuration(exercise.time)
               : exercise.distance
-              ? `${exercise.distance} m`
+              ? formatDistance(exercise.distance)
               : `${exercise.reps} reps`}{" "}
-            with {exercise.rest}s rest
+            with {formatDuration(exercise.rest)} rest
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { WorkoutLogDataType } from "@/lib/types";
 import { useEffect } from "react";
-import { useFormContext, FieldPath } from "react-hook-form";
+import { useFormContext, FieldPath, Controller } from "react-hook-form";
+import { DurationInput } from "../DurationInput";
 
 const Strength = ({
   formIndex,
@@ -11,6 +12,7 @@ const Strength = ({
 }) => {
   const {
     register,
+    control,
     watch,
     setValue,
     formState: { errors },
@@ -71,23 +73,30 @@ const Strength = ({
             </span>
           )}
         </p>
-        <p>
-          <label>Rest (s)</label>
-          <input
-            type="number"
-            {...register(restFieldName, {
+        <div>
+          <label>Rest</label>
+
+          <Controller
+            name={restFieldName}
+            control={control}
+            rules={{
               required: "Rest is required",
               min: { value: 1, message: "Rest must be at least 1" },
-              valueAsNumber: true,
-            })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+            }}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
+
           {errors.strength && errors.strength[formIndex]?.rest && (
             <span className="error">
               {errors.strength[formIndex].rest.message}
             </span>
           )}
-        </p>
+        </div>
         <p>
           <label>Weight Used</label>
           <input

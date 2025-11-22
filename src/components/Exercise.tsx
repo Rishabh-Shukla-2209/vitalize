@@ -4,7 +4,7 @@ import { ExerciseDetailsType } from "@/lib/types";
 import Image from "next/image";
 import { useState } from "react";
 import Icons from "./icons/appIcons";
-import { toProperCase } from "@/lib/utils";
+import { formatDistance, formatDuration, toProperCase } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
@@ -35,9 +35,9 @@ const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
             <ul className="flex gap-2 text-zinc-600 dark:text-zinc-100">
               {exercise.sets > 0 && <li>{exercise.sets} sets • </li>}
               {exercise.reps > 0 && <li>{exercise.reps} reps • </li>}
-              {exercise.distance && <li>{exercise.distance} km • </li>}
-              {exercise.time && <li>{exercise.time} minutes • </li>}
-              {exercise.rest > 0 && <li>{exercise.rest}s rest</li>}
+              {exercise.distance && <li>{formatDistance(exercise.distance)} • </li>}
+              {exercise.time && <li>{formatDuration(exercise.time)} • </li>}
+              {exercise.rest > 0 && <li>{formatDuration(exercise.rest)} rest</li>}
             </ul>
           </div>
         </div>

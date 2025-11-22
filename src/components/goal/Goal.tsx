@@ -1,7 +1,7 @@
 import { GoalType } from "@/lib/types";
 import Icons from "../icons/appIcons";
 import { Progress } from "../ui/progress";
-import { fitnessMetricLabels } from "@/lib/utils";
+import { fitnessMetricLabels, formatDistance, formatDuration } from "@/lib/utils";
 
 const Goal = ({ goal }: { goal: GoalType }) => {
   const progress =
@@ -26,10 +26,26 @@ const Goal = ({ goal }: { goal: GoalType }) => {
         </p>
         <p className="flex justify-between">
           <span className="text-sm text-zinc-600 dark:text-zinc-200">
-            Current: {goal.currentValue}
+            Current:{" "}
+            {goal.targetField === "time" ||
+            goal.targetField === "duration" ||
+            goal.targetField === "tug" ||
+            goal.targetField === "plankHoldTime" ||
+            goal.targetField === "workIntervalDuration" ||
+            goal.targetField === "timeToExhaustion"
+              ? formatDuration(goal.currentValue)
+              : goal.targetField === "distance" ? formatDistance(goal.currentValue) : goal.currentValue}
           </span>
           <span className="text-sm text-zinc-600 dark:text-zinc-200">
-            Goal: {goal.targetValue}
+            Goal:{" "}
+            {goal.targetField === "time" ||
+            goal.targetField === "duration" ||
+            goal.targetField === "tug" ||
+            goal.targetField === "plankHoldTime" ||
+            goal.targetField === "workIntervalDuration" ||
+            goal.targetField === "timeToExhaustion"
+              ? formatDuration(goal.targetValue)
+              : goal.targetField === "distance" ? formatDistance(goal.targetValue) : goal.targetValue}
           </span>
         </p>
         <Progress value={progress} />

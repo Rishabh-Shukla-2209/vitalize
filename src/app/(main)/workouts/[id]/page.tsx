@@ -8,7 +8,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Link from "next/link";
-import { toProperCase } from "@/lib/utils";
+import { formatDistance, formatDuration, toProperCase } from "@/lib/utils";
 import { useWorkoutFlow } from "@/hooks/useWorkoutFlow";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -72,7 +72,7 @@ const WorkoutPage = () => {
             <p>
               <span>{toProperCase(workoutPlan.level)} </span>
               <span>•</span>
-              <span> {workoutPlan.duration} minutes</span>
+              <span> {formatDuration(workoutPlan.duration)}</span>
             </p>
             <div className="flex justify-between gap-1.5 my-3">
               <div className="bg-zinc-400 dark:bg-sage-500 h-1.5 w-full rounded-l-full rounded-r-full" />
@@ -94,13 +94,13 @@ const WorkoutPage = () => {
                       <span>{currWorkoutItem.exercise!.reps} reps • </span>
                     )}
                     {currWorkoutItem.exercise!.distance && (
-                      <span>{currWorkoutItem.exercise!.distance}m • </span>
+                      <span>{formatDistance(currWorkoutItem.exercise!.distance)} • </span>
                     )}
                     {currWorkoutItem.exercise!.time && (
-                      <span>{currWorkoutItem.exercise!.time}s • </span>
+                      <span>{formatDuration(currWorkoutItem.exercise!.time)} • </span>
                     )}
                     {currWorkoutItem.exercise!.rest > 0 && (
-                      <span>{currWorkoutItem.exercise!.rest}s rest</span>
+                      <span>{formatDuration(currWorkoutItem.exercise!.rest)} rest</span>
                     )}
                   </h3>
                 </>
@@ -121,7 +121,7 @@ const WorkoutPage = () => {
                       : ""
                   } ${
                     currWorkoutItem?.currValues.distance
-                      ? `${currWorkoutItem.currValues.distance}m`
+                      ? `${formatDistance(currWorkoutItem.currValues.distance)}`
                       : ""
                   } ${
                     currWorkoutItem?.currValues.time

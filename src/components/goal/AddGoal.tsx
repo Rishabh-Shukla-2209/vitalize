@@ -1,281 +1,253 @@
 import { addGoal, getAllExercises } from "@/lib/queries";
-import { ExerciseCategoryType } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { useForm, Controller, ControllerRenderProps } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Combobox from "@/components/Combobox";
 import Selector from "../Selector";
-import { validCategoryFields } from "@/lib/utils";
 import { DatePicker } from "../DatePicker";
 import { Button } from "../ui/button";
-import { isBefore } from "date-fns";
+import { validCategoryFields } from "@/lib/utils";
+import { DurationInput } from "@/components/DurationInput";
+import { DistanceInput } from "@/components/DistanceInput";
+import { GoalFormValues, goalSchema } from "@/validations/goal";
+import { Spinner } from "../ui/spinner";
 
-const AddGoal = ({ userId, setAddGoal, resetSearch }: { userId: string, setAddGoal: Dispatch<SetStateAction<boolean>>, resetSearch: () => void }) => {
-  const [title, setTitle] = useState("");
-  const [titleError, setTitleError] = useState("");
-  const [exercise, setExercise] = useState<{
-    id: string;
-    name: string;
-    category: ExerciseCategoryType;
-  }>();
-  const [exError, setExError] = useState("");
-  const [field, setField] = useState("");
-  const [fieldError, setFieldError] = useState("");
-  const [currentValue, setCurrValue] = useState("");
-  const [currValError, setCurrValError] = useState("");
-  const [targetValue, setTargetValue] = useState("");
-  const [targetValError, setTargetValError] = useState("");
-  const [targetDate, setTargetDate] = useState<Date>();
-  const [dateError, setDateError] = useState("");
-  const [submitAttempted, setSubmitAttempted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
-  const { data } = useQuery({
+type ValueFieldProps = ControllerRenderProps<
+  GoalFormValues,
+  "currentValue" | "targetValue"
+>;
+
+const AddGoal = ({
+  userId,
+  setAddGoal,
+  resetSearch,
+}: {
+  userId: string;
+  setAddGoal: Dispatch<SetStateAction<boolean>>;
+  resetSearch: () => void;
+}) => {
+  const {
+    control,
+    handleSubmit,
+    watch,
+    register,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<GoalFormValues>({
+    resolver: zodResolver(goalSchema),
+    defaultValues: {
+      title: "",
+      field: "",
+      currentValue: undefined,
+      targetValue: undefined,
+    },
+  });
+
+  const { data: exercises } = useQuery({
     queryKey: ["Exercises"],
     queryFn: getAllExercises,
     staleTime: Infinity,
   });
 
-  useEffect(() => {
-      if (!submitAttempted) return;
-  
-      const validTitle = /^[A-Za-z0-9 _-]+$/;
-      if (!title) {
-        setTitleError("Required");
-        return;
-      }
-      if (title && !validTitle.test(title)) {
-        setTitleError("Invalid title. Title should only contain letters and numbers.");
-        return;
-      }
-  
-      setTitleError("");
-    }, [title, submitAttempted]);
+  const selectedExercise = watch("exercise");
+  const selectedField = watch("field");
 
   useEffect(() => {
-    if (!submitAttempted) return;
+    setValue("field", "");
+  }, [selectedExercise?.id, setValue]);
 
-    const validValues = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/;
-
-    if (!currentValue) {
-      setCurrValError("Required");
-      return;
-    }
-
+  const renderValueInput = (field: ValueFieldProps) => {
     if (
-      !validValues.test(currentValue)
+      selectedField === "time" ||
+      selectedField === "duration" ||
+      selectedField === "tug" ||
+      selectedField === "plankHoldTime" ||
+      selectedField === "workIntervalDuration" ||
+      selectedField === "timeToExhaustion"
     ) {
-      setCurrValError("Enter a valid value.");
-      return;
+      return (
+        <DurationInput
+          value={field.value}
+          onChange={field.onChange}
+          className="bg-white dark:bg-sage-400 rounded-md"
+        />
+      );
     }
-
-    setCurrValError("");
-  }, [submitAttempted, currentValue]);
-
-  useEffect(() => {
-    if (!submitAttempted) return;
-
-    const validValues = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/;
-
-    if (!targetValue) {
-      setTargetValError("Required");
-      return;
+    if (selectedField === "distance") {
+      return (
+        <DistanceInput
+          value={field.value}
+          onChange={field.onChange}
+          className="bg-white dark:bg-sage-400 rounded-md"
+        />
+      );
     }
-
-    if (
-      !validValues.test(targetValue)
-    ) {
-      setTargetValError("Enter a valid value.");
-      return;
-    }
-
-    setTargetValError("");
-  }, [submitAttempted, targetValue]);
-
-  useEffect(() => {
-    if (!submitAttempted) return;
-
-    if (!targetDate) {
-      setDateError("Required");
-      return;
-    }
-
-    if(isBefore(targetDate, new Date())){
-        setDateError("Date can't be past or today.");
-        return;
-    }
-    setDateError("");
-  }, [targetDate, submitAttempted]);
-
-  useEffect(() => {
-    if (!submitAttempted) return;
-
-    if (!exercise) {
-      setExError("Required");
-      return;
-    }
-
-    setExError("");
-  }, [exercise, submitAttempted]);
-  
-  useEffect(() => {
-    if (!submitAttempted || !exercise) return;
-
-    if (!field) {
-      setFieldError("Required");
-      return;
-    }
-
-    setFieldError("");
-  }, [exercise, field, submitAttempted]);
-
-  const areInputsValid = () => {
-    let isValid = true;
-    const validTitle = /^[A-Za-z0-9 _-]+$/;
-    const validValues = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/;
-
-    // --- Validate Title ---
-    if (!title) {
-        setTitleError("Required");
-        isValid = false;
-      }else if (title && !validTitle.test(title)) {
-        setTitleError("Only letters and numbers.");
-        isValid = false;
-      }else setTitleError("");
-
-    // --- Validate current value ---
-    if (!currentValue) {
-      setCurrValError("Required");
-      isValid = false;
-    }else if (
-      !validValues.test(currentValue)
-    ) {
-      setCurrValError("Enter a valid value.");
-      isValid = false;
-    }else setCurrValError("");
-
-    // --- Validate Target Value ---
-    if (!targetValue) {
-      setTargetValError("Required");
-      isValid = false;
-    }else if (
-      !validValues.test(targetValue)
-    ) {
-      setTargetValError("Enter a valid value.");
-      isValid = false;
-    }else setTargetValError("");
-
-    // --- Validate Date ---
-    if (!targetDate) {
-      setDateError("Required");
-      isValid = false;
-    }else if(isBefore(targetDate, new Date())){
-        setDateError("Date can't be past or today.");
-        isValid = false;
-    }else setDateError("");
-
-    // --- Validate Exercise ---
-    if (!exercise) {
-      setExError("Required");
-      isValid = false;
-    }else setExError("");
-
-    // --- Validate Field ---
-    if (exercise && !field) {
-      setFieldError("Required");
-      isValid = false;
-    }else setFieldError("");
-
-    return isValid;
+    return (
+      <input
+        type="number"
+        placeholder="Value"
+        className="text-sm w-full py-2 px-3 rounded-md border dark:bg-sage-400 focus:border-zinc-400 focus:outline-none"
+        value={field.value ?? ""}
+        onChange={(e) => {
+          const val = e.target.valueAsNumber;
+          field.onChange(isNaN(val) ? undefined : val);
+        }}
+      />
+    );
   };
 
-  const onAdd = async () => {
-    setSubmitAttempted(true);
-    if(!areInputsValid()) return;
-
-    setSubmitting(true);
-
+  const onSubmit = async (values: GoalFormValues) => {
     const data = {
-        userid: userId,
-        title,
-        targetExerciseid: exercise!.id,
-        targetField: field,
-        currentValue: parseFloat(currentValue),
-        targetValue: parseFloat(targetValue),
-        initialValue: parseFloat(currentValue),
-        targetDate: targetDate!
-    }
+      userid: userId,
+      title: values.title,
+      targetExerciseid: values.exercise!.id,
+      targetField: values.field,
+      currentValue: values.currentValue!,
+      targetValue: values.targetValue!,
+      initialValue: values.currentValue!,
+      targetDate: values.targetDate!,
+    };
 
     await addGoal(data);
     resetSearch();
     setAddGoal(false);
-    
-  }
+  };
 
   return (
     <div className="border p-5 rounded-md bg-zinc-100 dark:bg-sage-500">
       <h3 className="mb-1.5">Goal Details</h3>
-      <div className="flex flex-col md:flex-row md:flex-wrap gap-2 justify-between">
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col gap-2 justify-between">
           <div className="flex flex-col gap-4 flex-1">
-            <div className="flex flex-col md:flex-row gap-5">
-              <div className="flex flex-col gap-1">
+            <div className="flex flex-col md:flex-row md:justify-between gap-5">
+              <div className="flex flex-col gap-1 w-full">
                 <input
-                  type="text"
+                  {...register("title")}
                   placeholder="Enter Goal title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="text-sm py-2 dark:bg-sage-400 focus:border focus:border-zinc-400"
+                  className="text-sm py-2 px-3 rounded-md border dark:bg-sage-400 focus:border-zinc-400 focus:outline-none"
                 />
-                {titleError && <span className="error">{titleError}</span>}
+                {errors.title && (
+                  <span className="error">{errors.title.message}</span>
+                )}
               </div>
-              <div className="flex flex-col gap-1">
-                {data && <Combobox choices={data} setChoice={setExercise} />}
-                {exError && <span className="error">{exError}</span>}
+
+              <div className="flex flex-col gap-1 w-full items-start md:items-center">
+                <Controller
+                  name="exercise"
+                  control={control}
+                  render={({ field }) =>
+                    exercises ? (
+                      <Combobox
+                        choices={exercises}
+                        setChoice={(val) => field.onChange(val)}
+                      />
+                    ) : (
+                        <Spinner />
+                    )
+                  }
+                />
+                {errors.exercise && (
+                  <span className="error">{errors.exercise.message}</span>
+                )}
               </div>
-              <div className="flex flex-col gap-1">
-                {exercise && (
-                  <Selector
-                    choices={validCategoryFields[exercise.category]}
-                    selectedValue={field}
-                    placeholder="Select Parameter"
-                    setChoice={setField}
-                    classes="bg-white hover:bg-zinc-100 dark:bg-sage-400 dark:hover:bg-sage-400"
+
+              <div className="flex flex-col gap-1 w-full">
+                {selectedExercise && (
+                  <Controller
+                    name="field"
+                    control={control}
+                    render={({ field }) => (
+                      <Selector
+                        choices={validCategoryFields[selectedExercise.category]}
+                        selectedValue={field.value}
+                        placeholder="Select Parameter"
+                        setChoice={(val) => field.onChange(val)}
+                        classes="bg-white hover:bg-zinc-100 dark:bg-sage-400 dark:hover:bg-sage-400"
+                      />
+                    )}
                   />
                 )}
-                {fieldError && <span className="error">{fieldError}</span>}
+                {errors.field && (
+                  <span className="error">{errors.field.message}</span>
+                )}
               </div>
             </div>
+
             <div className="flex flex-col md:flex-row md:flex-wrap gap-5">
-              <div className="flex flex-col gap-1">
-                <input
-                  type="text"
-                  placeholder="Current Value"
-                  value={currentValue}
-                  onChange={(e) => setCurrValue(e.target.value)}
-                  className="text-sm dark:bg-sage-400 py-2 focus:border focus:border-zinc-400"
+              <div className="flex flex-col gap-1 w-full">
+                <label className="text-xs text-muted-foreground">
+                  Current Value
+                </label>
+                <Controller
+                  name="currentValue"
+                  control={control}
+                  render={({ field }) => renderValueInput(field)}
                 />
-                {currValError && <span className="error">{currValError}</span>}
+                {errors.currentValue && (
+                  <span className="error">{errors.currentValue.message}</span>
+                )}
               </div>
-              <div className="flex flex-col gap-1">
-                <input
-                  type="text"
-                  placeholder="Target Value"
-                  value={targetValue}
-                  onChange={(e) => setTargetValue(e.target.value)}
-                  className="text-sm dark:bg-sage-400 py-2 focus:border focus:border-zinc-400"
+
+              <div className="flex flex-col gap-1 w-full">
+                <label className="text-xs text-muted-foreground">
+                  Target Value
+                </label>
+                <Controller
+                  name="targetValue"
+                  control={control}
+                  render={({ field }) => renderValueInput(field)}
                 />
-                {targetValError && <span className="error">{targetValError}</span>}
+                {errors.targetValue && (
+                  <span className="error">{errors.targetValue.message}</span>
+                )}
               </div>
-              <div>
-                <DatePicker label="" date={targetDate} setDate={setTargetDate} />
-                {dateError && <span className="error">{dateError}</span>}
+
+              <div className="flex flex-col gap-1 w-full">
+                <label className="text-xs text-muted-foreground">
+                  Target Date
+                </label>
+                <Controller
+                  name="targetDate"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      label=""
+                      date={field.value}
+                      setDate={(date) => field.onChange(date)}
+                    />
+                  )}
+                />
+                {errors.targetDate && (
+                  <span className="error">{errors.targetDate.message}</span>
+                )}
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 md:w-40 mt-5 items-center w-full md:mt-0">
-            <Button variant="default" className="w-full" disabled={submitting} onClick={onAdd}>{submitting ? "Adding":"Add"}</Button>
-            <Button variant="outline" className="w-full" disabled={submitting} onClick={() => setAddGoal(false)}>Cancel</Button>
+
+          <div className="flex flex-wrap gap-4 mt-5 items-center w-full">
+            <Button
+              variant="default"
+              className="w-full"
+              disabled={isSubmitting}
+              type="submit"
+            >
+              {isSubmitting ? <Spinner /> : "Add"}
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              disabled={isSubmitting}
+              type="button"
+              onClick={() => setAddGoal(false)}
+            >
+              Cancel
+            </Button>
           </div>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };

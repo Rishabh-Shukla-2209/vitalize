@@ -1,6 +1,7 @@
 import { WorkoutLogDataType } from "@/lib/types";
 import { useEffect } from "react";
-import { useFormContext, FieldPath } from "react-hook-form";
+import { useFormContext, FieldPath, Controller } from "react-hook-form";
+import { DurationInput } from "../DurationInput";
 
 const Hiit = ({
   formIndex,
@@ -12,6 +13,7 @@ const Hiit = ({
   const {
     register,
     watch,
+    control,
     setValue,
     formState: { errors },
   } = useFormContext<WorkoutLogDataType>();
@@ -58,33 +60,42 @@ const Hiit = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
-        <p>
-          <label>Rest (s)</label>
-          <input
-            type="number"
-            {...register(restFieldName, {
-              valueAsNumber: true,
-            })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+        <div>
+          <label>Rest</label>
+          <Controller
+            name={restFieldName}
+            control={control}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
-        </p>
-        <p>
+        </div>
+        <div>
           <label>Set Duration</label>
-          <input
-            type="number"
-            {...register(workIntervalDurationFieldName, {
+          <Controller
+            name={workIntervalDurationFieldName}
+            control={control}
+            rules={{
               required: "Duration is required",
               min: { value: 1, message: "Duration must be at least 1" },
-              valueAsNumber: true,
-            })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+            }}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
+
           {errors.hiit && errors.hiit[formIndex]?.workIntervalDuration && (
             <span className="error">
               {errors.hiit[formIndex].workIntervalDuration.message}
             </span>
           )}
-        </p>
+        </div>
         <p>
           <label>Work-Rest Ratio</label>
           <input

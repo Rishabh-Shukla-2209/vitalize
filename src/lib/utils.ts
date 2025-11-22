@@ -157,10 +157,10 @@ export const MuscleGroupToCategories: Record<
 };
 
 export const Duration: { label: string; val: string }[] = [
-  { label: "Under 30 mins", val: "30,31" },
-  { label: "30 - 45 mins", val: "30,45" },
-  { label: "45 - 60 mins", val: "45,60" },
-  { label: "Over 60 mins", val: "60,500" },
+  { label: "Under 30 mins", val: "60,1800" },
+  { label: "30 - 45 mins", val: "1800,2700" },
+  { label: "45 - 60 mins", val: "2700,3600" },
+  { label: "Over 60 mins", val: "3600,30000" },
 ];
 
 export const fitnessMetricUnits = {
@@ -168,9 +168,9 @@ export const fitnessMetricUnits = {
   reps: "",
   weightUsed: "kg",
   vol: "kg",
-  distance: "km",
-  rest: "s",
-  duration: "s",
+  distance: "",
+  rest: "",
+  duration: "",
   heartRate: "bpm",
   speed: "m/s",
   caloriesBurned: "kcal",
@@ -179,12 +179,12 @@ export const fitnessMetricUnits = {
   rangeOfMotion: "degrees",
   staticFlexibility: "cm",
   dynamicFlexibility: "cm",
-  workIntervalDuration: "s",
-  restIntervalDuration: "s",
+  workIntervalDuration: "",
+  restIntervalDuration: "",
   workToRestRatio: "ratio",
-  plankHoldTime: "s",
-  tug: "s",
-  timeToExhaustion: "s",
+  plankHoldTime: "",
+  tug: "",
+  timeToExhaustion: "",
   heartRateVariability: "ms",
 };
 
@@ -392,3 +392,29 @@ export const getNotificationDetails = (notification: NotificationPayload) => {
 
   return {text: text[notification.type], link: link[notification.type]};
 }
+
+
+export const formatDuration = (seconds: number | undefined | null): string => {
+  if (seconds === undefined || seconds === null) return "-";
+  if (seconds === 0) return "0 s";
+  
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+
+  if (m > 0 && s > 0) return `${m} min ${s} s`;
+  if (m > 0) return `${m} min`;
+  return `${s}s`;
+};
+
+
+export const formatDistance = (meters: number | undefined | null): string => {
+  if (meters === undefined || meters === null) return "-";
+  if (meters === 0) return "0 m";
+
+  const km = Math.floor(meters / 1000);
+  const m = meters % 1000;
+
+  if (km > 0 && m > 0) return `${km} km ${m} m`;
+  if (km > 0) return `${km} km`;
+  return `${m}m`;
+};

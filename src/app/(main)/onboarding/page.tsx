@@ -10,230 +10,63 @@ import { saveOnboardingData } from "@/lib/queries";
 import { GenderOptions } from "@/lib/utils";
 import { useSession, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { OnboardingFormValues, onboardingSchema } from "@/validations/auth";
+
 
 const OnboardingPage = () => {
   const { user, isSignedIn, isLoaded } = useUser();
   const router = useRouter();
-  const {session} = useSession();
-  const [weight, setWeight] = useState("");
-  const [height, setHeight] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [gender, setGender] = useState<string>("");
-  const [dob, setDob] = useState<Date>();
-  const [weightError, setWeightError] = useState("");
-  const [heightError, setHeightError] = useState("");
-  const [firstNameError, setFirstNameError] = useState("");
-  const [lastNameError, setLastNameError] = useState("");
-  const [genderError, setGenderError] = useState("");
-  const [dobError, setDobError] = useState("");
-  const [submitAttempted, setSubmitAttempted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const { session } = useSession();
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<OnboardingFormValues>({
+    resolver: zodResolver(onboardingSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      gender: "",
+      height: "", 
+      weight: "",
+      dob: undefined,
+    },
+  });
 
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      if (user.firstName) setFirstName(user.firstName);
-      if (user.lastName) setLastName(user.lastName);
+    if (isLoaded && isSignedIn && user) {
+      reset({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+      });
     }
-  }, [isLoaded, isSignedIn, user]);
+  }, [isLoaded, isSignedIn, user, reset]);
 
-  useEffect(() => {
-    if (!submitAttempted) return;
-
-    const validNames = /^[A-Za-z]+$/;
-    if (!firstName) {
-      setFirstNameError("Required");
-      return;
-    }
-    if (firstName && !validNames.test(firstName)) {
-      setFirstNameError("Invalid name. Name should only contain letters.");
-      return;
-    }
-
-    setFirstNameError("");
-  }, [firstName, submitAttempted]);
-
-  useEffect(() => {
-    if (!submitAttempted) return;
-
-    const validNames = /^[A-Za-z]+$/;
-    if (!lastName) {
-      setLastNameError("Required");
-      return;
-    }
-    if (lastName && !validNames.test(lastName)) {
-      setLastNameError("Invalid name. Name should only contain letters.");
-      return;
-    }
-
-    setLastNameError("");
-  }, [lastName, submitAttempted]);
-
-  useEffect(() => {
-    if (!submitAttempted) return;
-
-    const validValues = /^[1-9]\d*$/;
-
-    if (!weight) {
-      setWeightError("Required");
-      return;
-    }
-
-    if (
-      !validValues.test(weight) ||
-      parseInt(weight) > 300 ||
-      parseInt(weight) < 20
-    ) {
-      setWeightError("Enter a valid value between 20 and 300. No decimals.");
-      return;
-    }
-
-    setWeightError("");
-  }, [submitAttempted, weight]);
-
-  useEffect(() => {
-    if (!submitAttempted) return;
-
-    const validValues = /^[1-9]\d*$/;
-
-    if (!height) {
-      setHeightError("Required");
-      return;
-    }
-
-    if (
-      !validValues.test(height) ||
-      parseInt(height) > 250 ||
-      parseInt(height) < 50
-    ) {
-      setHeightError("Enter a valid value between 50 and 250. No decimals.");
-      return;
-    }
-
-    setHeightError("");
-  }, [height, submitAttempted]);
-
-  useEffect(() => {
-    if (!submitAttempted) return;
-
-    if (!dob) {
-      setDobError("Required");
-      return;
-    }
-    setDobError("");
-  }, [dob, submitAttempted]);
-
-  useEffect(() => {
-    if (!submitAttempted) return;
-
-    if (!gender) {
-      setGenderError("Required");
-      return;
-    }
-
-    setGenderError("");
-  }, [gender, submitAttempted]);
-
-  const areInputsValid = () => {
-    let isValid = true;
-    const validNames = /^[A-Za-z]+$/;
-    const validValues = /^[1-9]\d*$/;
-
-    // --- Validate First Name ---
-    if (!firstName) {
-      setFirstNameError("Required");
-      isValid = false;
-    } else if (!validNames.test(firstName)) {
-      setFirstNameError("Invalid name. Name should only contain letters.");
-      isValid = false;
-    } else {
-      setFirstNameError("");
-    }
-
-    // --- Validate Last Name ---
-    if (!lastName) {
-      setLastNameError("Required");
-      isValid = false;
-    } else if (!validNames.test(lastName)) {
-      setLastNameError("Invalid name. Name should only contain letters.");
-      isValid = false;
-    } else {
-      setLastNameError("");
-    }
-
-    // --- Validate Weight ---
-    if (!weight) {
-      setWeightError("Required");
-      isValid = false;
-    } else if (
-      !validValues.test(weight) ||
-      parseInt(weight) > 300 ||
-      parseInt(weight) < 20
-    ) {
-      setWeightError("Enter a valid value between 20 and 300. No decimals.");
-      isValid = false;
-    } else {
-      setWeightError("");
-    }
-
-    // --- Validate Height ---
-    if (!height) {
-      setHeightError("Required");
-      isValid = false;
-    } else if (
-      !validValues.test(height) ||
-      parseInt(height) > 250 ||
-      parseInt(height) < 50
-    ) {
-      setHeightError("Enter a valid value between 50 and 250. No decimals.");
-      isValid = false;
-    } else {
-      setHeightError("");
-    }
-
-    // --- Validate DOB ---
-    if (!dob) {
-      setDobError("Required");
-      isValid = false;
-    } else {
-      setDobError("");
-    }
-
-    // --- Validate Gender ---
-    if (!gender) {
-      setGenderError("Required");
-      isValid = false;
-    } else {
-      setGenderError("");
-    }
-
-    return isValid;
-  };
-
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitAttempted(true);
-    if (!areInputsValid()) return;
+  const onSubmit = async (values: OnboardingFormValues) => {
     if (!user) return;
-    setSubmitting(true);
+    
     try {
       await Promise.all([
         saveOnboardingData(
           user.id,
-          firstName,
-          lastName,
+          values.firstName,
+          values.lastName,
           user.imageUrl,
-          parseInt(weight),
-          parseInt(height),
-          gender as Gender,
-          dob!
+          Number(values.weight),
+          Number(values.height),
+          values.gender as Gender,
+          values.dob
         ),
-        completeOnboarding(firstName, lastName),
+        completeOnboarding(values.firstName, values.lastName),
       ]);
       await session?.reload();
       router.refresh();
-      
     } catch (error) {
       console.error("Error during onboarding:", error);
     }
@@ -242,14 +75,13 @@ const OnboardingPage = () => {
   return isLoaded && isSignedIn ? (
     <div className="w-full flex justify-center">
       <div className="flex flex-col w-xl rounded-3xl px-10 py-5">
-        <h1 className="text-center">
-          Tell Us About Yourself
-        </h1>
+        <h1 className="text-center">Tell Us About Yourself</h1>
         <p className=" my-2 text-center">
           Please fill below details so that your progress can be tracked more
           accurately.
         </p>
-        <form onSubmit={onSubmit} className="flex flex-col">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+          
           <p className="flex flex-col gap-1">
             <label htmlFor="firstName" className="text-zinc-600 dark:text-zinc-200">
               First Name
@@ -258,12 +90,12 @@ const OnboardingPage = () => {
               id="firstName"
               type="text"
               placeholder="Enter first name..."
-              defaultValue={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              {...register("firstName")}
               className="bg-zinc-50 dark:bg-sage-400"
             />
-            {firstNameError && <span className="error">{firstNameError}</span>}
+            {errors.firstName && <span className="error">{errors.firstName.message}</span>}
           </p>
+
           <p className="flex flex-col gap-1">
             <label htmlFor="lastName" className="text-zinc-600 dark:text-zinc-200">
               Last Name
@@ -272,68 +104,88 @@ const OnboardingPage = () => {
               id="lastName"
               type="text"
               placeholder="Enter last name..."
-              defaultValue={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              {...register("lastName")}
               className="bg-zinc-50 dark:bg-sage-400"
             />
-            {lastNameError && <span className="error">{lastNameError}</span>}
+            {errors.lastName && <span className="error">{errors.lastName.message}</span>}
           </p>
+
           <p className="flex items-center gap-5">
             <label>Gender</label>
-            <Selector
-              choices={GenderOptions}
-              setChoice={setGender}
-              placeholder={"Select your gender..."}
-              selectedValue={gender}
+            <Controller
+              name="gender"
+              control={control}
+              render={({ field }) => (
+                <Selector
+                  choices={GenderOptions}
+                  setChoice={field.onChange}
+                  placeholder={"Select your gender..."}
+                  selectedValue={field.value}
+                />
+              )}
             />
-            {genderError && <span className="error">{genderError}</span>}
+            {errors.gender && <span className="error">{errors.gender.message}</span>}
           </p>
+
           <p className="flex flex-col gap-1">
             <label htmlFor="height" className="text-zinc-600 dark:text-zinc-200">
               Height (cm)
             </label>
             <input
               id="height"
-              type="text"
+              type="text" 
               placeholder="Enter your height..."
-              defaultValue={height}
-              onChange={(e) => setHeight(e.target.value)}
+              {...register("height")}
               className="bg-zinc-50 dark:bg-sage-400"
             />
-            {heightError && <span className="error">{heightError}</span>}
+            {errors.height && <span className="error">{errors.height.message}</span>}
           </p>
+
           <p className="flex flex-col gap-1">
             <label htmlFor="weight" className="text-zinc-600 dark:text-zinc-200">
               Weight (kg)
             </label>
             <input
               id="weight"
-              type="text"
+              type="text" 
               placeholder="Enter your weight..."
-              defaultValue={weight}
-              onChange={(e) => setWeight(e.target.value)}
+              {...register("weight")}
               className="bg-zinc-50 dark:bg-sage-400"
             />
-            {weightError && <span className="error">{weightError}</span>}
+            {errors.weight && <span className="error">{errors.weight.message}</span>}
           </p>
+
           <div className="flex items-center">
             <label className="text-zinc-600 dark:text-zinc-200 mr-5">Date of Birth</label>
-            <DatePicker label="" date={dob} setDate={setDob} />
-            {dobError && <span className="error ml-5">{dobError}</span>}
+            <Controller
+              name="dob"
+              control={control}
+              render={({ field }) => (
+                <DatePicker 
+                  label="" 
+                  date={field.value} 
+                  setDate={field.onChange} 
+                />
+              )}
+            />
+            {errors.dob && <span className="error ml-5">{errors.dob.message}</span>}
           </div>
+
           <Button
             type="submit"
             variant="default"
             className="text-lg py-2"
-            disabled={submitting}
+            disabled={isSubmitting}
           >
-            {submitting ? <Spinner /> : "Submit"}
+            {isSubmitting ? <Spinner /> : "Submit"}
           </Button>
         </form>
       </div>
     </div>
   ) : (
-    <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
+    <div className="w-full h-screen flex-center">
+      <Spinner className="mb-50" />
+    </div>
   );
 };
 

@@ -25,3 +25,34 @@ export const loginSchema = z.object({
 })
 
 export type LoginSchemaType = z.infer<typeof loginSchema>;
+
+export const onboardingSchema = z.object({
+  firstName: z
+    .string()
+    .min(1, "Required")
+    .regex(/^[A-Za-z]+$/, "Invalid name. Name should only contain letters."),
+  lastName: z
+    .string()
+    .min(1, "Required")
+    .regex(/^[A-Za-z]+$/, "Invalid name. Name should only contain letters."),
+  gender: z.string().min(1, "Required"),
+  height: z
+    .string()
+    .min(1, "Required")
+    .regex(/^[1-9]\d*$/, "Enter a valid value between 50 and 250. No decimals.")
+    .refine((val) => {
+      const n = Number(val);
+      return n >= 50 && n <= 250;
+    }, "Enter a valid value between 50 and 250. No decimals."),
+  weight: z
+    .string()
+    .min(1, "Required")
+    .regex(/^[1-9]\d*$/, "Enter a valid value between 20 and 300. No decimals.")
+    .refine((val) => {
+      const n = Number(val);
+      return n >= 20 && n <= 300;
+    }, "Enter a valid value between 20 and 300. No decimals."),
+  dob: z.date(),
+});
+
+export type OnboardingFormValues = z.infer<typeof onboardingSchema>;

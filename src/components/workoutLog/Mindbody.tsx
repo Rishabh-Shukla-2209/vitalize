@@ -1,5 +1,6 @@
 import { WorkoutLogDataType } from "@/lib/types";
-import { useFormContext, FieldPath } from "react-hook-form";
+import { useFormContext, FieldPath, Controller } from "react-hook-form";
+import { DurationInput } from "../DurationInput";
 
 const Mindbody = ({
   formIndex,
@@ -10,6 +11,7 @@ const Mindbody = ({
 }) => {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<WorkoutLogDataType>();
 
@@ -49,33 +51,42 @@ const Mindbody = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
-        <p>
-          <label>Rest (s)</label>
-          <input
-            type="number"
-            {...register(restFieldName, {
-              valueAsNumber: true,
-            })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+        <div>
+          <label>Rest</label>
+          <Controller
+            name={restFieldName}
+            control={control}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
-        </p>
-        <p>
+        </div>
+        <div>
           <label>Duration</label>
-          <input
-            type="number"
-            {...register(durationFieldName, {
-              required: "Duration  is required",
+          <Controller
+            name={durationFieldName}
+            control={control}
+            rules={{
+              required: "Duration is required",
               min: { value: 1, message: "Duration must be at least 1" },
-              valueAsNumber: true,
-            })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+            }}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
+            )}
           />
+
           {errors.mindbody && errors.mindbody[formIndex]?.duration && (
             <span className="error">
               {errors.mindbody[formIndex].duration.message}
             </span>
           )}
-        </p>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { DurationInput } from "@/components/DurationInput";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import Balance from "@/components/workoutLog/Balance";
@@ -18,7 +19,7 @@ import { WorkoutLogDataType } from "@/lib/types";
 import { useUser } from "@clerk/nextjs";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
 const WorkoutLogPage = () => {
   const params = useParams();
@@ -32,12 +33,13 @@ const WorkoutLogPage = () => {
   const {
     formState: { errors },
     register,
+    control,
     handleSubmit,
   } = methods;
 
   const onSubmit = handleSubmit((data) => {
     if (isLoaded && isSignedIn) {
-      setSubmitting(true);
+      setSubmitting(true);      
       saveWorkoutLog(user.id, workout!.id, data)
         .then(() => {
           router.push("/home");
@@ -185,24 +187,32 @@ const WorkoutLogPage = () => {
                 <textarea
                   {...register("notes")}
                   placeholder="You may enter any notes related to this workout here..."
-                  className="p-3 h-20 md:h-12 outline-none rounded-sm text-zinc-600 bg-zinc-50 dark:bg-sage-500 dark:text-zinc-200 focus:border-zinc-800 focus:border border border-zinc-200 dark:border-sage-700"
+                  className="p-3 h-20 md:h-12 outline-none rounded-sm text-zinc-600 bg-zinc-50 dark:bg-sage-500 dark:text-zinc-200 focus:border-zinc-800 focus:border border border-zinc-200 dark:border-none"
                 />
               </p>
-              <p>
-                <label>Duration (min)</label>
-                <input
-                  type="number"
-                  {...register("duration", {
+
+              <div>
+                <label>Duration</label>
+
+                <Controller
+                  name="duration"
+                  control={control}
+                  rules={{
                     required: "Duration is required",
                     min: { value: 1, message: "Duration must be at least 1" },
-                    valueAsNumber: true,
-                  })}
-                  className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 dark:bg-sage-500 dark:text-zinc-200 focus:border-zinc-800 focus:border max-w-25"
+                  }}
+                  render={({ field }) => (
+                    <DurationInput
+                      {...field}
+                      className="h-12 rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+                    />
+                  )}
                 />
+
                 {errors.duration && (
                   <span className="error">{errors.duration.message}</span>
                 )}
-              </p>
+              </div>
             </div>
             {workout.exercises.map((exercise) => {
               const category = exercise.exercise.category;
@@ -297,12 +307,14 @@ const WorkoutLogPage = () => {
               className="text-lg font-bold py-5"
               disabled={submitting}
             >
-              {submitting ? "Submitting" : "Submit"}
+              {submitting ? <Spinner /> : "Submit"}
             </Button>
           </form>
         </FormProvider>
       ) : (
-        <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
+        <div className="w-full h-screen flex-center">
+          <Spinner className="mb-50" />
+        </div>
       )}
     </div>
   );

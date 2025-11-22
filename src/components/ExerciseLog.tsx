@@ -1,7 +1,18 @@
 import { ExerciseLogType } from "@/lib/types";
-import { fitnessMetricLabels, fitnessMetricUnits } from "@/lib/utils";
+import {
+  fitnessMetricLabels,
+  fitnessMetricUnits,
+  formatDistance,
+  formatDuration,
+} from "@/lib/utils";
 
-const ExerciseLog = ({ exercise, name }: { exercise: ExerciseLogType, name: string | null}) => {
+const ExerciseLog = ({
+  exercise,
+  name,
+}: {
+  exercise: ExerciseLogType;
+  name: string | null;
+}) => {
   return (
     <div className="flex gap-2">
       <p className="flex-1 font-semibold">{name}</p>
@@ -18,7 +29,20 @@ const ExerciseLog = ({ exercise, name }: { exercise: ExerciseLogType, name: stri
           ) {
             return (
               <li key={key}>
-                {label}: {value} {unit} 
+                {label}:{" "}
+                {key === "time" ||
+                key === "duration" ||
+                key === "tug" ||
+                key === "plankHoldTime" ||
+                key === "workIntervalDuration" ||
+                key === "timeToExhaustion" ||
+                key === "restIntervalDuration" || 
+                key === "rest"
+                  ? formatDuration(value as number)
+                  : key === "distance"
+                  ? formatDistance(value as number)
+                  : value}{" "}
+                {unit}
               </li>
             );
           }

@@ -10,7 +10,9 @@ import {
   NotificationPayload,
 } from "./types";
 import { differenceInCalendarDays, differenceInMinutes, isToday, isYesterday } from "date-fns";
-import { GoalStatus as Status } from "@/generated/prisma";
+import { GoalStatus as Status } from "@/generated/prisma/client";
+import { isAppError } from "./errors";
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -418,3 +420,58 @@ export const formatDistance = (meters: number | undefined | null): string => {
   if (km > 0) return `${km} km`;
   return `${m}m`;
 };
+
+export function normalizeError(err: unknown) {
+  if (isAppError(err)) {
+    return {
+      type: err.type,
+      message: err.message,
+      details: err.details ?? null,
+    };
+  }
+
+  if (err instanceof Error) {
+    return {
+      type: "UNKNOWN",
+      message: err.message,
+      details: null,
+    };
+  }
+
+  return {
+    type: "UNKNOWN",
+    message: "An unexpected error occurred.",
+    details: null,
+  };
+}
+
+
+export function handleAppError(err: unknown) {
+  const e = normalizeError(err);
+
+  switch (e.type) {
+    case "UNAUTHORIZED":
+      toast.error("You must log in again.");
+      break;
+
+    case "VALIDATION_ERROR":
+      toast.error("Invalid input.");
+      break;
+
+    case "FORBIDDEN":
+      toast.error("You do not have permission to do this.");
+      break;
+
+    case "NOT_FOUND":
+      toast.error("The requested resource was not found.");
+      break;
+
+    case "DB_ERROR":
+      toast.error("A database error occurred. Please try again later.");
+      break;
+
+    default:
+      toast.error("Something went wrong.");
+  }
+}
+

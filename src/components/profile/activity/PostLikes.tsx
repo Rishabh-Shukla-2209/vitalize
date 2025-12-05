@@ -1,6 +1,6 @@
 import Icons from "@/components/icons/appIcons";
 import { Button } from "@/components/ui/button";
-import { getPostLikesActivity } from "@/lib/queries";
+import { getPostLikesActivity } from "@/lib/actions/user";
 import { minutesAgo } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -23,8 +23,8 @@ const Likes = ({ userId }: { userId: string }) => {
         ? pageCursors[currIndex].first
         : pageCursors[currIndex].last;
 
-    const data = await getPostLikesActivity(userId, cursor, direction);
-
+    const data = await getPostLikesActivity(cursor, direction);
+    if (!data) return;
     if (data.length > 0) {
       setPageCursors((prev) => {
         const next = [...prev];
@@ -40,7 +40,7 @@ const Likes = ({ userId }: { userId: string }) => {
     }
 
     return data;
-  }, [userId, currIndex, direction, pageCursors]);
+  }, [currIndex, direction, pageCursors]);
 
   const { data: postLikes, isLoading } = useQuery({
     queryKey: ["activity", "postLikes", userId, currIndex],
@@ -51,19 +51,29 @@ const Likes = ({ userId }: { userId: string }) => {
     <div>
       <h3 className="mb-2">Post Likes</h3>
       <div className="bg-zinc-50 dark:bg-sage-400 border border-zinc-200 dark:border-sage-700 rounded-md overflow-clip">
-        {isLoading ? <ActivitySkeleton/> : postLikes && postLikes.length > 0 ? 
+        {isLoading ? (
+          <ActivitySkeleton />
+        ) : postLikes && postLikes.length > 0 ? (
           postLikes.map((like) => (
-            <div key={like.id} className="border border-b-zinc-100 dark:border-sage-700 p-2 flex justify-between items-center text-zinc-600">
+            <div
+              key={like.id}
+              className="border border-b-zinc-100 dark:border-sage-700 p-2 flex justify-between items-center text-zinc-600"
+            >
               <p>Liked {`${like.post.user.firstName}'s post.`}</p>
               <p className="flex-center">
-                <span className="mr-2 text-sm">{minutesAgo(like.createdAt)}</span>
+                <span className="mr-2 text-sm">
+                  {minutesAgo(like.createdAt)}
+                </span>
                 <Button variant="outline">
                   <Icons.view />
                   <Link href={`/community/post/${like.postid}`}>View</Link>
                 </Button>
               </p>
             </div>
-          )): <p className="p-2">Your post likes will appear here.</p>}
+          ))
+        ) : (
+          <p className="p-2">Your post likes will appear here.</p>
+        )}
       </div>
       <div className="flex justify-between">
         <Button
@@ -75,7 +85,8 @@ const Likes = ({ userId }: { userId: string }) => {
             setDirection("prev");
           }}
         >
-        <Icons.left /> Prev</Button>
+          <Icons.left /> Prev
+        </Button>
         <Button
           variant="ghost"
           className="text-primary text-center mt-2 cursor-pointer"

@@ -1,4 +1,4 @@
-import { getPersonalRecords } from "@/lib/queries";
+import { getPersonalRecords } from "@/lib/actions/pr";
 import { PRType } from "@/lib/types";
 import { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "react-use";
@@ -30,13 +30,11 @@ const AllPRs = ({ userId }: { userId: string }) => {
         : pageCursors[currIndex].last;
 
     const data = await getPersonalRecords(
-      userId,
       cursor,
       direction,
       debouncedSearch
     );
-
-    if (data.length > 0) {
+    if (data && data.length > 0) {
       setPageCursors((prev) => {
         const next = [...prev];
         next[currIndex + 1] = {
@@ -51,7 +49,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
     }
 
     return data as unknown as PRType[];
-  }, [userId, currIndex, direction, debouncedSearch, pageCursors]);
+  }, [currIndex, direction, debouncedSearch, pageCursors]);
 
   const updateEditedValue = (
     prId: string,
@@ -109,7 +107,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
             <div key={pr.id} className="flex gap-2 bg-zinc-50 dark:bg-sage-400 rounded-md pr-2">
               <PR pR={pr} />
               <div className="flex-center">
-                <PREdit pr={pr} userId={userId} prUpdater={updateEditedValue} />
+                <PREdit pr={pr} prUpdater={updateEditedValue} />
               </div>
             </div>
           ))

@@ -1,6 +1,6 @@
 import Icons from "@/components/icons/appIcons";
 import { Button } from "@/components/ui/button";
-import { getPostsActivity } from "@/lib/queries";
+import { getPostsActivity } from "@/lib/actions/user";
 import { minutesAgo } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -23,8 +23,8 @@ const Posts = ({ userId }: { userId: string }) => {
         ? pageCursors[currIndex].first
         : pageCursors[currIndex].last;
 
-    const data = await getPostsActivity(userId, cursor, direction);
-
+    const data = await getPostsActivity(cursor, direction);
+    if (!data) return;
     if (data.length > 0) {
       setPageCursors((prev) => {
         const next = [...prev];
@@ -40,7 +40,7 @@ const Posts = ({ userId }: { userId: string }) => {
     }
 
     return data;
-  }, [userId, currIndex, direction, pageCursors]);
+  }, [currIndex, direction, pageCursors]);
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ["activity", "posts", userId, currIndex],
@@ -51,7 +51,9 @@ const Posts = ({ userId }: { userId: string }) => {
     <div>
       <h2 className="mb-2">Posts</h2>
       <div className="bg-zinc-50 dark:bg-sage-400 border border-zinc-200 dark:border-sage-700 rounded-md overflow-clip">
-        {isLoading ? <ActivitySkeleton /> : posts && posts.length > 0 ?
+        {isLoading ? (
+          <ActivitySkeleton />
+        ) : posts && posts.length > 0 ? (
           posts.map((post) => (
             <div
               key={post.id}
@@ -59,18 +61,19 @@ const Posts = ({ userId }: { userId: string }) => {
             >
               <p>{post.title.slice(0, 20)}...</p>
               <p className="flex-center">
-                <span className="mr-2 text-sm">{minutesAgo(post.createdAt)}</span>
+                <span className="mr-2 text-sm">
+                  {minutesAgo(post.createdAt)}
+                </span>
                 <Button variant="outline">
                   <Icons.view />
-                  <Link
-                    href={`/community/post/${post.id}`}
-                  >
-                    View
-                  </Link>
+                  <Link href={`/community/post/${post.id}`}>View</Link>
                 </Button>
               </p>
             </div>
-          )) : <p className="p-2">Your posts will appear here.</p>}
+          ))
+        ) : (
+          <p className="p-2">Your posts will appear here.</p>
+        )}
       </div>
       <div className="flex justify-between">
         <Button

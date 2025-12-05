@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { saveToDB } from "@/lib/actions/ai";
 import Icons from "../icons/appIcons";
 import AIWorkoutExerciseCard from "./AIWorkoutExerciseCard";
+import { handleAppError } from "@/lib/utils";
 
 const AIWorkout = ({
   userId,
@@ -15,8 +16,12 @@ const AIWorkout = ({
   const router = useRouter();
 
   const addWorkout = async () => {
-    const workoutId = await saveToDB(userId, workout);
-    router.push(`/programs/${workoutId}`);
+    try{
+      const workoutId = await saveToDB(userId, workout);
+      router.push(`/programs/${workoutId}`);
+    }catch(err){
+      handleAppError(err);
+    }
   };
 
   return (

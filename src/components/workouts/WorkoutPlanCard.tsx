@@ -1,6 +1,6 @@
 import { WorkoutPlanType } from "@/lib/types";
 import Image from "next/image";
-import Icons from "./icons/appIcons";
+import Icons from "../icons/appIcons";
 import clsx from "clsx";
 
 const WorkoutPlanCard = ({ workout }: { workout: WorkoutPlanType }) => {

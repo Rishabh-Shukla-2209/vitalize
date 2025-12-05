@@ -1,7 +1,7 @@
 "use client";
 
 import Icons from "@/components/icons/appIcons";
-import { getWorkoutDetails } from "@/lib/queries";
+import { getWorkoutDetails } from "@/lib/actions/workout";
 import { WorkoutPlanDetailsType } from "@/lib/types";
 
 import { useParams } from "next/navigation";

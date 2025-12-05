@@ -3,7 +3,7 @@
 import { ExerciseDetailsType } from "@/lib/types";
 import Image from "next/image";
 import { useState } from "react";
-import Icons from "./icons/appIcons";
+import Icons from "../icons/appIcons";
 import { formatDistance, formatDuration, toProperCase } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 

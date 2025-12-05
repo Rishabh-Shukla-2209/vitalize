@@ -2,13 +2,14 @@ import { CommentType, LikeType, PostType } from "@/lib/types";
 import WorkoutSummary from "./WorkoutSummary";
 import Link from "next/link";
 import Image from "next/image";
-import { timeAgo } from "@/lib/utils";
+import { handleAppError, timeAgo } from "@/lib/utils";
 import Icons from "../icons/appIcons";
 import clsx from "clsx";
 import Comment from "./Comment";
 import { Button } from "../ui/button";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { getComments, getPostLikes, getUser } from "@/lib/queries";
+import { getComments, getPostLikes } from "@/lib/actions/community";
+import { getUser } from "@/lib/actions/user";
 import { useQuery } from "@tanstack/react-query";
 import Like from "./Like";
 import { Spinner } from "../ui/spinner";
@@ -37,7 +38,7 @@ const PostWithComments = ({
     text: string,
     parentId?: string,
     parentAuthor?: string
-  ) => Promise<Omit<CommentType, "user" | "_count" | "liked">>;
+  ) => Promise<Omit<CommentType, "user" | "_count" | "liked"> | null>;
   updateLikeCommentQueryData: (
     target: "like" | "comment",
     commentsToAdd?: number
@@ -54,9 +55,14 @@ const PostWithComments = ({
   
   useEffect(() => {
     const fetchComments = async () => {
-      const data = await getComments(userId, post.id);
-      setComments(data);
-      setLoading(false);
+      try{
+        const data = await getComments(post.id);
+        setComments(data!);
+      }catch(err){
+        handleAppError(err);
+      }finally{
+        setLoading(false);
+      }
     };
 
     fetchComments();
@@ -64,14 +70,18 @@ const PostWithComments = ({
 
   const { data: userData } = useQuery({
     queryKey: ["user", { userId }],
-    queryFn: () => getUser(userId),
+    queryFn: () => getUser(),
     staleTime: Infinity,
   });
 
   useEffect(() => {
     const getLikes = async () => {
-      const data = await getPostLikes(post.id);
-      setLikes(data);
+      try{
+        const data = await getPostLikes(post.id);
+        setLikes(data!);
+      }catch(err){
+        handleAppError(err);
+      }
     };
 
     if (open && likes.length === 0) getLikes();
@@ -79,6 +89,7 @@ const PostWithComments = ({
 
   const saveComment = async (text: string) => {
     const newComment = await addComment(text);
+    if(!newComment) return;
     setComment("");
     const formattedComment: CommentType = {
       ...newComment,

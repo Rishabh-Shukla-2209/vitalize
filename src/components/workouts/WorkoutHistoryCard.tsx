@@ -1,6 +1,6 @@
 import { WorkoutLogType } from "@/lib/types";
-import Icons from "./icons/appIcons";
-import { Button } from "./ui/button";
+import Icons from "../icons/appIcons";
+import { Button } from "../ui/button";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ExerciseLog from "./ExerciseLog";

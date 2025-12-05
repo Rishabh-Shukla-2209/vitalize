@@ -3,16 +3,21 @@ import Icons from "../icons/appIcons";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useState } from "react";
-import { abandonGoal } from "@/lib/queries";
+import { abandonGoal } from "@/lib/actions/goal";
+import { handleAppError } from "@/lib/utils";
 
 const GoalEdit = ({ goal, goalUpdater }: { goal: GoalType, goalUpdater: (goalId: string) => void }) => {
   const [submitting, setSubmitting] = useState(false);
 
   const onEdit = async () => {
     setSubmitting(true);
-    await abandonGoal(goal.id);
-    goalUpdater(goal.id);
-    setSubmitting(false);
+    try{
+      await abandonGoal(goal.id);
+      goalUpdater(goal.id);
+      setSubmitting(false);
+    }catch(err){
+      handleAppError(err);
+    }
   }
 
   return (

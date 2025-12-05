@@ -14,8 +14,8 @@ import Stats from "@/components/profile/Stats";
 import UpdateAbout from "@/components/profile/UpdateAbout";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import UserAIWorkouts from "@/components/UserAIWorkouts";
-import { getNoOfPRs, getNoOfWorkoutsDone, getUser } from "@/lib/queries";
+import UserAIWorkouts from "@/components/profile/UserAIWorkouts";
+import { getNoOfPRs, getNoOfWorkoutsDone, getUser } from "@/lib/actions/user";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -26,7 +26,7 @@ const ProfilePage = () => {
 
   const { data: userData } = useQuery({
     queryKey: ["user", { userId: user?.id }],
-    queryFn: () => getUser(user?.id),
+    queryFn: () => getUser(),
     staleTime: Infinity,
     enabled: !!user,
   });
@@ -36,8 +36,8 @@ const ProfilePage = () => {
     queryFn: async () => {
       if (user) {
         const [prCount, workoutCount] = await Promise.all([
-          getNoOfPRs(user.id),
-          getNoOfWorkoutsDone(user.id),
+          getNoOfPRs(),
+          getNoOfWorkoutsDone(),
         ]);
         return { prCount, workoutCount };
       }
@@ -97,7 +97,7 @@ const ProfilePage = () => {
           <Spinner />
         </div>}
         {user ? <AllGoals userId={user.id} /> : <div className="w-full h-20 flex-center"><Spinner /></div>}
-        {user ? <UserAIWorkouts userId={user.id} /> : <div className="w-full h-20 flex-center"><Spinner /></div>}
+        {user ? <UserAIWorkouts/> : <div className="w-full h-20 flex-center"><Spinner /></div>}
       </div>
     </div>
   );

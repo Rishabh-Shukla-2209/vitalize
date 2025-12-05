@@ -1,12 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 enum Gender {
@@ -135,11 +133,8 @@ model User {
   NotificationSender    Notification[]    @relation("SenderRelation")
   AiInteraction         AiInteraction[]
   MeasureMent           Measurement[]
-
   PR PR[]
-
   PostLike PostLike[]
-
   CommentLike CommentLike[]
 }
 
@@ -157,8 +152,8 @@ model ExerciseCatalog {
   ExerciseLogs ExerciseLog[]
   planExercise PlanExercise[]
   Goal         Goal[]
-
   PR PR[]
+
 }
 
 model WorkoutPlan {
@@ -174,6 +169,8 @@ model WorkoutPlan {
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @default(now())
   WorkoutLogs WorkoutLog[]
+
+  @@index([userId])
 }
 
 model PlanExercise {
@@ -203,6 +200,8 @@ model WorkoutLog {
   notes     String?
 
   Post Post[]
+
+  @@index([userId, createdAt(sort: Desc)])
 }
 
 model ExerciseLog {
@@ -235,6 +234,9 @@ model ExerciseLog {
   WorkoutLog           WorkoutLog      @relation(fields: [WorkoutLogid], references: [id], onDelete: Cascade)
   WorkoutLogid         String
   planExercise         PlanExercise[]
+
+  @@index([WorkoutLogid])
+  @@index([exerciseid])
 }
 
 model Measurement {
@@ -264,6 +266,8 @@ model Goal {
   currentValue     Float
   targetDate       DateTime
   createdAt        DateTime        @default(now())
+
+  @@index([userid])
 }
 
 model PR {
@@ -289,6 +293,7 @@ model Follow {
   createdAt   DateTime     @default(now())
 
   @@unique([followerId, followingId])
+  @@index([followingId])
 }
 
 model Post {
@@ -305,6 +310,9 @@ model Post {
   PostLike     PostLike[]
   Comment      Comment[]
   Notification Notification[]
+
+  @@index([createdAt(sort: Desc), id])
+  @@index([userid])
 }
 
 model Comment {
@@ -323,6 +331,8 @@ model Comment {
   replies     Comment[]     @relation("replies")
 
   Notification Notification[]
+
+  @@index([postid])
 }
 
 model PostLike {
@@ -361,6 +371,8 @@ model Notification {
   isRead      Boolean          @default(false)
   readAt      DateTime?
   createdAt   DateTime         @default(now())
+
+  @@index([recipientid, createdAt(sort: Desc)])
 }
 
 model AiInteraction {

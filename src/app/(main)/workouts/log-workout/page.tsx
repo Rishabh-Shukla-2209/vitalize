@@ -1,9 +1,9 @@
 "use client";
 
 import Icons from "@/components/icons/appIcons";
-import WorkoutHistoryCard from "@/components/WorkoutHistoryCard";
-import WorkoutPlanCard from "@/components/WorkoutPlanCard";
-import { getPastWorkouts, getWorkoutPlans } from "@/lib/queries";
+import WorkoutHistoryCard from "@/components/workouts/WorkoutHistoryCard";
+import WorkoutPlanCard from "@/components/workouts/WorkoutPlanCard";
+import { getPastWorkouts, getWorkoutPlans } from "@/lib/actions/workout";
 import { WorkoutPlanType } from "@/lib/types";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -11,7 +11,10 @@ import React, { useEffect, useState } from "react";
 import { useDebounce } from "react-use";
 import { motion, AnimatePresence } from "framer-motion";
 import WorkoutSkeleton from "@/components/profile/skeletons/WorkoutSkeleton";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { handleAppError } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 const LogWorkoutPage = () => {
   const [search, setSearch] = useState("");
@@ -26,26 +29,37 @@ const LogWorkoutPage = () => {
 
   useEffect(() => {
     async function getData() {
-      const res = await getWorkoutPlans(debouncedSearch, "", "", "", "", user ? user.id : null);
-      setSearchedWorkouts(res);
+      try {
+        const res = await getWorkoutPlans(debouncedSearch, "", "", "", "");
+        setSearchedWorkouts(res!);
+      } catch (err) {
+        handleAppError(err);
+      }
     }
 
     if (debouncedSearch) getData();
   }, [debouncedSearch, user]);
 
-  const { data: recentWorkouts, isLoading } = useQuery({
-    queryKey: [user?.id, "past-workouts"],
-    queryFn: () => getPastWorkouts(user!.id),
-    staleTime: 5 * 60 * 1000,
-    enabled: !!user
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["past-workouts"],
+    queryFn: ({ pageParam }) => getPastWorkouts("", "", pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
+    staleTime: Infinity
   });
+
+  const recentWorkouts = data?.pages.flatMap((p) => p?.data) ?? [];
 
   return (
     <div className="p-5 md:px-15 lg:py-8 xl:px-60">
       <h1 className="mb-1">Log Workout</h1>
-      <p>
-        Select from your recent workouts or search for one.
-      </p>
+      <p>Select from your recent workouts or search for one.</p>
       <p className="flex items-center text-zinc-400 bg-zinc-100 dark:bg-sage-400 px-2.5 mt-3 rounded-lg w-85 md:w-100">
         <Icons.search />
         <input
@@ -80,14 +94,31 @@ const LogWorkoutPage = () => {
       </AnimatePresence>
 
       <div className="flex flex-col gap-5 mt-5">
-        {recentWorkouts && recentWorkouts.length > 0 ?
+        {recentWorkouts && recentWorkouts.length > 0 ? (
           recentWorkouts.map((workout) => (
             <WorkoutHistoryCard
-              key={workout.id}
-              workout={workout}
+              key={workout!.id}
+              workout={workout!}
               action="log"
             />
-          )) : isLoading ? <WorkoutSkeleton /> : <p>No workouts to show right now.</p>}
+          ))
+        ) : isLoading ? (
+          <WorkoutSkeleton />
+        ) : (
+          <p>No workouts to show right now.</p>
+        )}
+        {hasNextPage && (
+          <div className="flex-center">
+            <Button
+              variant="ghost"
+              className="text-primary"
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+            >
+              {isFetchingNextPage ? <Spinner /> : "See More"}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

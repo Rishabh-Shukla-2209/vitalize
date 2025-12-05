@@ -1,6 +1,6 @@
 import Icons from "@/components/icons/appIcons";
 import { Button } from "@/components/ui/button";
-import { getCommentsActivity } from "@/lib/queries";
+import { getCommentsActivity } from "@/lib/actions/user";
 import { minutesAgo } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -23,7 +23,8 @@ const Comments = ({ userId }: { userId: string }) => {
         ? pageCursors[currIndex].first
         : pageCursors[currIndex].last;
 
-    const data = await getCommentsActivity(userId, cursor, direction);
+    const data = await getCommentsActivity(cursor, direction);
+    if(!data) return;
 
     if (data.length > 0) {
       setPageCursors((prev) => {
@@ -40,7 +41,7 @@ const Comments = ({ userId }: { userId: string }) => {
     }
 
     return data;
-  }, [userId, currIndex, direction, pageCursors]);
+  }, [currIndex, direction, pageCursors]);
 
   const { data: comments, isLoading } = useQuery({
     queryKey: ["activity", "comments", userId, currIndex],

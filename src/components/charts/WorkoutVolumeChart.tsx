@@ -1,4 +1,4 @@
-import { getLastWeekVol } from "@/lib/queries";
+import { getLastWeekVol } from "@/lib/actions/charts";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import {
@@ -11,16 +11,20 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import ChartSkeleton from "./ChartSkeleton";
+import { handleAppError } from "@/lib/utils";
 
 const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["weeklyChartData", userId],
-    queryFn: () => getLastWeekVol(userId),
+    queryFn: () => getLastWeekVol(),
     staleTime: 12 * 60 * 60 * 1000,
   });
-  if (isLoading || isError || !data) {
+  if (isLoading) {
     return <ChartSkeleton />;
   }
+
+  if(isError) handleAppError(error);
+  if(!data) return <p>Unknown Error has occured while displaying this chart.</p>;
 
   const totalVolCurrent = data.totalVolCurrent;
   const totalVolPrev = data.totalVolPrev;

@@ -1,19 +1,24 @@
-"use client"
+"use client";
 
 import PostWithComments from "@/components/community/PostWithComments";
 import { Spinner } from "@/components/ui/spinner";
-import { getPost, saveComment, savePostReaction } from "@/lib/queries";
+import {
+  getPost,
+  saveComment,
+  savePostReaction,
+} from "@/lib/actions/community";
 import { PostType } from "@/lib/types";
+import { handleAppError } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
-import { useParams, useSearchParams} from "next/navigation";
+import { notFound, useParams, useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 
 const PostPage = () => {
   const { user } = useUser();
   const { postId } = useParams();
   const searchParams = useSearchParams();
-  const commentId = searchParams.get("commentId");  
+  const commentId = searchParams.get("commentId");
   const [post, setPost] = useState<PostType | null>();
   const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState("");
@@ -24,14 +29,22 @@ const PostPage = () => {
     : 0;
 
   useEffect(() => {
-    const fetchPost = async (postId: string, userId: string) => {
-      const res = await getPost(postId, userId);
-      setPost(res);
-      if (res) setLiked(res.liked);      
+    const fetchPost = async (postId: string) => {
+      try{
+        const res = await getPost(postId);
+        setPost(res);
+        if (res) setLiked(res.liked);
+      }catch(err){
+        handleAppError(err);
+      }
     };
 
-    if (user && typeof postId === "string") fetchPost(postId, user.id);    
+    if (user && typeof postId === "string") fetchPost(postId);
   }, [postId, user]);
+
+  if (post === null) {
+    notFound();
+  }
 
   const updateLikeCommentQueryData = useCallback(
     (target: "like" | "comment", commentsToAdd: number = 1) => {
@@ -60,36 +73,55 @@ const PostPage = () => {
 
   const addComment = useCallback(
     async (text: string, parentId?: string, parentAuthor?: string) => {
-      updateLikeCommentQueryData("comment");
-      const newComment = await saveComment(post!.id, post!.userid, user!.id, text, parentId, parentAuthor);
-      queryClient.invalidateQueries({
-      queryKey: ["activity", "comments"],
-      exact: false
-    })
-      return newComment;
+      try {
+        updateLikeCommentQueryData("comment");
+        const newComment = await saveComment(
+          post!.id,
+          post!.userid,
+          text,
+          parentId,
+          parentAuthor
+        );
+        queryClient.invalidateQueries({
+          queryKey: ["activity", "comments"],
+          exact: false,
+        });
+        return newComment;
+      } catch (err) {
+        handleAppError(err);
+        updateLikeCommentQueryData("comment", -1);
+        return null;
+      }
     },
-    [post, queryClient, updateLikeCommentQueryData, user]
+    [post, queryClient, updateLikeCommentQueryData]
   );
 
   useEffect(() => {
-      if (!user || !post || liked === post.liked) return;
-  
-      const timer = setTimeout(() => {
-        savePostReaction(post.id, post.userid, user.id, liked ? "liked" : "unliked");
-        updateLikeCommentQueryData("like");
-        queryClient.invalidateQueries({
+    if (!user || !post || liked === post.liked) return;
+
+    const timer = setTimeout(() => {
+      try {
+        savePostReaction(post.id, post.userid, liked ? "liked" : "unliked");
+      } catch (err) {
+        handleAppError(err);
+        return;
+      }
+      updateLikeCommentQueryData("like");
+      queryClient.invalidateQueries({
         queryKey: ["activity", "postLikes"],
-        exact: false
-      })
-      }, 2000);
-  
-      return () => clearTimeout(timer);
-    }, [liked, post, queryClient, updateLikeCommentQueryData, user]);
+        exact: false,
+      });
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [liked, post, queryClient, updateLikeCommentQueryData, user]);
 
   return (
     <div className="w-full h-full flex-center py-5">
       {post === undefined ? (
-        <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
+        <div className="w-full h-screen flex-center">
+          <Spinner className="mb-50" />
+        </div>
       ) : post ? (
         <PostWithComments
           post={post}

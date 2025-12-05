@@ -1,4 +1,4 @@
-import { getGoals } from "@/lib/queries";
+import { getGoals } from "@/lib/actions/goal";
 import { GoalType } from "@/lib/types";
 import { useState, useEffect, useCallback } from "react";
 import { useDebounce } from "react-use";
@@ -6,7 +6,7 @@ import Icons from "../icons/appIcons";
 import Goal from "./Goal";
 import { Button } from "../ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { GoalStatus as Status } from "@/generated/prisma";
+import { GoalStatus as Status } from "@/generated/prisma/enums";
 import Selector from "../Selector";
 import { GoalStatus } from "@/lib/utils";
 import AddGoal from "./AddGoal";
@@ -37,14 +37,13 @@ const AllGoals = ({ userId }: { userId: string }) => {
         : pageCursors[currIndex].last;
 
     const data = await getGoals(
-      userId,
       cursor,
       direction,
       debouncedSearch,
       status as Status | "All"
     );
 
-    if (data.length > 0) {
+    if (data && data.length > 0) {
       setPageCursors((prev) => {
         const next = [...prev];
         next[currIndex + 1] = {
@@ -59,7 +58,7 @@ const AllGoals = ({ userId }: { userId: string }) => {
     }
 
     return data as unknown as GoalType[];
-  }, [direction, pageCursors, currIndex, userId, debouncedSearch, status]);
+  }, [direction, pageCursors, currIndex, debouncedSearch, status]);
 
   const { data: goals, isLoading } = useQuery({
     queryKey: ["Goals", userId, currIndex, debouncedSearch, status],

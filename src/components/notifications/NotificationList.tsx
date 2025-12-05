@@ -5,11 +5,14 @@ import { pusherClient } from "@/lib/pusher-client";
 import { useUser } from "@clerk/nextjs";
 import { Cursor, NotificationPayload } from "@/lib/types";
 import Icons from "../icons/appIcons";
-import { getNotifications, getUnreadNotificationCount } from "@/lib/queries";
+import {
+  getNotifications,
+  getUnreadNotificationCount,
+} from "@/lib/actions/user";
 import Notification from "./Notification";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
-import { getNotificationDetails } from "@/lib/utils";
+import { getNotificationDetails, handleAppError } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { AnimatePresence, motion } from "framer-motion";
 import clsx from "clsx";
@@ -25,27 +28,36 @@ export function NotificationsList() {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    const fetchNotifications = async (userId: string) => {
-      const res = await getNotifications(userId, null);
-      if (res.length > 0) {
-        setNotifications(res);
-        setCursor({
-          createdAt: res[res.length - 1].createdAt,
-          id: res[res.length - 1].id,
-        });
+    const fetchNotifications = async () => {
+      try {
+        const res = await getNotifications(null);
+        if (res && res.length > 0) {
+          setNotifications(res);
+          setCursor({
+            createdAt: res[res.length - 1].createdAt,
+            id: res[res.length - 1].id,
+          });
+        }
+        if (res && res.length === 20) setHasMore(true);
+      } catch (err) {
+        handleAppError(err);
       }
-      if (res.length === 20) setHasMore(true);
     };
 
-    const fetchUnreadCount = async (userId: string) => {
-      const res = await getUnreadNotificationCount(userId);
-      setUnreadCount(res);
+    const fetchUnreadCount = async () => {
+      try{
+        const res = await getUnreadNotificationCount();
+        setUnreadCount(res!);
+      }catch(err){
+        handleAppError(err);
+      }
+      
     };
 
     if (!user) return;
 
-    fetchNotifications(user.id);
-    fetchUnreadCount(user.id);
+    fetchNotifications();
+    fetchUnreadCount();
 
     const channelName = `private-user-${user.id}`;
     const channel = pusherClient.subscribe(channelName);
@@ -69,15 +81,19 @@ export function NotificationsList() {
 
   const loadMoreNotifications = async () => {
     setLoading(true);
-    const res = await getNotifications(user!.id, cursor);
-    setNotifications((prev) => [...prev, ...res]);
-    setCursor({
-      createdAt: res[res.length - 1].createdAt,
-      id: res[res.length - 1].id,
-    });
-    if (res.length === 20) setHasMore(true);
-    else setHasMore(false);
-    setLoading(false);
+    try {
+      const res = await getNotifications(cursor);
+      setNotifications((prev) => [...prev, ...res!]);
+      setCursor({
+        createdAt: res![res!.length - 1].createdAt,
+        id: res![res!.length - 1].id,
+      });
+      if (res!.length === 20) setHasMore(true);
+      else setHasMore(false);
+      setLoading(false);
+    } catch (err) {
+      handleAppError(err);
+    }
   };
 
   return (
@@ -108,14 +124,14 @@ export function NotificationsList() {
             )}
           >
             <div>
-                <div className="flex justify-between p-2 border-b border-b-zinc-400 dark:border-sage-700">
-                  <h3>Notifications</h3>
-                  <Icons.uncheck
-                    onClick={() => setOpen(false)}
-                    className="cursor-pointer"
-                  />
-                </div>
-            {notifications.length > 0 ? (
+              <div className="flex justify-between p-2 border-b border-b-zinc-400 dark:border-sage-700">
+                <h3>Notifications</h3>
+                <Icons.uncheck
+                  onClick={() => setOpen(false)}
+                  className="cursor-pointer"
+                />
+              </div>
+              {notifications.length > 0 ? (
                 <>
                   {notifications.map((n) => (
                     <Notification
@@ -126,7 +142,7 @@ export function NotificationsList() {
                       setUnreadCount={setUnreadCount}
                     />
                   ))}
-                
+
                   {hasMore && (
                     <div className="flex-center">
                       {loading ? (
@@ -142,10 +158,10 @@ export function NotificationsList() {
                     </div>
                   )}
                 </>
-            ) : (
-              <p className="p-4">No notifications to show</p>
-            )}
-              </div>
+              ) : (
+                <p className="p-4">No notifications to show</p>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

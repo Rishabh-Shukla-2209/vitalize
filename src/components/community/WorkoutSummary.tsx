@@ -1,4 +1,4 @@
-import ExerciseLog from "../ExerciseLog";
+import ExerciseLog from "../workouts/ExerciseLog";
 import { WorkoutLogType } from "@/lib/types";
 
 const WorkoutSummary = ({ workout }: { workout: Omit<WorkoutLogType, "plan"> }) => {

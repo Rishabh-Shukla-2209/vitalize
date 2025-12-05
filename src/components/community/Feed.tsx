@@ -1,10 +1,11 @@
 import { useFeed } from "@/hooks/useFeed";
 import { useRef, useEffect } from "react";
 import Post from "./Post";
-import { getPosts, getUserPosts } from "@/lib/queries";
 import { FeedFetcher } from "@/lib/types";
 import { Spinner } from "../ui/spinner";
 import PostSkeleton from "./PostSkeleton";
+import { getPosts } from "@/lib/actions/community";
+import { getUserPosts } from "@/lib/actions/user";
 
 const Feed = ({
   userId,
@@ -17,26 +18,30 @@ const Feed = ({
 }) => {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  const adaptedGetPosts: FeedFetcher = async ({ userId, cursor, source }) => {
-    return getPosts(userId, cursor, source);
+  const adaptedGetPosts: FeedFetcher = async ({ cursor, source }) => {
+    const res = await getPosts(cursor, source);
+    if(res){
+      return res;
+    }
+    throw res;
   };
 
-  const adaptedGetUserPosts: FeedFetcher = async ({
-    userId,
-    cursor,
-  }) => {
-    const res = await getUserPosts(specificUserId!, cursor, userId);
-    return {
-      ...res,
-      nextSource: null,
-    };
+  const adaptedGetUserPosts: FeedFetcher = async ({ cursor }) => {
+    const res = await getUserPosts(specificUserId!, cursor);
+    if (res)
+      return {
+        ...res,
+        nextSource: null,
+      };
+    else throw res;
   };
 
-  const { posts, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFeed(
-    userId,
-    type === "general" ? adaptedGetPosts : adaptedGetUserPosts,
-    specificUserId,
-  );
+  const { posts, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useFeed(
+      userId,
+      type === "general" ? adaptedGetPosts : adaptedGetUserPosts,
+      specificUserId
+    );
 
   useEffect(() => {
     const node = sentinelRef.current;
@@ -62,13 +67,25 @@ const Feed = ({
   return (
     <div className="flex flex-col items-center gap-5">
       {posts.map((post) => (
-        <Post key={post.id} post={post} userId={userId} specificUserId={specificUserId}/>
+        <Post
+          key={post.id}
+          post={post}
+          userId={userId}
+          specificUserId={specificUserId}
+        />
       ))}
 
-      {isLoading && <><PostSkeleton /><PostSkeleton /></>}
+      {isLoading && (
+        <>
+          <PostSkeleton />
+          <PostSkeleton />
+        </>
+      )}
 
       {isFetchingNextPage && (
-        <p className="flex-center"><Spinner /></p>
+        <p className="flex-center">
+          <Spinner />
+        </p>
       )}
 
       {!isLoading && !hasNextPage && (

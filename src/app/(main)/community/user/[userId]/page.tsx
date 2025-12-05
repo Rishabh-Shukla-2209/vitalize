@@ -8,14 +8,10 @@ import { useParams } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  getNoOfPRs,
-  getNoOfWorkoutsDone,
-  getFollowingStatus,
-  saveFollowing,
-  getUser,
-} from "@/lib/queries";
 import { Spinner } from "@/components/ui/spinner";
+import { saveFollowing } from "@/lib/actions/community";
+import { getNoOfPRs, getNoOfWorkoutsDone, getUser, getFollowingStatus } from "@/lib/actions/user";
+import { handleAppError } from "@/lib/utils";
 
 const SocialProfile = () => {
   const [followStatus, setFollowStatus] =
@@ -30,12 +26,12 @@ const SocialProfile = () => {
       if (user && typeof id === "string") {
         const [prCount, workoutCount, profileUser, followStatus] =
           await Promise.all([
-            getNoOfPRs(id),
-            getNoOfWorkoutsDone(id),
-            getUser(id),
-            getFollowingStatus(user.id, id),
+            getNoOfPRs(),
+            getNoOfWorkoutsDone(),
+            getUser(),
+            getFollowingStatus(id),
           ]);
-        setFollowStatus(followStatus);
+        setFollowStatus(followStatus!);
         return { prCount, workoutCount, profileUser, followStatus };
       }
     },
@@ -67,10 +63,14 @@ const SocialProfile = () => {
         data.followStatus === "Accepted" || data.followStatus === "Requested"
           ? "unFollow"
           : "follow";
-      console.log(2);
 
-      saveFollowing(user!.id, id as string, data.profileUser!.privacy, action);
-      updateFollowQueryData(followStatus);
+      try{
+        saveFollowing(id as string, data.profileUser!.privacy, action);
+        updateFollowQueryData(followStatus);
+      }catch(err){
+        handleAppError(err);
+        updateFollowQueryData(data.followStatus!);
+      }
     }, 2000);
 
     return () => clearTimeout(timer);

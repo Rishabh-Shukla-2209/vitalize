@@ -1,12 +1,12 @@
-import { getUserAIWorkouts } from "@/lib/queries";
+import { getUserAIWorkouts } from "@/lib/actions/user";
 import { useState, useCallback } from "react";
-import Icons from "./icons/appIcons";
-import { Button } from "./ui/button";
+import Icons from "../icons/appIcons";
+import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 import AIWorkoutCard from "./AIWorkoutCard";
-import AIWorkoutSkeleton from "./profile/skeletons/WorkoutSkeleton";
+import AIWorkoutSkeleton from "./skeletons/WorkoutSkeleton";
 
-const UserAIWorkouts = ({ userId }: { userId: string }) => {
+const UserAIWorkouts = () => {
   const [pageCursors, setPageCursors] = useState<
     Array<{
       first: { createdAt: Date; id: string } | null;
@@ -22,27 +22,28 @@ const UserAIWorkouts = ({ userId }: { userId: string }) => {
         ? pageCursors[currIndex].first
         : pageCursors[currIndex].last;
 
-    const data = await getUserAIWorkouts(userId, cursor, direction);
-
-    if (data.length > 0) {
-      setPageCursors((prev) => {
-        const next = [...prev];
-        next[currIndex + 1] = {
-          first: { createdAt: data[0].createdAt, id: data[0].id },
-          last: {
-            createdAt: data[data.length - 1].createdAt,
-            id: data[data.length - 1].id,
-          },
-        };
-        return next;
-      });
+    const data = await getUserAIWorkouts(cursor, direction);
+    if (data) {
+      if (data.length > 0) {
+        setPageCursors((prev) => {
+          const next = [...prev];
+          next[currIndex + 1] = {
+            first: { createdAt: data[0].createdAt, id: data[0].id },
+            last: {
+              createdAt: data[data.length - 1].createdAt,
+              id: data[data.length - 1].id,
+            },
+          };
+          return next;
+        });
+      }
     }
 
     return data;
-  }, [userId, currIndex, direction, pageCursors]);
+  }, [currIndex, direction, pageCursors]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["UserAIWorkouts", userId, currIndex],
+    queryKey: ["UserAIWorkouts", currIndex],
     queryFn: getData,
     staleTime: 5 * 60 * 1000,
   });
@@ -51,7 +52,9 @@ const UserAIWorkouts = ({ userId }: { userId: string }) => {
     <div>
       <h2 className="mt-5">AI Workouts</h2>
       <div className="flex flex-col gap-2 mt-2">
-        {isLoading ? <AIWorkoutSkeleton /> : data && data.length > 0 ? (
+        {isLoading ? (
+          <AIWorkoutSkeleton />
+        ) : data && data.length > 0 ? (
           data.map((workout) => (
             <AIWorkoutCard key={workout.id} workout={workout} />
           ))

@@ -1,11 +1,12 @@
-import Exercise from "@/components/Exercise";
+import Exercise from "@/components/workouts/Exercise";
 import Icons from "@/components/icons/appIcons";
 import { Button } from "@/components/ui/button";
-import { getWorkoutDetails } from "@/lib/queries";
+import { getWorkoutDetails } from "@/lib/actions/workout";
 import { toProperCase } from "@/lib/utils";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import React from "react";
 
 const ProgramDetailPage = async ({
@@ -17,7 +18,7 @@ const ProgramDetailPage = async ({
   const workout = await getWorkoutDetails(workout_id);
 
   if (!workout) {
-    return <p>Workout not found</p>;
+    notFound();
   }
   const equipments = workout.exercises
     .map((planExercise) => planExercise.exercise.equipment)

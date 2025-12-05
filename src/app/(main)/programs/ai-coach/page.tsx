@@ -1,7 +1,7 @@
 "use client";
 
-import AIWorkout from "@/components/aiWorkout/AIWorkout";
-import AIWorkoutSkeletom from "@/components/aiWorkout/AIWorkoutSkeletom";
+import AIWorkout from "@/components/ai/AIWorkout";
+import AIWorkoutSkeletom from "@/components/ai/AIWorkoutSkeletom";
 import Icons from "@/components/icons/appIcons";
 import MultiSelector from "@/components/MultiSelector";
 import Selector from "@/components/Selector";
@@ -16,79 +16,6 @@ import { Difficulty, ExerciseCategories, MuscleGroups } from "@/lib/utils";
 import { AiWorkoutSchemaType } from "@/validations/ai";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-
-// const mockWorkout: AiWorkoutSchemaType = {
-//     description:
-//       "A beginner-focused full-body strength session targeting chest, back, shoulders, biceps, triceps, forearms, abs, lower back, quads, lats, hamstrings, glutes and calves using foundational compound and accessory movements.",
-//     duration: 60,
-//     level: "BEGINNER",
-//     name: "Beginner Full-Body Strength",
-//     exercises: [
-//       {
-//         position: 1,
-//         name: "Back Squats",
-//         benefit: "Improves Squat stability and quad strength",
-//         sets: 3,
-//         reps: 8,
-//         rest: 90,
-//         exerciseId: "d6b13585-7f73-4550-8c81-d3288bc6d742",
-//       },
-//       {
-//         position: 2,
-//         name: "Back Squats",
-//         benefit: "Improves Squat stability and quad strength",
-//         sets: 3,
-//         reps: 8,
-//         rest: 90,
-//         exerciseId: "69c96db9-c147-4756-8bc1-ab854971fc96",
-//       },
-//       {
-//         position: 3,
-//         name: "Back Squats",
-//         benefit: "Improves Squat stability and quad strength",
-//         sets: 3,
-//         reps: 5,
-//         rest: 120,
-//         exerciseId: "0a058928-4da0-4c60-808b-cde543dee511",
-//       },
-//       {
-//         position: 4,
-//         name: "Back Squats",
-//         benefit: "Improves Squat stability and quad strength",
-//         sets: 3,
-//         reps: 6,
-//         rest: 90,
-//         exerciseId: "78eddb71-fc5e-4e74-bee1-2a735802adc8",
-//       },
-//       {
-//         position: 5,
-//         name: "Back Squats",
-//         benefit: "Improves Squat stability and quad strength",
-//         sets: 3,
-//         reps: 12,
-//         rest: 60,
-//         exerciseId: "da30947b-e933-40d7-9dca-cdf4effaf472",
-//       },
-//       {
-//         position: 6,
-//         name: "Back Squats",
-//         benefit: "Improves Squat stability and quad strength",
-//         sets: 3,
-//         reps: 12,
-//         rest: 60,
-//         exerciseId: "334dc35c-9ee8-408c-ab30-7f2b088482cc",
-//       },
-//       {
-//         position: 7,
-//         name: "Back Squats",
-//         benefit: "Improves Squat stability and quad strength",
-//         sets: 2,
-//         reps: 15,
-//         rest: 45,
-//         exerciseId: "7ac1ad1c-a414-4cca-a0e9-01092aa1a34b",
-//       },
-//     ],
-//   };
 
 const AICoachPage = () => {
   const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<

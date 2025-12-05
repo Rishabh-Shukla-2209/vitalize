@@ -1,13 +1,13 @@
 import PR from "./PR";
 import { useQuery } from "@tanstack/react-query";
-import { getRecentPersonalRecords } from "@/lib/queries";
+import { getRecentPersonalRecords } from "@/lib/actions/pr";
 import PRSkeleton from "./PRSkeleton";
 import Link from "next/link";
 
-const PRs = ({ userId }: { userId: string }) => {
-  const { data: { prs, countOfTotalPRs } = {}, isLoading, isError } = useQuery({
+const PRs = () => {
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["PRs"],
-    queryFn: () => getRecentPersonalRecords(userId),
+    queryFn: () => getRecentPersonalRecords(),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -19,8 +19,8 @@ const PRs = ({ userId }: { userId: string }) => {
     <div className="boundary w-full px-5 py-3">
       <h3 className="mb-1.5">Personal Records</h3>
       <div className="flex flex-col gap-2">
-        {prs && prs.length > 0 ? (
-          prs.map((pr) => <PR key={pr.id} pR={pr} />)
+        {data?.prs && data.prs.length > 0 ? (
+          data.prs.map((pr) => <PR key={pr.id} pR={pr} />)
         ) : (
           <p>
             {isError
@@ -28,7 +28,7 @@ const PRs = ({ userId }: { userId: string }) => {
               : "Your personal records will appear here."}
           </p>
         )}
-        {(countOfTotalPRs ?? 0) > 11 && (
+        {(data?.countOfTotalPRs ?? 0) > 11 && (
           <Link href="/profile" className="text-primary text-center mt-2">
             See more...
           </Link>

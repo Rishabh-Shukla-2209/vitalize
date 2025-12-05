@@ -1,7 +1,7 @@
 import { WorkoutLogDataType } from "@/lib/types";
 import { useFormContext, FieldPath, Controller } from "react-hook-form";
-import { DurationInput } from "../DurationInput";
-import { DistanceInput } from "../DistanceInput";
+import { DurationInput } from "@/components/DurationInput";
+import { DistanceInput } from "@/components/DistanceInput";
 
 const Cardio = ({
   formIndex,

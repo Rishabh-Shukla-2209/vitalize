@@ -1,4 +1,4 @@
-import { getUser, updateUser } from "@/lib/queries";
+import { getUser, updateUser } from "@/lib/actions/user";
 import { useUser } from "@clerk/nextjs";
 import {
   Dispatch,
@@ -16,6 +16,10 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { PrivacyType } from "@/lib/types";
 import { Spinner } from "../ui/spinner";
+import { updateUserSchema } from "@/validations/user";
+import { mapZodErrors } from "@/validations/errorMapper";
+import { toast } from "sonner";
+import { handleAppError } from "@/lib/utils";
 
 const UpdateAbout = ({
   setEdit,
@@ -29,12 +33,18 @@ const UpdateAbout = ({
   const [privacy, setPrivacy] = useState("");
   const [error, setError] = useState("");
   const [updating, setUpdating] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{
+    about?: string;
+    bio?: string;
+    privacy?: string;
+    imgUrl?: string;
+  }>({});
+
   const queryClient = useQueryClient();
-  
 
   const { data: userData } = useQuery({
     queryKey: ["user", { userId: user?.id }],
-    queryFn: () => getUser(user?.id),
+    queryFn: () => getUser(),
     staleTime: Infinity,
     enabled: !!user,
   });
@@ -66,30 +76,59 @@ const UpdateAbout = ({
     if (!userData || !user) return;
 
     setUpdating(true);
+    setError("");
 
-    let uploadUrl: string | undefined = "";
-    if (preview && preview !== userData.imgUrl) {
-      uploadUrl = await upload();
-    }
+    try {
+      let uploadUrl: string | undefined = undefined;
 
-    if (!error) {
-      const updatedData: { imgUrl?: string; about?: string; bio?: string; privacy?: PrivacyType } = {};
+      if (preview && preview !== userData.imgUrl) {
+        uploadUrl = await upload();
+
+        if (!uploadUrl) {
+          throw new Error("Image upload failed");
+        }
+      }
+
+      const updatedData: {
+        imgUrl?: string;
+        about?: string;
+        bio?: string;
+        privacy?: PrivacyType;
+      } = {};
 
       if (uploadUrl) updatedData.imgUrl = uploadUrl;
       if (bio !== (userData.bio ?? "")) updatedData.bio = bio;
       if (about !== (userData.about ?? "")) updatedData.about = about;
-      if (privacy && privacy !== userData.privacy) updatedData.privacy = privacy as PrivacyType
+      if (privacy && privacy !== userData.privacy)
+        updatedData.privacy = privacy as PrivacyType;
 
       if (Object.keys(updatedData).length !== 0) {
-        await updateUser(userData.id, updatedData);
+        const result = updateUserSchema.safeParse(updatedData);
+
+        if (!result.success) {
+          setFieldErrors(mapZodErrors(result.error));
+          setUpdating(false);
+          return;
+        }
+
+        const validatedData = result.data;
+
+        await updateUser(validatedData);
+
         queryClient.invalidateQueries({
           queryKey: ["user", { userId: user.id }],
           exact: true,
         });
+        toast.success("Profile updated!");
+        setEdit(false);
+      } else {
+        setEdit(false);
       }
+    } catch (err) {
+      handleAppError(err);
+    } finally {
+      setUpdating(false);
     }
-    setEdit(false);
-    setUpdating(false);
   };
 
   return (
@@ -109,6 +148,9 @@ const UpdateAbout = ({
               </div>
             )}
             <ImageCropper setPreview={setPreview} updating={updating} />
+            {fieldErrors.imgUrl && (
+              <span className="error">{fieldErrors.imgUrl}</span>
+            )}
           </div>
           <div className="flex-1 mb-5 flex flex-col gap-2">
             <p className="flex items-center">
@@ -120,10 +162,16 @@ const UpdateAbout = ({
                 id="about"
                 placeholder="Enter your about here..."
                 value={about}
-                onChange={(e) => setAbout(e.target.value)}
+                onChange={(e) => {
+                  setAbout(e.target.value);
+                  setFieldErrors((prev) => ({ ...prev, about: undefined }));
+                }}
                 className="border border-zinc-200 dark:border-sage-700 rounded p-2 text-zinc-600 dark:text-zinc-200 outline-0 flex-5 bg-white dark:bg-sage-500 resize-none"
               ></textarea>
             </p>
+            {fieldErrors.about && (
+              <span className="error">{fieldErrors.about}</span>
+            )}
             <p className="flex items-center">
               <label htmlFor="bio" className="flex-1">
                 Bio
@@ -133,15 +181,25 @@ const UpdateAbout = ({
                 id="bio"
                 placeholder="Enter your bio here..."
                 value={bio}
-                onChange={(e) => setBio(e.target.value)}
+                onChange={(e) => {
+                  setBio(e.target.value);
+                  setFieldErrors((prev) => ({ ...prev, bio: undefined }));
+                }}
                 className="border border-zinc-200 dark:border-sage-700 bg-white dark:bg-sage-500 rounded p-2 text-zinc-600 dark:text-zinc-200 outline-0 flex-5 resize-none h-25 "
               ></textarea>
             </p>
+            {fieldErrors.bio && (
+              <span className="error">{fieldErrors.bio}</span>
+            )}
             <div className="flex items-center mt-2">
               <label htmlFor="privacy" className="flex-1">
                 Visibility
               </label>
-              <RadioGroup onValueChange={setPrivacy} defaultValue={userData.privacy} className="flex">
+              <RadioGroup
+                onValueChange={setPrivacy}
+                defaultValue={userData.privacy}
+                className="flex"
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="PUBLIC" id="public" />
                   <Label htmlFor="public">Public</Label>
@@ -172,7 +230,7 @@ const UpdateAbout = ({
           </Button>
         </>
       ) : (
-        <p>Loading</p>
+        <Spinner />
       )}
     </div>
   );

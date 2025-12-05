@@ -1,13 +1,25 @@
 import {
-  PrismaClient,
   Gender,
   Difficulty,
   ExerciseCategory,
   MuscleGroup,
   Equipment,
-} from "@/generated/prisma";
+} from "@/generated/prisma/enums";
 
-const prisma = new PrismaClient();
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@/generated/prisma/client";
+
+const connectionString = process.env.DIRECT_URL;
+
+const pool = new Pool({
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function resetDatabase() {
   console.log("🗑️ Clearing existing data...");

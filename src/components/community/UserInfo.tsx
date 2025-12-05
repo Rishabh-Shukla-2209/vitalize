@@ -1,4 +1,4 @@
-import { User } from "@/generated/prisma"
+import { User } from "@/generated/prisma/client"
 import Link from "next/link"
 import Image from "next/image"
 import Icons from "../icons/appIcons"

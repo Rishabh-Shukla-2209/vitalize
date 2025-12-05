@@ -4,26 +4,37 @@ import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useState } from "react";
 import Selector from "../Selector";
-import { validCategoryFields } from "@/lib/utils";
-import { changePRField } from "@/lib/queries";
+import { handleAppError, validCategoryFields } from "@/lib/utils";
+import { changePRField } from "@/lib/actions/pr";
 import { Spinner } from "../ui/spinner";
 
-const PREdit = ({ pr, userId, prUpdater }: { pr: PRType, userId: string, prUpdater: (prId: string, updatedField: string, updatedVal: number) => void }) => {
+const PREdit = ({
+  pr,
+  prUpdater,
+}: {
+  pr: PRType;
+  prUpdater: (prId: string, updatedField: string, updatedVal: number) => void;
+}) => {
   const [edit, setEdit] = useState(false);
   const [newField, setNewField] = useState(pr.prField);
   const [submitting, setSubmitting] = useState(false);
 
   const onEdit = async () => {
-    if(newField === pr.prField){
-        setEdit(false);
-        return;
+    if (newField === pr.prField) {
+      setEdit(false);
+      return;
     }
-    setSubmitting(true);
-    const updatedVal = await changePRField(userId, pr.id, pr.exercise.id, newField);
-    prUpdater(pr.id, newField, updatedVal);
-    setSubmitting(false);
-    setEdit(false);
-  }
+    try {
+      setSubmitting(true);
+      const updatedVal = await changePRField(pr.id, pr.exercise.id, newField);
+      prUpdater(pr.id, newField, updatedVal!);
+      setEdit(false);
+    } catch (err) {
+      handleAppError(err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const category = pr.exercise.category as ExerciseCategoryType;
   return edit ? (
@@ -42,7 +53,12 @@ const PREdit = ({ pr, userId, prUpdater }: { pr: PRType, userId: string, prUpdat
       >
         {submitting ? <Spinner /> : "Done"}
       </Button>
-      <Button variant="outline" className="w-full md:w-auto" onClick={() => setEdit(false)} disabled={submitting}>
+      <Button
+        variant="outline"
+        className="w-full md:w-auto"
+        onClick={() => setEdit(false)}
+        disabled={submitting}
+      >
         Cancel
       </Button>
     </div>

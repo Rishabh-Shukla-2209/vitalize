@@ -1,8 +1,9 @@
 import { WorkoutLogDataType } from "@/lib/types";
+import { useEffect } from "react";
 import { useFormContext, FieldPath, Controller } from "react-hook-form";
-import { DurationInput } from "../DurationInput";
+import { DurationInput } from "@/components/DurationInput";
 
-const Flexibility = ({
+const Hiit = ({
   formIndex,
   exerciseName,
 }: {
@@ -11,16 +12,24 @@ const Flexibility = ({
 }) => {
   const {
     register,
+    watch,
     control,
+    setValue,
     formState: { errors },
   } = useFormContext<WorkoutLogDataType>();
 
-  const setsFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.sets`;
-  const repsFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.reps`;
-  const restFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.rest`;
-  const rangeOfMotionFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.rangeOfMotion`;
-  const staticFlexibilityFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.staticFlexibility`;
-  const dynamicFlexibilityFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.dynamicFlexibility`;
+  const setsFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.sets`;
+  const repsFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.reps`;
+  const restFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.rest`;
+  const workIntervalDurationFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.workIntervalDuration`;
+  const workToRestFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.workToRestRatio`;
+
+  const [work, rest] = watch([workIntervalDurationFieldName, restFieldName]);
+
+  useEffect(() => {
+    const WRRatio = Math.round(((work || 0) / (rest || 1)) * 100) / 100;
+    setValue(workToRestFieldName, WRRatio);
+  }, [rest, setValue, work, workToRestFieldName]);
 
   return (
     <div className="mt-5">
@@ -37,10 +46,8 @@ const Flexibility = ({
             })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
-          {errors.flexibility && errors.flexibility[formIndex]?.sets && (
-            <span className="error">
-              {errors.flexibility[formIndex].sets.message}
-            </span>
+          {errors.hiit && errors.hiit[formIndex]?.sets && (
+            <span className="error">{errors.hiit[formIndex].sets.message}</span>
           )}
         </p>
         <p>
@@ -66,37 +73,35 @@ const Flexibility = ({
             )}
           />
         </div>
-        <p>
-          <label>Range of Motion</label>
-          <input
-            type="number"
-            {...register(rangeOfMotionFieldName, {
-              required: "ROM is required",
-              min: { value: 1, message: "ROM must be at least 1" },
-              valueAsNumber: true,
-            })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
-          />
-          {errors.flexibility &&
-            errors.flexibility[formIndex]?.rangeOfMotion && (
-              <span className="error">
-                {errors.flexibility[formIndex].rangeOfMotion.message}
-              </span>
+        <div>
+          <label>Set Duration</label>
+          <Controller
+            name={workIntervalDurationFieldName}
+            control={control}
+            rules={{
+              required: "Duration is required",
+              min: { value: 1, message: "Duration must be at least 1" },
+            }}
+            render={({ field }) => (
+              <DurationInput
+                {...field}
+                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
+              />
             )}
-        </p>
-        <p>
-          <label>Static Flexibility</label>
-          <input
-            type="number"
-            {...register(staticFlexibilityFieldName, { valueAsNumber: true })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
-        </p>
+
+          {errors.hiit && errors.hiit[formIndex]?.workIntervalDuration && (
+            <span className="error">
+              {errors.hiit[formIndex].workIntervalDuration.message}
+            </span>
+          )}
+        </div>
         <p>
-          <label>Dynamic Flexibility</label>
+          <label>Work-Rest Ratio</label>
           <input
             type="number"
-            {...register(dynamicFlexibilityFieldName, { valueAsNumber: true })}
+            {...register(workToRestFieldName, { valueAsNumber: true })}
+            readOnly
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
@@ -105,4 +110,4 @@ const Flexibility = ({
   );
 };
 
-export default Flexibility;
+export default Hiit;

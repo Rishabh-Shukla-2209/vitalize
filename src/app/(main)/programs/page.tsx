@@ -2,16 +2,18 @@
 
 import Icons from "@/components/icons/appIcons";
 import Selector from "@/components/Selector";
-import WorkoutPlanSkeleton from "@/components/WorkoutPlanSkeleton";
-import WorkoutPlanCard from "@/components/WorkoutPlanCard";
-import { getWorkoutPlans } from "@/lib/queries";
+import WorkoutPlanSkeleton from "@/components/workouts/WorkoutPlanSkeleton";
+import WorkoutPlanCard from "@/components/workouts/WorkoutPlanCard";
+import { getWorkoutPlans } from "@/lib/actions/workout";
 import { DifficultyType, EquipmentType, MuscleGroupType } from "@/lib/types";
 import { Difficulty, Duration, Equipment, MuscleGroups } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDebounce } from "react-use";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 const ProgramsPage = () => {
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState("");
@@ -25,7 +27,14 @@ const ProgramsPage = () => {
 
   useDebounce(() => setDebouncedSearch(search), 500, [search]);
 
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
     queryKey: [
       "workouts",
       { selectedMuscleGroup },
@@ -35,19 +44,18 @@ const ProgramsPage = () => {
       { debouncedSearch },
       { userId: user ? user.id : null },
     ],
-    queryFn: async () => {
-      const data = await getWorkoutPlans(
+    queryFn: ({ pageParam }) =>
+      getWorkoutPlans(
         debouncedSearch,
         selectedMuscleGroup as MuscleGroupType | "",
         selectedEquipment as EquipmentType | "",
         selectedDifficulty as DifficultyType | "",
         selectedDuration,
-        user ? user.id : null
-      );
-
-      return data;
-    },
-    staleTime: 60 * 60 * 1000,
+        pageParam
+      ),
+    getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
+    initialPageParam: 0,
+    staleTime: Infinity,
   });
 
   useEffect(() => {
@@ -75,6 +83,8 @@ const ProgramsPage = () => {
     setSelectedDuration("");
   };
 
+  const plans = data?.pages.flatMap((p) => p?.data) ?? [];
+
   return (
     <div className="px-5 py-7">
       <div className="flex flex-wrap gap-5 justify-between items-center mb-2">
@@ -91,7 +101,17 @@ const ProgramsPage = () => {
         </p>
       </div>
       <div className="flex gap-3 my-5">
-        <div className="pt-1">{filtersApplied ? <Icons.removeFilter color="#38e07b" onClick={clearFilters} className="cursor-pointer"/> : <Icons.filter className="text-zinc-500"/>}</div>
+        <div className="pt-1">
+          {filtersApplied ? (
+            <Icons.removeFilter
+              color="#38e07b"
+              onClick={clearFilters}
+              className="cursor-pointer"
+            />
+          ) : (
+            <Icons.filter className="text-zinc-500" />
+          )}
+        </div>
         <div className="flex flex-wrap gap-3 ">
           <Selector
             placeholder="Muscle Group"
@@ -123,15 +143,27 @@ const ProgramsPage = () => {
         <WorkoutPlanSkeleton />
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] auto-rows gap-5">
-          {data.length > 0 ? (
-            data.map((workout) => (
-              <Link href={`/programs/${workout.id}`} key={workout.id}>
-                <WorkoutPlanCard workout={workout} />
+          {plans.length > 0 ? (
+            plans.map((workout) => (
+              <Link href={`/programs/${workout!.id}`} key={workout!.id}>
+                <WorkoutPlanCard workout={workout!} />
               </Link>
             ))
           ) : (
             <p>No workouts are available for your selection.</p>
           )}
+        </div>
+      )}
+      {hasNextPage && (
+        <div className="flex-center mt-5">
+          <Button
+            variant="ghost"
+            className="text-primary"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? <Spinner /> : "See More"}
+          </Button>
         </div>
       )}
       {isError && <p>Error fetching workouts!!</p>}

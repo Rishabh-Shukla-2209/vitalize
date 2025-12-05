@@ -1,6 +1,6 @@
 import { WorkoutLogDataType } from "@/lib/types";
 import { useFormContext, FieldPath, Controller } from "react-hook-form";
-import { DurationInput } from "../DurationInput";
+import { DurationInput } from "@/components/DurationInput";
 
 const Core = ({
   formIndex,

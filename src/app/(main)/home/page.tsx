@@ -1,8 +1,8 @@
 "use client";
-import { hasWorkedOutToday } from "@/lib/queries";
-import ExerciseCategoryChart from "@/components/charts/ExerciseCategoryChart";
+import { hasWorkedOutToday } from "@/lib/actions/user";
+import ExerciseCategoryChart from "@/components/charts/ExerciseCategory";
 import MonthlyWorkouts from "@/components/charts/MonthlyWorkouts";
-import ProgressCompChart from "@/components/charts/ProgressCompChart";
+import ProgressCompChart from "@/components/charts/ProgressComp";
 import WorkoutVolumeChart from "@/components/charts/WorkoutVolumeChart";
 import Icons from "@/components/icons/appIcons";
 import { useUser } from "@clerk/nextjs";
@@ -14,18 +14,23 @@ import GoalSkeleton from "@/components/goal/GoalSkeleton";
 import PRSkeleton from "@/components/personalRecords/PRSkeleton";
 import { Button } from "@/components/ui/button";
 import ChartSkeleton from "@/components/charts/ChartSkeleton";
+import { handleAppError } from "@/lib/utils";
 
 const Homepage = () => {
   const { user, isLoaded, isSignedIn } = useUser();
   const [todaysWorkoutComplete, setTodaysWorkoutComplete] = useState(false);
 
   useEffect(() => {
-    async function didWorkoutToday(userId: string) {
-      const result = await hasWorkedOutToday(userId);
-      setTodaysWorkoutComplete(result);
+    async function didWorkoutToday() {
+      try{
+        const result = await hasWorkedOutToday();
+        setTodaysWorkoutComplete(result!);
+      }catch(err){
+        handleAppError(err);
+      }
     }
     if (isLoaded && isSignedIn) {
-      didWorkoutToday(user.id);
+      didWorkoutToday();
     }
   }, [isLoaded, isSignedIn, user]);
 
@@ -95,8 +100,8 @@ const Homepage = () => {
           {isLoaded && isSignedIn ? (
             <>
               <MonthlyWorkouts userId={user.id} />
-              <Goals userId={user.id} />
-              <PRs userId={user.id} />
+              <Goals />
+              <PRs/>
             </>
           ) : (
             <>

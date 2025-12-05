@@ -1,8 +1,8 @@
 import { WorkoutLogDataType } from "@/lib/types";
 import { useFormContext, FieldPath, Controller } from "react-hook-form";
-import { DurationInput } from "../DurationInput";
+import { DurationInput } from "@/components/DurationInput";
 
-const Balance = ({
+const Mindbody = ({
   formIndex,
   exerciseName,
 }: {
@@ -15,10 +15,10 @@ const Balance = ({
     formState: { errors },
   } = useFormContext<WorkoutLogDataType>();
 
-  const setsFieldName: FieldPath<WorkoutLogDataType> = `balance.${formIndex}.sets`;
-  const repsFieldName: FieldPath<WorkoutLogDataType> = `balance.${formIndex}.reps`;
-  const restFieldName: FieldPath<WorkoutLogDataType> = `balance.${formIndex}.rest`;
-  const tugFieldName: FieldPath<WorkoutLogDataType> = `balance.${formIndex}.tug`;
+  const setsFieldName: FieldPath<WorkoutLogDataType> = `mindbody.${formIndex}.sets`;
+  const repsFieldName: FieldPath<WorkoutLogDataType> = `mindbody.${formIndex}.reps`;
+  const restFieldName: FieldPath<WorkoutLogDataType> = `mindbody.${formIndex}.rest`;
+  const durationFieldName: FieldPath<WorkoutLogDataType> = `mindbody.${formIndex}.duration`;
 
   return (
     <div className="mt-5">
@@ -35,9 +35,9 @@ const Balance = ({
             })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
-          {errors.balance && errors.balance[formIndex]?.sets && (
+          {errors.mindbody && errors.mindbody[formIndex]?.sets && (
             <span className="error">
-              {errors.balance[formIndex].sets.message}
+              {errors.mindbody[formIndex].sets.message}
             </span>
           )}
         </p>
@@ -65,13 +65,13 @@ const Balance = ({
           />
         </div>
         <div>
-          <label>TUG</label>
+          <label>Duration</label>
           <Controller
-            name={tugFieldName}
+            name={durationFieldName}
             control={control}
             rules={{
-              required: "TUG is required",
-              min: { value: 1, message: "TUG must be at least 1" },
+              required: "Duration is required",
+              min: { value: 1, message: "Duration must be at least 1" },
             }}
             render={({ field }) => (
               <DurationInput
@@ -81,9 +81,9 @@ const Balance = ({
             )}
           />
 
-          {errors.balance && errors.balance[formIndex]?.tug && (
+          {errors.mindbody && errors.mindbody[formIndex]?.duration && (
             <span className="error">
-              {errors.balance[formIndex].tug.message}
+              {errors.mindbody[formIndex].duration.message}
             </span>
           )}
         </div>
@@ -92,4 +92,4 @@ const Balance = ({
   );
 };
 
-export default Balance;
+export default Mindbody;

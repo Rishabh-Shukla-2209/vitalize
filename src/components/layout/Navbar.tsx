@@ -7,7 +7,7 @@ import { clsx } from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getUser } from "@/lib/queries";
+import { getUser } from "@/lib/actions/user";
 import { useQuery } from "@tanstack/react-query";
 import { NotificationsList } from "../notifications/NotificationList";
 import { ModeToggle } from "../ThemeToggler";
@@ -27,7 +27,7 @@ const Navbar = () => {
 
   const { data: userData } = useQuery({
     queryKey: ["user", { userId: user?.id }],
-    queryFn: () => getUser(user?.id),
+    queryFn: () => getUser(),
     staleTime: Infinity,
     enabled: !!user,
   });

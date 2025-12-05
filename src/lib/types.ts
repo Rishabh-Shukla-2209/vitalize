@@ -1,4 +1,5 @@
-import { NotificationType, User } from "@/generated/prisma";
+import { User } from "@/generated/prisma/client";
+import { NotificationType } from "@/generated/prisma/enums";
 
 export type DifficultyType = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
 export type PrivacyType = "PUBLIC" | "PRIVATE";
@@ -410,7 +411,6 @@ export type FeedFetcher = (params: {
   userId: string;
   cursor: Cursor;
   source: Source;
-  callerId?: string;
 }) => Promise<GetPostsResponse>;
 
 export type ProfileDataType = {

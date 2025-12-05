@@ -1,10 +1,14 @@
-import { updateFollow, updateNotifReadStatus } from "@/lib/queries";
 import { NotificationPayload } from "@/lib/types";
-import { getNotificationDetails, minutesAgo } from "@/lib/utils";
+import {
+  getNotificationDetails,
+  handleAppError,
+  minutesAgo,
+} from "@/lib/utils";
 import clsx from "clsx";
 import Link from "next/link";
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
+import { updateNotifReadStatus, updateFollow } from "@/lib/actions/user";
 
 const Notification = ({
   notification,
@@ -23,13 +27,22 @@ const Notification = ({
     setOpen(false);
     if (notification.isRead) return;
     setUnreadCount((prev) => prev - 1);
-    updateNotifReadStatus(notification.id).then(() => {
-      setNotifications((prev) =>
-        prev.map((n) => {
-          return n.id === notification.id ? { ...n, isRead: true } : n;
-        })
-      );
-    });
+    updateNotifReadStatus(notification.id)
+      .then(() => {
+        setNotifications((prev) =>
+          prev.map((n) => {
+            return n.id === notification.id ? { ...n, isRead: true } : n;
+          })
+        );
+      })
+      .catch((err) => {
+        handleAppError(err);
+        setNotifications((prev) =>
+          prev.map((n) => {
+            return n.id === notification.id ? { ...n, isRead: false } : n;
+          })
+        );
+      });
   };
 
   const acceptFollowRequest = async () => {
@@ -41,11 +54,18 @@ const Notification = ({
           : n;
       })
     );
-    await updateFollow(
-      notification.id,
-      notification.actorId,
-      notification.recipientid
-    );
+    try {
+      await updateFollow(notification.id, notification.recipientid);
+    } catch (error) {
+      handleAppError(error);
+      setNotifications((prev) =>
+        prev.map((n) => {
+          return n.id === notification.id
+            ? { ...n, type: "FOLLOW_REQUESTED", isRead: false }
+            : n;
+        })
+      );
+    }
   };
 
   return (

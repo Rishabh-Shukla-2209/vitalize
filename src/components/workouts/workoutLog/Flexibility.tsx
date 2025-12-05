@@ -1,9 +1,8 @@
 import { WorkoutLogDataType } from "@/lib/types";
-import { useEffect } from "react";
 import { useFormContext, FieldPath, Controller } from "react-hook-form";
-import { DurationInput } from "../DurationInput";
+import { DurationInput } from "@/components/DurationInput";
 
-const Strength = ({
+const Flexibility = ({
   formIndex,
   exerciseName,
 }: {
@@ -13,27 +12,15 @@ const Strength = ({
   const {
     register,
     control,
-    watch,
-    setValue,
     formState: { errors },
   } = useFormContext<WorkoutLogDataType>();
 
-  const setsFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.sets`;
-  const repsFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.reps`;
-  const restFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.rest`;
-  const weightUsedFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.weightUsed`;
-  const volFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.vol`;
-
-  const [sets, reps, weight] = watch([
-    setsFieldName,
-    repsFieldName,
-    weightUsedFieldName,
-  ]);
-
-  useEffect(() => {
-    const newVol = (sets || 0) * (reps || 0) * (weight || 0);
-    setValue(volFieldName, newVol);
-  }, [sets, reps, setValue, volFieldName, weight]);
+  const setsFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.sets`;
+  const repsFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.reps`;
+  const restFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.rest`;
+  const rangeOfMotionFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.rangeOfMotion`;
+  const staticFlexibilityFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.staticFlexibility`;
+  const dynamicFlexibilityFieldName: FieldPath<WorkoutLogDataType> = `flexibility.${formIndex}.dynamicFlexibility`;
 
   return (
     <div className="mt-5">
@@ -48,11 +35,11 @@ const Strength = ({
               min: { value: 1, message: "Sets must be at least 1" },
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 dark:bg-sage-500 dark:text-zinc-200 focus:border-zinc-800 focus:border"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
-          {errors.strength && errors.strength[formIndex]?.sets && (
+          {errors.flexibility && errors.flexibility[formIndex]?.sets && (
             <span className="error">
-              {errors.strength[formIndex].sets.message}
+              {errors.flexibility[formIndex].sets.message}
             </span>
           )}
         </p>
@@ -61,28 +48,16 @@ const Strength = ({
           <input
             type="number"
             {...register(repsFieldName, {
-              required: "Reps are required",
-              min: { value: 1, message: "Reps must be at least 1" },
               valueAsNumber: true,
             })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
-          {errors.strength && errors.strength[formIndex]?.reps && (
-            <span className="error">
-              {errors.strength[formIndex].reps.message}
-            </span>
-          )}
         </p>
         <div>
           <label>Rest</label>
-
           <Controller
             name={restFieldName}
             control={control}
-            rules={{
-              required: "Rest is required",
-              min: { value: 1, message: "Rest must be at least 1" },
-            }}
             render={({ field }) => (
               <DurationInput
                 {...field}
@@ -90,27 +65,38 @@ const Strength = ({
               />
             )}
           />
-
-          {errors.strength && errors.strength[formIndex]?.rest && (
-            <span className="error">
-              {errors.strength[formIndex].rest.message}
-            </span>
-          )}
         </div>
         <p>
-          <label>Weight Used</label>
+          <label>Range of Motion</label>
           <input
             type="number"
-            {...register(weightUsedFieldName, { valueAsNumber: true })}
+            {...register(rangeOfMotionFieldName, {
+              required: "ROM is required",
+              min: { value: 1, message: "ROM must be at least 1" },
+              valueAsNumber: true,
+            })}
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+          />
+          {errors.flexibility &&
+            errors.flexibility[formIndex]?.rangeOfMotion && (
+              <span className="error">
+                {errors.flexibility[formIndex].rangeOfMotion.message}
+              </span>
+            )}
+        </p>
+        <p>
+          <label>Static Flexibility</label>
+          <input
+            type="number"
+            {...register(staticFlexibilityFieldName, { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
         <p>
-          <label>Volume</label>
+          <label>Dynamic Flexibility</label>
           <input
             type="number"
-            {...register(volFieldName, { valueAsNumber: true })}
-            readOnly
+            {...register(dynamicFlexibilityFieldName, { valueAsNumber: true })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
@@ -119,4 +105,4 @@ const Strength = ({
   );
 };
 
-export default Strength;
+export default Flexibility;

@@ -5,14 +5,13 @@ import ImageCropper from "@/components/ImageCropper";
 import Selector from "@/components/Selector";
 import { Button } from "@/components/ui/button";
 import { uploadCroppedImage } from "@/lib/actions/uploadImage";
-import { createPost, getPastWorkouts } from "@/lib/queries";
 import { PrivacyType, WorkoutLogType } from "@/lib/types";
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
-import { timeAgo } from "@/lib/utils";
+import { handleAppError, timeAgo } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -22,6 +21,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { createPost } from "@/lib/actions/community";
+import { getPastWorkouts } from "@/lib/actions/workout";
+import { postSchema } from "@/validations/post";
+import { mapZodErrors } from "@/validations/errorMapper";
 
 const CreatePostPage = () => {
   const { user } = useUser();
@@ -35,6 +38,13 @@ const CreatePostPage = () => {
   const [workoutLogId, setWorkoutLogId] = useState("");
   const [postPreview, setPostPreview] = useState(false);
   const [privacy, setPrivacy] = useState("PUBLIC");
+  const [fieldErrors, setFieldErrors] = useState<{
+    title?: string;
+    body?: string;
+    privacy?: string;
+    imgUrl?: string;
+    workoutLogid?: string;
+  }>({});
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -81,12 +91,23 @@ const CreatePostPage = () => {
       if (workoutLogId) postData.workoutLogid = workoutLogId;
       if (body) postData.body = body;
 
-      await createPost(user.id, postData);
-      queryClient.invalidateQueries({
-        queryKey: ["activity", "posts"],
-        exact: false
-      })
-      router.push("/home");
+      try {
+        const parsed = postSchema.safeParse(postData);
+        if (!parsed.success) {
+          setFieldErrors(mapZodErrors(parsed.error));
+          setUploading(false);
+          setPostPreview(false);
+          return;
+        }
+        await createPost(postData);
+        queryClient.invalidateQueries({
+          queryKey: ["activity", "posts"],
+          exact: false,
+        });
+        router.push("/home");
+      } catch (err) {
+        handleAppError(err);
+      }
     }
     setUploading(false);
   };
@@ -94,10 +115,12 @@ const CreatePostPage = () => {
   const { data } = useQuery({
     queryKey: ["workoutHistory", user?.id],
     queryFn: async () => {
-      const res = await getPastWorkouts(user!.id);
-      const logsMap = new Map(res.map((workout) => [workout.id, workout]));
+      const res = await getPastWorkouts();
+      const logsMap = new Map(
+        res?.data.map((workout) => [workout.id, workout])
+      );
       setWorkoutMap(logsMap);
-      return res.map((workout) => ({
+      return res?.data.map((workout) => ({
         label: `${workout.plan.name} - ${timeAgo(workout.createdAt)}`,
         val: workout.id,
       }));
@@ -112,9 +135,7 @@ const CreatePostPage = () => {
 
   return (
     <div className="w-full flex flex-col items-center px-5">
-      <h1 className="text-center my-5">
-        Create Post
-      </h1>
+      <h1 className="text-center my-5">Create Post</h1>
       {postPreview ? (
         <div className="flex flex-col gap-3 max-w-120 min-h-150 bg-zinc-100 dark:bg-sage-400 p-5 rounded-md mb-5">
           <div className="flex flex-col flex-1 gap-2 mt-5">
@@ -162,6 +183,9 @@ const CreatePostPage = () => {
               onChange={(e) => setTitle(e.target.value)}
             />
             {titleError && <span className="error">{titleError}</span>}
+            {fieldErrors.title && (
+              <span className="error">{fieldErrors.title}</span>
+            )}
           </p>
           <textarea
             placeholder="Content"
@@ -169,6 +193,9 @@ const CreatePostPage = () => {
             onChange={(e) => setBody(e.target.value)}
             className="border min-h-30 dark:bg-sage-400 dark:text-zinc-200 border-zinc-200 dark:border-sage-700 rounded p-2 text-zinc-600 outline-0 flex-5 bg-white resize-none"
           />
+          {fieldErrors.body && (
+            <span className="error">{fieldErrors.body}</span>
+          )}
           <div className="border border-zinc-200 dark:border-sage-700 dark:bg-sage-400 text-zinc-600 rounded px-5 py-2  min-h-100">
             {!imgPreview && !workoutLogId ? (
               <>
@@ -229,7 +256,7 @@ const CreatePostPage = () => {
               Visibility
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Icons.info size={20} className="cursor-pointer"/>
+                  <Icons.info size={20} className="cursor-pointer" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="text-white">

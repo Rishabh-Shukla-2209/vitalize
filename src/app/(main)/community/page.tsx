@@ -5,8 +5,9 @@ import UserInfo from "@/components/community/UserInfo";
 import Icons from "@/components/icons/appIcons";
 import ActivitySkeleton from "@/components/profile/skeletons/ActivitySkeleton";
 import { Button } from "@/components/ui/button";
-import { User } from "@/generated/prisma";
-import { getSuggestions, searchUsers } from "@/lib/queries";
+import { User } from "@/generated/prisma/client";
+import { searchUsers, getSuggestions } from "@/lib/actions/community";
+import { handleAppError } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
@@ -23,12 +24,16 @@ const CommunityPage = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
-    const fetchUsers = async (userId: string) => {
-      const res = await searchUsers(userId, debouncedSearch);
-      setSearchedUsers(res);
+    const fetchUsers = async () => {
+      try{
+        const res = await searchUsers(debouncedSearch);
+        setSearchedUsers(res!);
+      }catch(err){
+        handleAppError(err);
+      }
     };
 
-    if (user && debouncedSearch) fetchUsers(user.id);
+    if (user && debouncedSearch) fetchUsers();
     if (!debouncedSearch) setSearchedUsers([]);
   }, [user, debouncedSearch]);
 
@@ -90,7 +95,7 @@ const CommunityPage = () => {
           />
         </p>
         {searchedUsers.length > 0 && (
-          <div className="bg-zinc-100 rounded-md px-3 py-2 my-5">
+          <div className="bg-zinc-100 dark:bg-sage-400 rounded-md px-3 py-2 my-5">
             {searchedUsers.map((u) => (
               <UserInfo key={u.id} user={u} />
             ))}

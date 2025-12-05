@@ -1,40 +1,44 @@
-import { getCurrMonthsWorkoutDates, getStreaks } from "@/lib/queries";
-import { monthDays } from "@/lib/utils";
+import { getStreaks } from "@/lib/actions/user";
+import { getCurrMonthsWorkoutDates } from "@/lib/actions/charts";
+import { handleAppError, monthDays } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { getMonth } from "date-fns";
 import ChartSkeleton from "./ChartSkeleton";
 
 const MonthlyWorkouts = ({ userId }: { userId: string }) => {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["workoutDays", userId],
     queryFn: async () => {
       const [dates, streaks] = await Promise.all([
-        getCurrMonthsWorkoutDates(userId),
-        getStreaks(userId),
+        getCurrMonthsWorkoutDates(),
+        getStreaks(),
       ]);
       return { dates, streaks };
     },
     staleTime: 12 * 60 * 60 * 1000,
   });
 
-  if (isLoading || isError || !data) {
+  if (isLoading) {
     return <ChartSkeleton />;
   }
+
+  if(isError) handleAppError(error);
+  if(!data) return <p>Unknown Error has occured while displaying this chart.</p>;
 
   const workedOutOnDays: boolean[] = [];
   const month = getMonth(new Date());
   const daysInCurrMonth = monthDays[month];
 
   for (let i = 1; i <= daysInCurrMonth; i++) {
-    if (data.dates.includes(i)) {
+    if (data?.dates!.includes(i)) {
       workedOutOnDays.push(true);
     } else {
       workedOutOnDays.push(false);
     }
   }
-  const currStreak = data.streaks?.currentStreakDays;
-  const longestStreak = data.streaks?.longestStreakDays;
+  const currStreak = data?.streaks?.currentStreakDays;
+  const longestStreak = data?.streaks?.longestStreakDays;
 
   return (
     <div className="boundary w-full flex flex-col p-5 dark:bg-sage-400">

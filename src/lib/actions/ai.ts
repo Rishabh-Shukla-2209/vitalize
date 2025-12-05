@@ -2,7 +2,6 @@
 
 import { aiWorkoutSchema, AiWorkoutSchemaType } from "@/validations/ai";
 import { openai } from "../openai";
-import { getAvailableExercises, saveAiWorkout } from "../queries";
 import {
   DifficultyType,
   ExerciseCategoryType,
@@ -10,6 +9,60 @@ import {
 } from "../types";
 
 import type { ChatCompletion } from "openai/resources/chat/completions";
+import { Prisma } from "@/generated/prisma/client";
+import prisma from "../db";
+
+const saveAiWorkout = async (data: Prisma.WorkoutPlanCreateInput) => {
+  const maxRetries = 5;
+  let attempt = 0;
+
+  while (attempt < maxRetries) {
+    try {
+      const savedWorkout = await prisma.workoutPlan.create({ data });
+      return savedWorkout.id;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        const uniqueSuffix = Math.floor(Math.random() * 10000)
+          .toString()
+          .padStart(4, "0");
+        data = { ...data, name: `${data.name}-${uniqueSuffix}` };
+        attempt++;
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  throw new Error("Failed to save unique workout after several retries");
+};
+
+const getAvailableExercises = async (
+  muscleGroups: Array<MuscleGroupType>,
+  category: ExerciseCategoryType
+) => {
+  const whereClause: Prisma.ExerciseCatalogWhereInput = {};
+
+  if (muscleGroups.length > 0) {
+    whereClause.muscleGroup = { in: muscleGroups };
+  }
+
+  if (category) {
+    whereClause.category = category;
+  }
+
+  const data = await prisma.exerciseCatalog.findMany({
+    where: whereClause,
+    select: {
+      name: true,
+      id: true,
+    },
+  });
+
+  return data;
+};
 
 const getPrompt = async (
   muscleGroups: Array<MuscleGroupType>,
@@ -172,3 +225,4 @@ export const saveToDB = async (userId: string, aiResult: AiWorkoutSchemaType) =>
   const workoutPlan = transformForPrisma(aiResult, userId);
   return await saveAiWorkout(workoutPlan);
 }
+

@@ -2,7 +2,7 @@ import { CommentType, LikeType } from "@/lib/types";
 import Link from "next/link";
 import Image from "next/image";
 import Icons from "../icons/appIcons";
-import { minutesAgo } from "@/lib/utils";
+import { handleAppError, minutesAgo } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import {
   Dispatch,
@@ -15,15 +15,15 @@ import {
 import clsx from "clsx";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
-import { User } from "@/generated/prisma";
-import {
-  deleteComment,
-  getCommentLikes,
-  saveCommentReaction,
-} from "@/lib/queries";
+import { User } from "@/generated/prisma/client";
 import Like from "./Like";
 import { useQueryClient } from "@tanstack/react-query";
 import { useKeyboardAvoidance } from "@/hooks/useKeyboardAvoidance";
+import {
+  deleteComment,
+  saveCommentReaction,
+  getCommentLikes,
+} from "@/lib/actions/community";
 
 const Comment = ({
   comment,
@@ -40,7 +40,7 @@ const Comment = ({
     text: string,
     parentId?: string,
     parentAuthor?: string
-  ) => Promise<Omit<CommentType, "user" | "_count" | "liked">>;
+  ) => Promise<Omit<CommentType, "user" | "_count" | "liked"> | null> ;
   updateLikeCommentQueryData: (
     target: "like" | "comment",
     commentsToAdd?: number
@@ -57,10 +57,10 @@ const Comment = ({
   const [deleting, setDeleting] = useState(false);
   const [highlight, setHighlight] = useState(false);
   const queryClient = useQueryClient();
-  
+
   const inputRef = useRef<HTMLInputElement>(null);
   useKeyboardAvoidance(inputRef);
-  
+
   const isTarget = comment.id === targetCommentId;
 
   const addReplyToTree = (
@@ -92,7 +92,10 @@ const Comment = ({
     setAddingReply(true);
 
     const newComment = await addComment(text, comment.id, comment.userid);
-
+    if(!newComment){
+      setAddingReply(false);
+      return;
+    }
     const formattedComment: CommentType = {
       ...newComment,
       replies: [],
@@ -125,7 +128,7 @@ const Comment = ({
       for (const node of nodes) {
         if (node.id === targetId) {
           deletedCount += 1 + countReplies(node);
-          continue; 
+          continue;
         }
 
         let newNode = node;
@@ -165,7 +168,11 @@ const Comment = ({
     });
 
     updateLikeCommentQueryData("comment", -noOfDeletedComments);
-    await deleteComment(comment.id);
+    try{
+      await deleteComment(comment.id);
+    }catch(err){
+      handleAppError(err);
+    }
   };
 
   const updateCommentLike = useCallback(
@@ -201,19 +208,21 @@ const Comment = ({
     if (liked === comment.liked) return;
 
     const timer = setTimeout(() => {
-      
-      saveCommentReaction(
-        comment.id,
-        comment.userid,
-        comment.postid,
-        userData.id,
-        liked ? "liked" : "unliked"
-      );
-      setComments((prev) => updateCommentLike(prev, comment.id, liked));
-      queryClient.invalidateQueries({
-        queryKey: ["activity", "commentLikes"],
-        exact: false,
-      });
+      try {
+        saveCommentReaction(
+          comment.id,
+          comment.userid,
+          comment.postid,
+          liked ? "liked" : "unliked"
+        );
+        setComments((prev) => updateCommentLike(prev, comment.id, liked));
+        queryClient.invalidateQueries({
+          queryKey: ["activity", "commentLikes"],
+          exact: false,
+        });
+      } catch (err) {
+        handleAppError(err);
+      }
     }, 1000);
 
     return () => clearTimeout(timer);
@@ -231,8 +240,12 @@ const Comment = ({
 
   useEffect(() => {
     const getLikes = async () => {
-      const data = await getCommentLikes(comment.id);
-      setLikes(data);
+      try {
+        const data = await getCommentLikes(comment.id);
+        setLikes(data!);
+      } catch (err) {
+        handleAppError(err);
+      }
     };
 
     if (open && likes.length === 0) getLikes();
@@ -280,7 +293,10 @@ const Comment = ({
       <div
         className={clsx(
           "flex gap-1 py-1 border-b border-b-zinc-300 dark:border-b-sage-700 transition-colors duration-700",
-          { "bg-yellow-100 border-amber-600 dark:bg-sage-200 dark:border-sage-800": highlight }
+          {
+            "bg-yellow-100 border-amber-600 dark:bg-sage-200 dark:border-sage-800":
+              highlight,
+          }
         )}
       >
         <Link

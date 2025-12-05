@@ -3,19 +3,20 @@
 import { DurationInput } from "@/components/DurationInput";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import Balance from "@/components/workoutLog/Balance";
-import Cardio from "@/components/workoutLog/Cardio";
-import Core from "@/components/workoutLog/Core";
-import Endurance from "@/components/workoutLog/Endurance";
-import Flexibility from "@/components/workoutLog/Flexibility";
-import Hiit from "@/components/workoutLog/Hiit";
-import Mindbody from "@/components/workoutLog/Mindbody";
-import Recovery from "@/components/workoutLog/Recovery";
-import Strength from "@/components/workoutLog/Strength";
-import { ExerciseCategory } from "@/generated/prisma";
-import { getWorkoutDetails, saveWorkoutLog } from "@/lib/queries";
+import Balance from "@/components/workouts/workoutLog/Balance";
+import Cardio from "@/components/workouts/workoutLog/Cardio";
+import Core from "@/components/workouts/workoutLog/Core";
+import Endurance from "@/components/workouts/workoutLog/Endurance";
+import Flexibility from "@/components/workouts/workoutLog/Flexibility";
+import Hiit from "@/components/workouts/workoutLog/Hiit";
+import Mindbody from "@/components/workouts/workoutLog/Mindbody";
+import Recovery from "@/components/workouts/workoutLog/Recovery";
+import Strength from "@/components/workouts/workoutLog/Strength";
+import { ExerciseCategory } from "@/generated/prisma/enums";
+import { getWorkoutDetails, saveWorkoutLog } from "@/lib/actions/workout";
 import { WorkoutPlanDetailsType } from "@/lib/types";
 import { WorkoutLogDataType } from "@/lib/types";
+import { handleAppError } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -27,7 +28,7 @@ const WorkoutLogPage = () => {
   const router = useRouter();
   const [workout, setWorkout] = useState<WorkoutPlanDetailsType | null>();
   const [submitting, setSubmitting] = useState(false);
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
 
   const methods = useForm<WorkoutLogDataType>();
   const {
@@ -40,7 +41,7 @@ const WorkoutLogPage = () => {
   const onSubmit = handleSubmit((data) => {
     if (isLoaded && isSignedIn) {
       setSubmitting(true);      
-      saveWorkoutLog(user.id, workout!.id, data)
+      saveWorkoutLog(workout!.id, data)
         .then(() => {
           router.push("/home");
         })
@@ -48,7 +49,7 @@ const WorkoutLogPage = () => {
           setSubmitting(false);
           console.log(error);
 
-          window.alert("Error submitting workout details");
+          handleAppError(error);
         });
     }
   });

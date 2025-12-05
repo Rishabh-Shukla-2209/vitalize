@@ -1,7 +1,7 @@
 import { memo } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { User } from "@/generated/prisma";
+import { User } from "@/generated/prisma/client";
 import { toProperCase } from "@/lib/utils";
 
 const About = ({

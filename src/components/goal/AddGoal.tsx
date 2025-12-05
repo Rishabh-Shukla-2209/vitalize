@@ -1,4 +1,4 @@
-import { addGoal, getAllExercises } from "@/lib/queries";
+import { addGoal, getAllExercises } from "@/lib/actions/goal";
 import { useQuery } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm, Controller, ControllerRenderProps } from "react-hook-form";
@@ -7,7 +7,7 @@ import Combobox from "@/components/Combobox";
 import Selector from "../Selector";
 import { DatePicker } from "../DatePicker";
 import { Button } from "../ui/button";
-import { validCategoryFields } from "@/lib/utils";
+import { handleAppError, validCategoryFields } from "@/lib/utils";
 import { DurationInput } from "@/components/DurationInput";
 import { DistanceInput } from "@/components/DistanceInput";
 import { GoalFormValues, goalSchema } from "@/validations/goal";
@@ -110,9 +110,13 @@ const AddGoal = ({
       targetDate: values.targetDate!,
     };
 
-    await addGoal(data);
-    resetSearch();
-    setAddGoal(false);
+    try{
+      await addGoal(data);
+      resetSearch();
+      setAddGoal(false);
+    }catch(err){
+      handleAppError(err);
+    }
   };
 
   return (

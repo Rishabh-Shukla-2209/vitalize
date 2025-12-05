@@ -1,9 +1,9 @@
 import { WorkoutLogDataType } from "@/lib/types";
 import { useEffect } from "react";
 import { useFormContext, FieldPath, Controller } from "react-hook-form";
-import { DurationInput } from "../DurationInput";
+import { DurationInput } from "@/components/DurationInput";
 
-const Hiit = ({
+const Strength = ({
   formIndex,
   exerciseName,
 }: {
@@ -12,24 +12,28 @@ const Hiit = ({
 }) => {
   const {
     register,
-    watch,
     control,
+    watch,
     setValue,
     formState: { errors },
   } = useFormContext<WorkoutLogDataType>();
 
-  const setsFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.sets`;
-  const repsFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.reps`;
-  const restFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.rest`;
-  const workIntervalDurationFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.workIntervalDuration`;
-  const workToRestFieldName: FieldPath<WorkoutLogDataType> = `hiit.${formIndex}.workToRestRatio`;
+  const setsFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.sets`;
+  const repsFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.reps`;
+  const restFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.rest`;
+  const weightUsedFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.weightUsed`;
+  const volFieldName: FieldPath<WorkoutLogDataType> = `strength.${formIndex}.vol`;
 
-  const [work, rest] = watch([workIntervalDurationFieldName, restFieldName]);
+  const [sets, reps, weight] = watch([
+    setsFieldName,
+    repsFieldName,
+    weightUsedFieldName,
+  ]);
 
   useEffect(() => {
-    const WRRatio = Math.round(((work || 0) / (rest || 1)) * 100) / 100;
-    setValue(workToRestFieldName, WRRatio);
-  }, [rest, setValue, work, workToRestFieldName]);
+    const newVol = (sets || 0) * (reps || 0) * (weight || 0);
+    setValue(volFieldName, newVol);
+  }, [sets, reps, setValue, volFieldName, weight]);
 
   return (
     <div className="mt-5">
@@ -44,10 +48,12 @@ const Hiit = ({
               min: { value: 1, message: "Sets must be at least 1" },
               valueAsNumber: true,
             })}
-            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 dark:bg-sage-500 dark:text-zinc-200 focus:border-zinc-800 focus:border"
           />
-          {errors.hiit && errors.hiit[formIndex]?.sets && (
-            <span className="error">{errors.hiit[formIndex].sets.message}</span>
+          {errors.strength && errors.strength[formIndex]?.sets && (
+            <span className="error">
+              {errors.strength[formIndex].sets.message}
+            </span>
           )}
         </p>
         <p>
@@ -55,32 +61,27 @@ const Hiit = ({
           <input
             type="number"
             {...register(repsFieldName, {
+              required: "Reps are required",
+              min: { value: 1, message: "Reps must be at least 1" },
               valueAsNumber: true,
             })}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
+          {errors.strength && errors.strength[formIndex]?.reps && (
+            <span className="error">
+              {errors.strength[formIndex].reps.message}
+            </span>
+          )}
         </p>
         <div>
           <label>Rest</label>
+
           <Controller
             name={restFieldName}
             control={control}
-            render={({ field }) => (
-              <DurationInput
-                {...field}
-                className="rounded-sm text-zinc-600 bg-zinc-50 focus-within:border-zinc-800 focus-within:border dark:bg-sage-500 dark:text-zinc-200"
-              />
-            )}
-          />
-        </div>
-        <div>
-          <label>Set Duration</label>
-          <Controller
-            name={workIntervalDurationFieldName}
-            control={control}
             rules={{
-              required: "Duration is required",
-              min: { value: 1, message: "Duration must be at least 1" },
+              required: "Rest is required",
+              min: { value: 1, message: "Rest must be at least 1" },
             }}
             render={({ field }) => (
               <DurationInput
@@ -90,17 +91,25 @@ const Hiit = ({
             )}
           />
 
-          {errors.hiit && errors.hiit[formIndex]?.workIntervalDuration && (
+          {errors.strength && errors.strength[formIndex]?.rest && (
             <span className="error">
-              {errors.hiit[formIndex].workIntervalDuration.message}
+              {errors.strength[formIndex].rest.message}
             </span>
           )}
         </div>
         <p>
-          <label>Work-Rest Ratio</label>
+          <label>Weight Used</label>
           <input
             type="number"
-            {...register(workToRestFieldName, { valueAsNumber: true })}
+            {...register(weightUsedFieldName, { valueAsNumber: true })}
+            className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
+          />
+        </p>
+        <p>
+          <label>Volume</label>
+          <input
+            type="number"
+            {...register(volFieldName, { valueAsNumber: true })}
             readOnly
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
@@ -110,4 +119,4 @@ const Hiit = ({
   );
 };
 
-export default Hiit;
+export default Strength;

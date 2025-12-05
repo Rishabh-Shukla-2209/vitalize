@@ -1,5 +1,5 @@
-import Icons from "./icons/appIcons";
-import { Button } from "./ui/button";
+import Icons from "../icons/appIcons";
+import { Button } from "../ui/button";
 import Link from "next/link";
 
 const AIWorkoutCard = ({

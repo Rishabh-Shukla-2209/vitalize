@@ -1,12 +1,16 @@
 import { GetPostsResponse, LikeType, PageParam, PostType } from "@/lib/types";
 import Icons from "../icons/appIcons";
 import Image from "next/image";
-import { timeAgo } from "@/lib/utils";
+import { handleAppError, timeAgo } from "@/lib/utils";
 import { Button } from "../ui/button";
 import WorkoutSummary from "./WorkoutSummary";
 import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import { getPostLikes, saveComment, savePostReaction } from "@/lib/queries";
+import {
+  getPostLikes,
+  saveComment,
+  savePostReaction,
+} from "@/lib/actions/community";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Like from "./Like";
@@ -71,7 +75,8 @@ const Post = ({
       };
 
       queryClient.setQueryData(
-        ["feed", specificUserId ? specificUserId : "general", userId], updateData
+        ["feed", specificUserId ? specificUserId : "general", userId],
+        updateData
       );
 
       if (specificUserId) {
@@ -85,31 +90,63 @@ const Post = ({
     if (liked === post.liked) return;
 
     const timer = setTimeout(() => {
-      savePostReaction(post.id, post.userid, userId, liked ? "liked" : "unliked");
+      try {
+        savePostReaction(post.id, post.userid, liked ? "liked" : "unliked");
+      } catch (err) {
+        handleAppError(err);
+        return;
+      }
       updateLikeCommentQueryData("like");
       queryClient.invalidateQueries({
         queryKey: ["activity", "postLikes"],
-        exact: false
-      })
+        exact: false,
+      });
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [liked, post.id, post.liked, post.userid, queryClient, updateLikeCommentQueryData, userId]);
+  }, [
+    liked,
+    post.id,
+    post.liked,
+    post.userid,
+    queryClient,
+    updateLikeCommentQueryData,
+    userId,
+  ]);
 
-  const addComment = useCallback(async (text: string, parentId?: string, parentAuthor?: string) => {
-    updateLikeCommentQueryData("comment");
-    const newComment = await saveComment(post.id, post.userid, userId, text, parentId, parentAuthor);
-    queryClient.invalidateQueries({
-      queryKey: ["activity", "comments"],
-      exact: false
-    })
-    return newComment;
-  }, [post.id, post.userid, queryClient, updateLikeCommentQueryData, userId])
+  const addComment = useCallback(
+    async (text: string, parentId?: string, parentAuthor?: string) => {
+      try {
+        updateLikeCommentQueryData("comment");
+        const newComment = await saveComment(
+          post.id,
+          post.userid,
+          text,
+          parentId,
+          parentAuthor
+        );
+        queryClient.invalidateQueries({
+          queryKey: ["activity", "comments"],
+          exact: false,
+        });
+        return newComment;
+      } catch (err) {
+        handleAppError(err);
+        updateLikeCommentQueryData("comment", -1);
+        return null;
+      }
+    },
+    [post.id, post.userid, queryClient, updateLikeCommentQueryData]
+  );
 
   useEffect(() => {
     const getLikes = async () => {
-      const data = await getPostLikes(post.id);
-      setLikes(data);
+      try{
+        const data = await getPostLikes(post.id);
+        setLikes(data!);
+      }catch(err){
+        handleAppError(err);
+      }
     };
 
     if (open === "likes" && likes.length === 0) getLikes();
@@ -145,7 +182,16 @@ const Post = ({
         <p className="font-semibold">{post.title}</p>
         <p>{post.body}</p>
         {post.workoutLog && <WorkoutSummary workout={post.workoutLog} />}
-        {post.imgUrl && <div className="relative h-60 min-h-120 w-full rounded-md overflow-hidden px-3 mt-2"><Image src={post.imgUrl} alt="Post Image" fill style={{ objectFit: "cover" }}/></div>}
+        {post.imgUrl && (
+          <div className="relative h-60 min-h-120 w-full rounded-md overflow-hidden px-3 mt-2">
+            <Image
+              src={post.imgUrl}
+              alt="Post Image"
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </div>
+        )}
       </div>
       <div className="flex gap-3 justify-between text-zinc-600 text-sm font-semibold mt-5">
         <p className="flex gap-1  cursor-pointer">
@@ -219,18 +265,24 @@ const Post = ({
           )}
 
           {open === "comments" && (
-            <><Icons.uncheck color="#38e07b" size={30} onClick={() => setOpen("none")} className="fixed right-5 top-4 cursor-pointer"/>
-            <PostWithComments
-              post={post}
-              userId={userId}
-              comment={comment}
-              liked={liked}
-              setLiked={setLiked}
-              setComment={setComment}
-              addComment={addComment}
-              optimisticLikesCount={optimisticLikesCount}
-              updateLikeCommentQueryData={updateLikeCommentQueryData}
-            />
+            <>
+              <Icons.uncheck
+                color="#38e07b"
+                size={30}
+                onClick={() => setOpen("none")}
+                className="fixed right-5 top-4 cursor-pointer"
+              />
+              <PostWithComments
+                post={post}
+                userId={userId}
+                comment={comment}
+                liked={liked}
+                setLiked={setLiked}
+                setComment={setComment}
+                addComment={addComment}
+                optimisticLikesCount={optimisticLikesCount}
+                updateLikeCommentQueryData={updateLikeCommentQueryData}
+              />
             </>
           )}
         </div>

@@ -8,13 +8,13 @@ import {
 } from "../ui/carousel";
 import Goal from "./Goal";
 import { useQuery } from "@tanstack/react-query";
-import { getActiveGoals } from "@/lib/queries";
+import { getActiveGoals } from "@/lib/actions/goal";
 import GoalSkeleton from "./GoalSkeleton";
 
-const Goals = ({ userId }: { userId: string }) => {
+const Goals = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["activeGoals"],
-    queryFn: () => getActiveGoals(userId),
+    queryFn: () => getActiveGoals(),
     staleTime: 5 * 60 * 1000,
   });
 

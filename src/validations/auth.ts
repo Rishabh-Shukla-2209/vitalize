@@ -53,6 +53,42 @@ export const onboardingSchema = z.object({
       return n >= 20 && n <= 300;
     }, "Enter a valid value between 20 and 300. No decimals."),
   dob: z.date(),
+  imgUrl: z.string().optional()
 });
 
 export type OnboardingFormValues = z.infer<typeof onboardingSchema>;
+
+export const onboardingSchemaServer = z
+  .object({
+    firstName: z
+      .string()
+      .min(1, "Required")
+      .regex(/^[A-Za-z]+$/, "Invalid name"),
+
+    lastName: z
+      .string()
+      .min(1, "Required")
+      .regex(/^[A-Za-z]+$/, "Invalid name"),
+
+    imgUrl: z.url(),
+
+    gender: z.enum(["MALE", "FEMALE", "OTHER"]),
+
+    height: z
+      .string()
+      .regex(/^[1-9]\d*$/, "Enter a valid value between 50 and 250")
+      .transform((v) => Number(v))
+      .refine((n) => n >= 50 && n <= 250, "Enter a valid value between 50 and 250"),
+
+    weight: z
+      .string()
+      .regex(/^[1-9]\d*$/, "Enter a valid value between 20 and 300")
+      .transform((v) => Number(v))
+      .refine((n) => n >= 20 && n <= 300, "Enter a valid value between 20 and 300"),
+
+    dob: z
+      .union([z.string(), z.date()])
+      .transform((v) => (typeof v === "string" ? new Date(v) : v))
+      .refine((d) => !isNaN(d.getTime()), "Invalid date"),
+  })
+  .strict();

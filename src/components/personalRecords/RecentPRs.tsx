@@ -8,7 +8,7 @@ const PRs = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["PRs"],
     queryFn: () => getRecentPersonalRecords(),
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity,
   });
 
   if (isLoading) {

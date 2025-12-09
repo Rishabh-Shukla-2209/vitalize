@@ -31,7 +31,7 @@ const LogWorkoutPage = () => {
     async function getData() {
       try {
         const res = await getWorkoutPlans(debouncedSearch, "", "", "", "");
-        setSearchedWorkouts(res!);
+        setSearchedWorkouts(res!.data);
       } catch (err) {
         handleAppError(err);
       }
@@ -47,7 +47,7 @@ const LogWorkoutPage = () => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["past-workouts"],
+    queryKey: ["past-workouts", user?.id],
     queryFn: ({ pageParam }) => getPastWorkouts("", "", pageParam),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,

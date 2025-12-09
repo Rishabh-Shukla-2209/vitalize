@@ -45,7 +45,7 @@ const UserAIWorkouts = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["UserAIWorkouts", currIndex],
     queryFn: getData,
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity,
   });
 
   return (

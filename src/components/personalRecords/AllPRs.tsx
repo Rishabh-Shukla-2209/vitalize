@@ -72,7 +72,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
   const { data: prs, isLoading } = useQuery({
     queryKey: ["PRs", userId, currIndex, debouncedSearch],
     queryFn: getData,
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity,
   });
 
   useEffect(() => {

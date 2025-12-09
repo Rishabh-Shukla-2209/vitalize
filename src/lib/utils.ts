@@ -13,6 +13,8 @@ import { differenceInCalendarDays, differenceInMinutes, isToday, isYesterday } f
 import { GoalStatus as Status } from "@/generated/prisma/client";
 import { isAppError } from "./errors";
 import { toast } from "sonner";
+import * as Sentry from "@sentry/nextjs";
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -448,6 +450,10 @@ export function normalizeError(err: unknown) {
 
 export function handleAppError(err: unknown) {
   const e = normalizeError(err);
+
+  if (e.type === "UNKNOWN" || e.type === "DB_ERROR") {
+    Sentry.captureException(err);
+  }
 
   switch (e.type) {
     case "UNAUTHORIZED":

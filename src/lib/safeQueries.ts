@@ -1,6 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
 import { DBError, AppError, AppErrorDetails } from "@/lib/errors";
 import prisma from "./db";
+import * as Sentry from "@sentry/nextjs"
 
 export type SafeResult<T> = {
   data: T | null;
@@ -37,7 +38,7 @@ export async function safeQuery<T>(
 
     const dbErr = new DBError(message, details);
 
-    console.error("[safeQuery] DB Error:", dbErr);
+    Sentry.captureException(err);
 
     return { data: null, error: dbErr };
   }
@@ -59,7 +60,7 @@ export async function safeTransaction<T>(
 
     const dbErr = new DBError(message, details);
 
-    console.error("[safeTransaction] DB Error:", dbErr);
+    Sentry.captureException(err);
 
     return { data: null, error: dbErr };
   }

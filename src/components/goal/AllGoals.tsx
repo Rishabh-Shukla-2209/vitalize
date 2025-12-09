@@ -63,7 +63,7 @@ const AllGoals = ({ userId }: { userId: string }) => {
   const { data: goals, isLoading } = useQuery({
     queryKey: ["Goals", userId, currIndex, debouncedSearch, status],
     queryFn: getData,
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity,
   });
 
   const resetSearch = useCallback(() => {

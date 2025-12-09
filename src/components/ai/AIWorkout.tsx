@@ -5,6 +5,9 @@ import { saveToDB } from "@/lib/actions/ai";
 import Icons from "../icons/appIcons";
 import AIWorkoutExerciseCard from "./AIWorkoutExerciseCard";
 import { handleAppError } from "@/lib/utils";
+import { useState } from "react";
+import { Spinner } from "../ui/spinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AIWorkout = ({
   userId,
@@ -14,13 +17,21 @@ const AIWorkout = ({
   workout: AiWorkoutSchemaType;
 }) => {
   const router = useRouter();
+  const [adding, setAdding] = useState(false);
+  const queryClient = useQueryClient();
 
   const addWorkout = async () => {
+    setAdding(true);
     try{
       const workoutId = await saveToDB(userId, workout);
+      queryClient.invalidateQueries({
+        queryKey: ["UserAIWorkouts"]
+      })
       router.push(`/programs/${workoutId}`);
     }catch(err){
       handleAppError(err);
+    }finally{
+      setAdding(false);
     }
   };
 
@@ -29,8 +40,8 @@ const AIWorkout = ({
       <div>
         <div className="flex flex-wrap justify-between mb-2 ">
           <h2 className="my-3">Your Personalised Workout Plan</h2>
-          <Button variant="default" onClick={addWorkout} className="text-lg">
-            <Icons.add />Add to Workouts
+          <Button variant="default" onClick={addWorkout} className="text-lg" disabled={adding}>
+            {adding? <Spinner /> : <><Icons.add />Add to Workouts</>}
           </Button>
         </div>
         <p>{workout.description}</p>

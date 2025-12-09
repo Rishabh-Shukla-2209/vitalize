@@ -18,9 +18,11 @@ import { WorkoutPlanDetailsType } from "@/lib/types";
 import { WorkoutLogDataType } from "@/lib/types";
 import { handleAppError } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const WorkoutLogPage = () => {
   const params = useParams();
@@ -29,6 +31,7 @@ const WorkoutLogPage = () => {
   const [workout, setWorkout] = useState<WorkoutPlanDetailsType | null>();
   const [submitting, setSubmitting] = useState(false);
   const { isLoaded, isSignedIn } = useUser();
+  const queryClient = useQueryClient();
 
   const methods = useForm<WorkoutLogDataType>();
   const {
@@ -43,6 +46,8 @@ const WorkoutLogPage = () => {
       setSubmitting(true);      
       saveWorkoutLog(workout!.id, data)
         .then(() => {
+          queryClient.invalidateQueries();
+          toast.success("Workout Logged");
           router.push("/home");
         })
         .catch((error) => {

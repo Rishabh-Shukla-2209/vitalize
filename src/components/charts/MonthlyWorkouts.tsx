@@ -16,7 +16,7 @@ const MonthlyWorkouts = ({ userId }: { userId: string }) => {
       ]);
       return { dates, streaks };
     },
-    staleTime: 12 * 60 * 60 * 1000,
+    staleTime: Infinity,
   });
 
   if (isLoading) {

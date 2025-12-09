@@ -8,7 +8,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getUser } from "@/lib/actions/user";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { NotificationsList } from "../notifications/NotificationList";
 import { ModeToggle } from "../ThemeToggler";
 import {
@@ -24,6 +24,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const [imageUrl, setImageUrl] = useState("");
   const { user } = useUser();
+  const queryClient = useQueryClient();
 
   const { data: userData } = useQuery({
     queryKey: ["user", { userId: user?.id }],
@@ -41,6 +42,10 @@ const Navbar = () => {
       setImageUrl(user.imageUrl);
     }
   }, [userData, user]);
+
+  const clearQueries = () => {
+    queryClient.clear();
+  };
 
   return (
     <div className="max-w-full">
@@ -114,7 +119,7 @@ const Navbar = () => {
                   <SignOutButton>
                     <div className="flex gap-1 mt-1">
                       <Icons.logout className="text-red-600" />
-                      <p className="text-red-600">Logout</p>
+                      <p className="text-red-600" onClick={clearQueries}>Logout</p>
                     </div>
                   </SignOutButton>
                 </DropdownMenuItem>

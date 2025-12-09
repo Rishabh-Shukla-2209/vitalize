@@ -6,7 +6,6 @@ import ProgressCompChart from "@/components/charts/ProgressComp";
 import WorkoutVolumeChart from "@/components/charts/WorkoutVolumeChart";
 import Icons from "@/components/icons/appIcons";
 import { useUser } from "@clerk/nextjs";
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Goals from "@/components/goal/ActiveGoals";
 import PRs from "@/components/personalRecords/RecentPRs";
@@ -14,25 +13,17 @@ import GoalSkeleton from "@/components/goal/GoalSkeleton";
 import PRSkeleton from "@/components/personalRecords/PRSkeleton";
 import { Button } from "@/components/ui/button";
 import ChartSkeleton from "@/components/charts/ChartSkeleton";
-import { handleAppError } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 
 const Homepage = () => {
-  const { user, isLoaded, isSignedIn } = useUser();
-  const [todaysWorkoutComplete, setTodaysWorkoutComplete] = useState(false);
+  const { user } = useUser();
 
-  useEffect(() => {
-    async function didWorkoutToday() {
-      try{
-        const result = await hasWorkedOutToday();
-        setTodaysWorkoutComplete(result!);
-      }catch(err){
-        handleAppError(err);
-      }
-    }
-    if (isLoaded && isSignedIn) {
-      didWorkoutToday();
-    }
-  }, [isLoaded, isSignedIn, user]);
+  const {data: todaysWorkoutComplete} = useQuery({
+    queryKey: ["todays-workout-status", user?.id],
+    queryFn: hasWorkedOutToday,
+    staleTime: Infinity,
+    enabled: !!user
+  })
 
   return (
     <div className="p-8 scroll-smooth">
@@ -81,7 +72,7 @@ const Homepage = () => {
             )}
           </div>
 
-          {isLoaded && isSignedIn ? (
+          {user ? (
             <>
               <WorkoutVolumeChart userId={user.id} />
               <ExerciseCategoryChart userId={user.id} />
@@ -97,7 +88,7 @@ const Homepage = () => {
         </div>
 
         <div className="flex flex-col flex-2 gap-10">
-          {isLoaded && isSignedIn ? (
+          {user ? (
             <>
               <MonthlyWorkouts userId={user.id} />
               <Goals />

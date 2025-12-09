@@ -17,7 +17,7 @@ const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["weeklyChartData", userId],
     queryFn: () => getLastWeekVol(),
-    staleTime: 12 * 60 * 60 * 1000,
+    staleTime: Infinity,
   });
   if (isLoading) {
     return <ChartSkeleton />;

@@ -125,7 +125,7 @@ const CreatePostPage = () => {
         val: workout.id,
       }));
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity,
     enabled: !!user,
   });
 

@@ -1,5 +1,5 @@
 import { addGoal, getAllExercises } from "@/lib/actions/goal";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm, Controller, ControllerRenderProps } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,6 +50,8 @@ const AddGoal = ({
     queryFn: getAllExercises,
     staleTime: Infinity,
   });
+
+  const queryClient = useQueryClient();
 
   const selectedExercise = watch("exercise");
   const selectedField = watch("field");
@@ -113,6 +115,9 @@ const AddGoal = ({
     try{
       await addGoal(data);
       resetSearch();
+      queryClient.invalidateQueries({
+        queryKey: ["activeGoals"]
+      })
       setAddGoal(false);
     }catch(err){
       handleAppError(err);

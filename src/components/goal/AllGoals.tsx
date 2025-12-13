@@ -40,7 +40,7 @@ const AllGoals = ({ userId }: { userId: string }) => {
       cursor,
       direction,
       debouncedSearch,
-      status as Status | "All"
+      status as Status | "All",
     );
 
     if (data && data.length > 0) {
@@ -83,9 +83,9 @@ const AllGoals = ({ userId }: { userId: string }) => {
       (oldGoals: GoalType[]) => {
         if (!oldGoals) return;
         return oldGoals.map((goal) =>
-          goal.id === goalId ? { ...goal, status: "ABANDONED" } : goal
+          goal.id === goalId ? { ...goal, status: "ABANDONED" } : goal,
         );
-      }
+      },
     );
   };
 
@@ -132,7 +132,9 @@ const AllGoals = ({ userId }: { userId: string }) => {
             resetSearch={resetSearch}
           />
         )}
-        {isLoading ? <GoalsSkeleton /> : goals && goals.length > 0 ? (
+        {isLoading ? (
+          <GoalsSkeleton />
+        ) : goals && goals.length > 0 ? (
           goals.map((goal) => (
             <div
               key={goal.id}

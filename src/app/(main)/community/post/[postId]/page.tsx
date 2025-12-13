@@ -30,11 +30,11 @@ const PostPage = () => {
 
   useEffect(() => {
     const fetchPost = async (postId: string) => {
-      try{
+      try {
         const res = await getPost(postId);
         setPost(res);
         if (res) setLiked(res.liked);
-      }catch(err){
+      } catch (err) {
         handleAppError(err);
       }
     };
@@ -68,7 +68,7 @@ const PostPage = () => {
         };
       });
     },
-    [liked, post]
+    [liked, post],
   );
 
   const addComment = useCallback(
@@ -80,7 +80,7 @@ const PostPage = () => {
           post!.userid,
           text,
           parentId,
-          parentAuthor
+          parentAuthor,
         );
         queryClient.invalidateQueries({
           queryKey: ["activity", "comments"],
@@ -93,7 +93,7 @@ const PostPage = () => {
         return null;
       }
     },
-    [post, queryClient, updateLikeCommentQueryData]
+    [post, queryClient, updateLikeCommentQueryData],
   );
 
   useEffect(() => {

@@ -18,7 +18,10 @@ const AIWorkoutExerciseCard = ({ exercise }: { exercise: Props }) => {
     <div className="bg-zinc-200 dark:bg-sage-500 rounded-md p-3">
       <div className="flex mb-2">
         <div className="flex-1 mr-1">
-          <Icons.dumbell size={60} className="bg-zinc-100 dark:bg-sage-400 text-primary p-2 rounded-md" />
+          <Icons.dumbell
+            size={60}
+            className="bg-zinc-100 dark:bg-sage-400 text-primary p-2 rounded-md"
+          />
         </div>
         <div className="flex-3">
           <h3>{exercise.name}</h3>
@@ -27,8 +30,8 @@ const AIWorkoutExerciseCard = ({ exercise }: { exercise: Props }) => {
             {exercise.time
               ? formatDuration(exercise.time)
               : exercise.distance
-              ? formatDistance(exercise.distance)
-              : `${exercise.reps} reps`}{" "}
+                ? formatDistance(exercise.distance)
+                : `${exercise.reps} reps`}{" "}
             with {formatDuration(exercise.rest)} rest
           </p>
         </div>

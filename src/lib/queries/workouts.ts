@@ -18,12 +18,11 @@ export const getWorkoutPlansQuery = async (
   equipment: EquipmentType | "" = "",
   difficulty: DifficultyType | "" = "",
   duration: string = "",
-  userId: string | null = null,
-  pageParam: number = 0
+  pageParam: number = 0,
 ) => {
   return safeQuery(async () => {
     const andConditions: Prisma.WorkoutPlanWhereInput[] = [];
-    const whereClause: Prisma.WorkoutPlanWhereInput = {};
+    const whereClause: Prisma.WorkoutPlanWhereInput = { userId: null };
 
     if (difficulty) {
       andConditions.push({ level: difficulty });
@@ -59,12 +58,6 @@ export const getWorkoutPlansQuery = async (
             },
           },
         },
-      });
-    }
-
-    if (userId) {
-      andConditions.push({
-        OR: [{ userId: null }, { userId }],
       });
     }
 
@@ -119,7 +112,7 @@ export const getPastWorkoutsQuery = async (
   userId: string,
   date: Date | undefined | "" = "",
   muscleGroup: MuscleGroupType | "" = "",
-  pageParam: number = 0
+  pageParam: number = 0,
 ) => {
   return safeQuery(async () => {
     const whereClause: Prisma.WorkoutLogWhereInput = { userId };
@@ -173,7 +166,7 @@ export const getPastWorkoutsQuery = async (
 export const saveWorkoutLogQuery = async (
   userId: string,
   planId: string,
-  workoutData: WorkoutLogDataType
+  workoutData: WorkoutLogDataType,
 ) => {
   return safeQuery(async () => {
     const exercises: Prisma.ExerciseLogCreateWithoutWorkoutLogInput[] = [];
@@ -309,7 +302,7 @@ export const saveWorkoutLogQuery = async (
 
                 if (goalsExIds.includes(exerciseId)) {
                   const goal = goals!.find(
-                    (goal) => goal.targetExercise.id === exerciseId
+                    (goal) => goal.targetExercise.id === exerciseId,
                   );
                   const newValue = ex[
                     goal!.targetField as keyof typeof ex
@@ -349,8 +342,8 @@ export const saveWorkoutLogQuery = async (
                 },
               },
               data: pr.val,
-            })
-          )
+            }),
+          ),
         );
 
         await Promise.all(
@@ -360,8 +353,8 @@ export const saveWorkoutLogQuery = async (
                 id: goal.key,
               },
               data: goal.val,
-            })
-          )
+            }),
+          ),
         );
       });
     } catch (err) {

@@ -7,7 +7,7 @@ const WorkoutSkeleton = () => {
       <div className="w-full h-20 rounded-md shimmer border border-zinc-200 dark:border-sage-400" />
       <div className="w-full h-20 rounded-md shimmer border border-zinc-200 dark:border-sage-400" />
     </div>
-  )
-}
+  );
+};
 
-export default WorkoutSkeleton
+export default WorkoutSkeleton;

@@ -7,7 +7,7 @@ export const changePRFieldQuery = async (
   userId: string,
   prId: string,
   exerciseId: string,
-  newField: string
+  newField: string,
 ) => {
   return safeQuery(async () => {
     const newPRValue = await prisma.exerciseLog.aggregate({
@@ -75,7 +75,7 @@ export const getPersonalRecordsQuery = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
   direction: "next" | "prev",
-  search: string = ""
+  search: string = "",
 ) => {
   return safeQuery(async () => {
     const findArgs: Prisma.PRFindManyArgs = {

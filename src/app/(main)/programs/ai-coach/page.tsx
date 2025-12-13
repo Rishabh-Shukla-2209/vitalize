@@ -35,21 +35,25 @@ const AICoachPage = () => {
   const onSubmit = async () => {
     if (!user) return;
 
-    if (!selectedCategory || selectedMuscleGroups.length === 0 || !selectedDifficulty) {
+    if (
+      !selectedCategory ||
+      selectedMuscleGroups.length === 0 ||
+      !selectedDifficulty
+    ) {
       if (!selectedCategory) setCategoryError("Required");
       if (selectedMuscleGroups.length === 0) setMuscleGroupError("Required");
       if (!selectedDifficulty) setDifficultyError("Required");
       return;
     }
-    
+
     setButtonDisabled(true);
     setLoading(true);
 
     const aiResult = await createAiWorkout(
       selectedMuscleGroups as Array<MuscleGroupType>,
       selectedCategory as ExerciseCategoryType,
-      selectedDifficulty as DifficultyType
-    );    
+      selectedDifficulty as DifficultyType,
+    );
     setLoading(false);
     setButtonDisabled(false);
     setAiWorkout(aiResult);
@@ -64,12 +68,8 @@ const AICoachPage = () => {
   return (
     <div className="px-5 py-7">
       <div className="mb-10">
-        <h1 className="mb-1.5">
-          AI Workout Coach
-        </h1>
-        <p>
-          Get a personalised workout plan tailored to your goals.
-        </p>
+        <h1 className="mb-1.5">AI Workout Coach</h1>
+        <p>Get a personalised workout plan tailored to your goals.</p>
       </div>
       <div className="flex flex-col lg:flex-row gap-10">
         <div className="flex flex-col gap-5 flex-1">
@@ -111,7 +111,9 @@ const AICoachPage = () => {
         </div>
         <div className="flex-3">
           {loading && <AIWorkoutSkeletom />}
-          {(aiWorkout && user) && <AIWorkout userId={user.id} workout={aiWorkout}/>}
+          {aiWorkout && user && (
+            <AIWorkout userId={user.id} workout={aiWorkout} />
+          )}
         </div>
       </div>
     </div>

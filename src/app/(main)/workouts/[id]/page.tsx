@@ -17,7 +17,7 @@ const WorkoutPage = () => {
   const params = useParams();
   const id = params.id;
   const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlanDetailsType | null>(
-    null
+    null,
   );
   const [workoutStarted, setWorkoutStarted] = useState(false);
 
@@ -27,6 +27,8 @@ const WorkoutPage = () => {
     prevWorkoutItem,
     pauseWorkout,
     timeRemaining,
+    setTimeRemaining,
+    setIsTimerRunning,
     isPaused,
     status,
     dispatch,
@@ -52,10 +54,14 @@ const WorkoutPage = () => {
             },
           },
         });
+
+        if (data.exercises[0].time) {
+          setTimeRemaining(data.exercises[0].time);
+        }
       }
     }
     if (typeof id === "string") getData(id);
-  }, [id, dispatch]);
+  }, [id, dispatch, setTimeRemaining]);
 
   if (typeof id !== "string") {
     return <p>Invalid workout ID</p>;
@@ -66,9 +72,7 @@ const WorkoutPage = () => {
       {workoutPlan ? (
         <div className="flex flex-col items-center min-w-80 md:min-w-100 px-3 gap-5">
           <div className="bg-zinc-100 dark:bg-sage-400 flex-5 mt-10 p-5 text-center w-full rounded-lg">
-            <h1 className="mb-1">
-              {workoutPlan.name}
-            </h1>
+            <h1 className="mb-1">{workoutPlan.name}</h1>
             <p>
               <span>{toProperCase(workoutPlan.level)} </span>
               <span>•</span>
@@ -94,13 +98,20 @@ const WorkoutPage = () => {
                       <span>{currWorkoutItem.exercise!.reps} reps • </span>
                     )}
                     {currWorkoutItem.exercise!.distance && (
-                      <span>{formatDistance(currWorkoutItem.exercise!.distance)} • </span>
+                      <span>
+                        {formatDistance(currWorkoutItem.exercise!.distance)}{" "}
+                        •{" "}
+                      </span>
                     )}
                     {currWorkoutItem.exercise!.time && (
-                      <span>{formatDuration(currWorkoutItem.exercise!.time)} • </span>
+                      <span>
+                        {formatDuration(currWorkoutItem.exercise!.time)} •{" "}
+                      </span>
                     )}
                     {currWorkoutItem.exercise!.rest > 0 && (
-                      <span>{formatDuration(currWorkoutItem.exercise!.rest)} rest</span>
+                      <span>
+                        {formatDuration(currWorkoutItem.exercise!.rest)} rest
+                      </span>
                     )}
                   </h3>
                 </>
@@ -111,7 +122,7 @@ const WorkoutPage = () => {
               className={clsx(
                 "font-bold text-zinc-600 dark:text-zinc-200",
                 { "text-6xl": status === "rest" },
-                { "text-4xl mb-8": status === "work" }
+                { "text-4xl mb-8": status === "work" },
               )}
             >
               {status === "work"
@@ -186,14 +197,19 @@ const WorkoutPage = () => {
           ) : (
             <Button
               className="flex-1 flex-center text-lg w-full py-4 px-10 rounded-l-full rounded-r-full"
-              onClick={() => setWorkoutStarted(true)}
+              onClick={() => {
+                setWorkoutStarted(true);
+                if (currWorkoutItem?.currValues.time) setIsTimerRunning(true);
+              }}
             >
               Start Workout
             </Button>
           )}
         </div>
       ) : (
-        <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
+        <div className="w-full h-screen flex-center">
+          <Spinner className="mb-50" />
+        </div>
       )}
     </div>
   );

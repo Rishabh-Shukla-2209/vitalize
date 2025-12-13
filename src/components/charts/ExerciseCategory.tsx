@@ -15,49 +15,66 @@ const ExerciseCategory = ({ userId }: { userId: string }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categoryError, setCategoryError] = useState(false);
   const [dateFrom, setDateFrom] = useState<Date | undefined>(
-    subDays(new Date(), 30)
+    subDays(new Date(), 30),
   );
   const [dateTo, setDateTo] = useState<Date | undefined>(new Date());
   const [loading, setLoading] = useState(false);
   const categories = ExerciseCategories;
   const chartName = useRef(`${selectedCategory} PROGRESS`);
-  const [data, setData] = useState<Array<{name: string, val: number}>>([]);
+  const [data, setData] = useState<Array<{ name: string; val: number }>>([]);
+  const [dateError, setDateError] = useState("");
 
   useEffect(() => {
     const getData = async () => {
       const end = new Date();
       const start = subDays(end, 30);
-      try{
+      try {
         const chartData = await getExerciseCatData("STRENGTH", start, end);
         setData(chartData!);
-      }catch(err){
+      } catch (err) {
         handleAppError(err);
       }
-    }
+    };
     getData();
-  }, [userId])
+  }, [userId]);
 
   const updateData = async () => {
-    if(!selectedCategory){
+    if (!selectedCategory) {
       setCategoryError(true);
       return;
     }
+
+    if (dateError) return;
+
     setLoading(true);
-    try{
-      const updatedData = await getExerciseCatData(selectedCategory as ExerciseCategoryType, dateFrom, dateTo);
+    try {
+      const updatedData = await getExerciseCatData(
+        selectedCategory as ExerciseCategoryType,
+        dateFrom,
+        dateTo,
+      );
       setData(updatedData!);
       chartName.current = `${selectedCategory} PROGRESS`;
-    }catch(err){
+    } catch (err) {
       handleAppError(err);
-    }finally{
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     setCategoryError(false);
   }, [selectedCategory]);
 
+  useEffect(() => {
+    if (!dateFrom || !dateTo) {
+      setDateError("Both dates are required.");
+    } else if (dateFrom >= dateTo) {
+      setDateError("Start date must be before end date.");
+    } else {
+      setDateError("");
+    }
+  }, [dateTo, dateFrom]);
 
   return (
     <div className="boundary p-5 dark:bg-sage-400">
@@ -72,9 +89,15 @@ const ExerciseCategory = ({ userId }: { userId: string }) => {
           />
           {categoryError && <span className="error">Required</span>}
         </div>
-        <DatePicker label="From:" date={dateFrom} setDate={setDateFrom} />
+        <div className="flex flex-col gap-1">
+          <DatePicker label="From:" date={dateFrom} setDate={setDateFrom} />
+          {dateError && <span className="error">{dateError}</span>}
+        </div>
+
         <DatePicker label="To:" date={dateTo} setDate={setDateTo} />
-        <Button variant='default' onClick={updateData} disabled={loading}>{loading? <Spinner /> : "Go"}</Button>
+        <Button variant="default" onClick={updateData} disabled={loading}>
+          {loading ? <Spinner /> : "Go"}
+        </Button>
       </div>
       <div className="h-60 sm:h-70 md:h-80 lg:h-90 m-auto mx-auto mt-2.5 flex-center">
         <ExerciseCategoryChart data={data} chartName={chartName.current} />

@@ -81,9 +81,7 @@ const SignUpForm = () => {
         </div>
         <div className="text-center">
           <h1>Create your account</h1>
-          <p className="my-2">
-            Start your journey to a healthier you.
-          </p>
+          <p className="my-2">Start your journey to a healthier you.</p>
         </div>
         <div className="rounded-2xl bg-zinc-50 dark:bg-sage-400 p-8 mt-10">
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -139,7 +137,10 @@ const SignUpForm = () => {
             </Button>
             <p className="mt-10 text-center text-md">
               Already have an account?{" "}
-              <Link href={"/sign-in"} className="text-primary hover:font-medium">
+              <Link
+                href={"/sign-in"}
+                className="text-primary hover:font-medium"
+              >
                 Sign in
               </Link>
             </p>

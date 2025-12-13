@@ -4,36 +4,40 @@ import { getFollowingStatusQuery } from "./queries/user";
 import { getPostPrivacy } from "./queries/community";
 
 export const requireUser = async () => {
-  const {userId} = await auth();
+  const { userId } = await auth();
   if (!userId) throw new UnauthorizedError("You must be signed in");
   return userId;
 };
 
 export const ensureOwnership = (
   resourceOwnerId: string | null | undefined,
-  currentUserId: string
+  currentUserId: string,
 ) => {
   if (!resourceOwnerId) {
     throw new NotFoundError("Resource not found");
   }
 
   if (resourceOwnerId !== currentUserId) {
-    throw new ForbiddenError("You do not have permission to modify this resource");
+    throw new ForbiddenError(
+      "You do not have permission to modify this resource",
+    );
   }
-}
+};
 
-export const ensurePostAccessibility = async (postId: string, userId: string) => {
-  const {data: postInfo, error} = await getPostPrivacy(postId);
-  if(error) throw error;
+export const ensurePostAccessibility = async (
+  postId: string,
+  userId: string,
+) => {
+  const { data: postInfo, error } = await getPostPrivacy(postId);
+  if (error) throw error;
 
-  if(postInfo?.privacy === "PUBLIC") return;
+  if (postInfo?.privacy === "PUBLIC") return;
 
-  const {data:followStatus, error: followError} = await getFollowingStatusQuery(userId, postInfo!.userid);
-  if(followError) throw error;
+  const { data: followStatus, error: followError } =
+    await getFollowingStatusQuery(userId, postInfo!.userid);
+  if (followError) throw error;
 
-  if(followStatus === "Accepted") return;
+  if (followStatus === "Accepted") return;
 
-  throw new ForbiddenError("You do not have access to this post")
-}
-
-
+  throw new ForbiddenError("You do not have access to this post");
+};

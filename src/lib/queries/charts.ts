@@ -81,11 +81,11 @@ export const getLastWeekVolQuery = async (userId: string) => {
 
     const totalVolCurrent = transformedData.reduce(
       (total, day) => total + day.vol,
-      0
+      0,
     );
     const totalVolPrev = beforePrevWeekLogs.reduce(
       (total, day) => total + day.vol,
-      0
+      0,
     );
 
     const returnResult = {
@@ -124,7 +124,7 @@ export const getExerciseCatDataQuery = async (
   userId: string,
   category: ExerciseCategoryType,
   startDate = new Date(),
-  endDate = new Date()
+  endDate = new Date(),
 ) => {
   return safeQuery(async () => {
     const data = await prisma.exerciseLog.findMany({
@@ -172,7 +172,7 @@ export const getMuscleGroupDataQuery = async (
   muscleGroup: MuscleGroupType,
   category: ExerciseCategoryType,
   startDate = new Date(),
-  endDate = new Date()
+  endDate = new Date(),
 ) => {
   return safeQuery(async () => {
     const data = await prisma.exerciseLog.findMany({

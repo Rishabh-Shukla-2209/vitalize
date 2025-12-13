@@ -32,7 +32,7 @@ const Notification = ({
         setNotifications((prev) =>
           prev.map((n) => {
             return n.id === notification.id ? { ...n, isRead: true } : n;
-          })
+          }),
         );
       })
       .catch((err) => {
@@ -40,7 +40,7 @@ const Notification = ({
         setNotifications((prev) =>
           prev.map((n) => {
             return n.id === notification.id ? { ...n, isRead: false } : n;
-          })
+          }),
         );
       });
   };
@@ -52,7 +52,7 @@ const Notification = ({
         return n.id === notification.id
           ? { ...n, type: "FOLLOW", isRead: true }
           : n;
-      })
+      }),
     );
     try {
       await updateFollow(notification.id, notification.recipientid);
@@ -63,7 +63,7 @@ const Notification = ({
           return n.id === notification.id
             ? { ...n, type: "FOLLOW_REQUESTED", isRead: false }
             : n;
-        })
+        }),
       );
     }
   };

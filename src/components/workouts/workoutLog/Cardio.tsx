@@ -57,7 +57,7 @@ const Cardio = ({
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>
-       <div>
+        <div>
           <label>Rest</label>
           <Controller
             name={restFieldName}

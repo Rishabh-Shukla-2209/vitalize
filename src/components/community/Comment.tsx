@@ -39,11 +39,11 @@ const Comment = ({
   addComment: (
     text: string,
     parentId?: string,
-    parentAuthor?: string
-  ) => Promise<Omit<CommentType, "user" | "_count" | "liked"> | null> ;
+    parentAuthor?: string,
+  ) => Promise<Omit<CommentType, "user" | "_count" | "liked"> | null>;
   updateLikeCommentQueryData: (
     target: "like" | "comment",
-    commentsToAdd?: number
+    commentsToAdd?: number,
   ) => void;
   targetCommentId?: string;
 }) => {
@@ -66,7 +66,7 @@ const Comment = ({
   const addReplyToTree = (
     comments: CommentType[],
     parentId: string,
-    reply: CommentType
+    reply: CommentType,
   ): CommentType[] => {
     return comments.map((c) => {
       // Direct parent found
@@ -92,7 +92,7 @@ const Comment = ({
     setAddingReply(true);
 
     const newComment = await addComment(text, comment.id, comment.userid);
-    if(!newComment){
+    if (!newComment) {
       setAddingReply(false);
       return;
     }
@@ -118,7 +118,7 @@ const Comment = ({
 
   const removeCommentFromTree = (
     tree: CommentType[],
-    targetId: string
+    targetId: string,
   ): { newTree: CommentType[]; deletedCount: number } => {
     let deletedCount = 0;
 
@@ -168,9 +168,9 @@ const Comment = ({
     });
 
     updateLikeCommentQueryData("comment", -noOfDeletedComments);
-    try{
+    try {
       await deleteComment(comment.id);
-    }catch(err){
+    } catch (err) {
       handleAppError(err);
     }
   };
@@ -201,7 +201,7 @@ const Comment = ({
         return c;
       });
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -213,7 +213,7 @@ const Comment = ({
           comment.id,
           comment.userid,
           comment.postid,
-          liked ? "liked" : "unliked"
+          liked ? "liked" : "unliked",
         );
         setComments((prev) => updateCommentLike(prev, comment.id, liked));
         queryClient.invalidateQueries({
@@ -258,7 +258,7 @@ const Comment = ({
         comment.replies?.some((r) => containsComment(r, targetId)) || false
       );
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -296,7 +296,7 @@ const Comment = ({
           {
             "bg-yellow-100 border-amber-600 dark:bg-sage-200 dark:border-sage-800":
               highlight,
-          }
+          },
         )}
       >
         <Link

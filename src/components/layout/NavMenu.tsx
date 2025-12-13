@@ -29,7 +29,7 @@ const NavMenu = () => {
         ))}
         <DropdownMenuItem asChild>
           <Link href={"/profile"}>
-              <p>Profile</p>
+            <p>Profile</p>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
@@ -43,7 +43,6 @@ const NavMenu = () => {
             </div>
           </SignOutButton>
         </DropdownMenuItem>
-
       </DropdownMenuContent>
     </DropdownMenu>
   );

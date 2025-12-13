@@ -1,7 +1,4 @@
-import {
-  clerkMiddleware,
-  createRouteMatcher,
-} from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
@@ -20,14 +17,14 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (isAuthenticated) {
     const userId = sessionClaims.sub;
-    const hasOnboarded = sessionClaims.hasOnboarded;    
+    const hasOnboarded = sessionClaims.hasOnboarded;
     const isOnboardingPage = req.nextUrl.pathname.startsWith("/onboarding");
 
     if (!hasOnboarded && !isOnboardingPage) {
       return NextResponse.redirect(new URL("/onboarding", req.url));
     }
 
-    if (isPublicRoute(req)|| (hasOnboarded && isOnboardingPage)) {
+    if (isPublicRoute(req) || (hasOnboarded && isOnboardingPage)) {
       return NextResponse.redirect(new URL("/home", req.url));
     }
 
@@ -35,7 +32,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     if (match) {
       const routeUserId = match[1];
-      
+
       if (routeUserId === userId) {
         return NextResponse.redirect(new URL("/profile", req.url));
       }
@@ -50,6 +47,3 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
-
-
-

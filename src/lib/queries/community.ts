@@ -7,7 +7,7 @@ import { safeQuery } from "../safeQueries";
 export const getPostsQuery = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  source: Source
+  source: Source,
 ) => {
   return safeQuery(async () => {
     const following = await prisma.follow.findMany({
@@ -212,7 +212,7 @@ export const savePostReactionQuery = async (
   postId: string,
   authorId: string,
   userId: string,
-  reaction: "liked" | "unliked"
+  reaction: "liked" | "unliked",
 ) => {
   return safeQuery(async () => {
     const newNotification = await prisma.$transaction(async (tx) => {
@@ -265,7 +265,7 @@ export const savePostReactionQuery = async (
       await pusherServer.trigger(
         `private-user-${authorId}`,
         "notification:new",
-        newNotification
+        newNotification,
       );
     }
   });
@@ -277,7 +277,7 @@ export const saveCommentQuery = async (
   userId: string,
   text: string,
   parentId?: string,
-  parentAuthorId?: string
+  parentAuthorId?: string,
 ) => {
   return safeQuery(async () => {
     const comment = await prisma.comment.create({
@@ -313,7 +313,7 @@ export const saveCommentQuery = async (
         await pusherServer.trigger(
           `private-user-${parentId ? parentAuthorId! : authorId}`,
           "notification:new",
-          newNotification
+          newNotification,
         );
       }
     }
@@ -326,7 +326,7 @@ export const saveFollowingQuery = async (
   followerId: string,
   followingId: string,
   followingPrivacy: PrivacyType,
-  action: "follow" | "unFollow"
+  action: "follow" | "unFollow",
 ) => {
   return safeQuery(async () => {
     const newNotification = await prisma.$transaction(async (tx) => {
@@ -378,7 +378,7 @@ export const saveFollowingQuery = async (
       await pusherServer.trigger(
         `private-user-${followingId}`,
         "notification:new",
-        newNotification
+        newNotification,
       );
     }
   });
@@ -477,7 +477,7 @@ export const saveCommentReactionQuery = async (
   commentAuthorId: string,
   postId: string,
   userId: string,
-  reaction: "liked" | "unliked"
+  reaction: "liked" | "unliked",
 ) => {
   return safeQuery(async () => {
     const newNotification = await prisma.$transaction(async (tx) => {
@@ -531,7 +531,7 @@ export const saveCommentReactionQuery = async (
       await pusherServer.trigger(
         `private-user-${commentAuthorId}`,
         "notification:new",
-        newNotification
+        newNotification,
       );
     }
   });
@@ -603,7 +603,7 @@ export const createPostQuery = async (
     body?: string;
     imgUrl?: string;
     workoutLogid?: string;
-  }
+  },
 ) => {
   return safeQuery(async () => {
     if (postData.workoutLogid) {

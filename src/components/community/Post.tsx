@@ -43,7 +43,7 @@ const Post = ({
       const updateData = (
         oldData:
           | { pages: GetPostsResponse[]; pageParams: PageParam[] }
-          | undefined
+          | undefined,
       ) => {
         if (!oldData) return oldData;
 
@@ -68,7 +68,7 @@ const Post = ({
                       }),
                     },
                   }
-                : p
+                : p,
             ),
           })),
         };
@@ -76,14 +76,14 @@ const Post = ({
 
       queryClient.setQueryData(
         ["feed", specificUserId ? specificUserId : "general", userId],
-        updateData
+        updateData,
       );
 
       if (specificUserId) {
         queryClient.setQueryData(["feed", "general", userId], updateData);
       }
     },
-    [liked, post.id, post.liked, queryClient, specificUserId, userId]
+    [liked, post.id, post.liked, queryClient, specificUserId, userId],
   );
 
   useEffect(() => {
@@ -123,7 +123,7 @@ const Post = ({
           post.userid,
           text,
           parentId,
-          parentAuthor
+          parentAuthor,
         );
         queryClient.invalidateQueries({
           queryKey: ["activity", "comments"],
@@ -136,15 +136,15 @@ const Post = ({
         return null;
       }
     },
-    [post.id, post.userid, queryClient, updateLikeCommentQueryData]
+    [post.id, post.userid, queryClient, updateLikeCommentQueryData],
   );
 
   useEffect(() => {
     const getLikes = async () => {
-      try{
+      try {
         const data = await getPostLikes(post.id);
         setLikes(data!);
-      }catch(err){
+      } catch (err) {
         handleAppError(err);
       }
     };

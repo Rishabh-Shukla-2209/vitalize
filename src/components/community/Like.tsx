@@ -8,9 +8,7 @@ import { Button } from "../ui/button";
 const Like = ({ like }: { like: LikeType }) => {
   return (
     <div className="flex justify-between items-center w-full my-1 pb-1 border-b-zinc-300 dark:border-b-sage-700 border-b">
-      <div
-        className="flex gap-3 items-center text-sm"
-      >
+      <div className="flex gap-3 items-center text-sm">
         {like.user.imgUrl ? (
           <Image
             src={like.user.imgUrl}
@@ -30,7 +28,12 @@ const Like = ({ like }: { like: LikeType }) => {
         </div>
       </div>
       <Button variant="outline" className="mr-1">
-          <Link href={`/community/user/${like.userid}`} className="dark:text-zinc-100">Profile</Link>
+        <Link
+          href={`/community/user/${like.userid}`}
+          className="dark:text-zinc-100"
+        >
+          Profile
+        </Link>
       </Button>
     </div>
   );

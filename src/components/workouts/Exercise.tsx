@@ -35,9 +35,13 @@ const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
             <ul className="flex gap-2 text-zinc-600 dark:text-zinc-100">
               {exercise.sets > 0 && <li>{exercise.sets} sets • </li>}
               {exercise.reps > 0 && <li>{exercise.reps} reps • </li>}
-              {exercise.distance && <li>{formatDistance(exercise.distance)} • </li>}
+              {exercise.distance && (
+                <li>{formatDistance(exercise.distance)} • </li>
+              )}
               {exercise.time && <li>{formatDuration(exercise.time)} • </li>}
-              {exercise.rest > 0 && <li>{formatDuration(exercise.rest)} rest</li>}
+              {exercise.rest > 0 && (
+                <li>{formatDuration(exercise.rest)} rest</li>
+              )}
             </ul>
           </div>
         </div>
@@ -61,23 +65,17 @@ const Exercise = ({ exercise }: { exercise: ExerciseDetailsType }) => {
             {exercise.exercise.category && (
               <div className="flex gap-2">
                 <h3>Category: </h3>
-                <p>
-                  {toProperCase(exercise.exercise.category)}
-                </p>
+                <p>{toProperCase(exercise.exercise.category)}</p>
               </div>
             )}
             <div className="flex gap-1 md:gap-2">
               <h3>Muscles Involved: </h3>
-              <p>
-                {toProperCase(exercise.exercise.muscleGroup)}
-              </p>
+              <p>{toProperCase(exercise.exercise.muscleGroup)}</p>
             </div>
             {exercise.exercise.equipment && (
               <div className="flex gap-2">
                 <h3>Equipment: </h3>
-                <p>
-                  {toProperCase(exercise.exercise.equipment)}
-                </p>
+                <p>{toProperCase(exercise.exercise.equipment)}</p>
               </div>
             )}
           </motion.div>

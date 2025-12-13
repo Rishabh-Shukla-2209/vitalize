@@ -92,15 +92,22 @@
   }
 
   .dark .shimmer::after {
-  background-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0,0,0,0.30) 20%,       
-    transparent 40%
-  );
-}
-}
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.3) 20%,
+      transparent 40%
+    );
+  }
 
+  .bg-dot-white {
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    );
+    background-size: 20px 20px;
+  }
+}
 
 @layer components {
   .log-workout-form {

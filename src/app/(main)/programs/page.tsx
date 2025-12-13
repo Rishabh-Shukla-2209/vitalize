@@ -51,7 +51,7 @@ const ProgramsPage = () => {
         selectedEquipment as EquipmentType | "",
         selectedDifficulty as DifficultyType | "",
         selectedDuration,
-        pageParam
+        pageParam,
       ),
     getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
     initialPageParam: 0,

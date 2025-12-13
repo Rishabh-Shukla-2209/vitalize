@@ -20,7 +20,7 @@ const Feed = ({
 
   const adaptedGetPosts: FeedFetcher = async ({ cursor, source }) => {
     const res = await getPosts(cursor, source);
-    if(res){
+    if (res) {
       return res;
     }
     throw res;
@@ -40,7 +40,7 @@ const Feed = ({
     useFeed(
       userId,
       type === "general" ? adaptedGetPosts : adaptedGetUserPosts,
-      specificUserId
+      specificUserId,
     );
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const Feed = ({
           fetchNextPage();
         }
       },
-      { rootMargin: "200px" }
+      { rootMargin: "200px" },
     );
 
     observer.observe(node);

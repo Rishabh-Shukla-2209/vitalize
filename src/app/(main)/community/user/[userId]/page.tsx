@@ -10,12 +10,16 @@ import { Button } from "@/components/ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
 import { saveFollowing } from "@/lib/actions/community";
-import { getNoOfPRs, getNoOfWorkoutsDone, getUser, getFollowingStatus } from "@/lib/actions/user";
+import {
+  getFollowingStatus,
+  getCommunityUser,
+  getCommUserNoOfPRs,
+  getCommUserNoOfWorkoutsDone,
+} from "@/lib/actions/user";
 import { handleAppError } from "@/lib/utils";
 
 const SocialProfile = () => {
-  const [followStatus, setFollowStatus] =
-    useState<FollowStatus>("Not Following");
+  const [followStatus, setFollowStatus] = useState<FollowStatus | null>(null);
   const { userId: id } = useParams();
   const { user } = useUser();
   const queryClient = useQueryClient();
@@ -26,18 +30,23 @@ const SocialProfile = () => {
       if (user && typeof id === "string") {
         const [prCount, workoutCount, profileUser, followStatus] =
           await Promise.all([
-            getNoOfPRs(),
-            getNoOfWorkoutsDone(),
-            getUser(),
+            getCommUserNoOfPRs(id),
+            getCommUserNoOfWorkoutsDone(id),
+            getCommunityUser(id),
             getFollowingStatus(id),
           ]);
-        setFollowStatus(followStatus!);
         return { prCount, workoutCount, profileUser, followStatus };
       }
     },
     staleTime: Infinity,
     enabled: !!user,
   });
+
+  useEffect(() => {
+    if (data && followStatus === null) {
+      setFollowStatus(data.followStatus);
+    }
+  }, [data, followStatus]);
 
   const updateFollowQueryData = useCallback(
     (newFollowStatus: FollowStatus) => {
@@ -49,14 +58,14 @@ const SocialProfile = () => {
             ...oldData,
             followStatus: newFollowStatus,
           };
-        }
+        },
       );
     },
-    [id, queryClient, user]
+    [id, queryClient, user],
   );
 
   useEffect(() => {
-    if (!data || followStatus === data.followStatus) return;
+    if (!data || !followStatus || followStatus === data.followStatus) return;
 
     const timer = setTimeout(() => {
       const action =
@@ -64,10 +73,10 @@ const SocialProfile = () => {
           ? "unFollow"
           : "follow";
 
-      try{
+      try {
         saveFollowing(id as string, data.profileUser!.privacy, action);
         updateFollowQueryData(followStatus);
-      }catch(err){
+      } catch (err) {
         handleAppError(err);
         updateFollowQueryData(data.followStatus!);
       }
@@ -97,7 +106,11 @@ const SocialProfile = () => {
             <div className="border border-zinc-300 dark:border-sage-700 rounded-md bg-zinc-100 dark:bg-sage-400 p-5 text-center">
               {data.profileUser && (
                 <>
-                  <About userData={data.profileUser} visitedByOther={true} />
+                  <About
+                    userData={data.profileUser}
+                    visitedByOther={true}
+                    commUserId={id as string}
+                  />
                   <Button
                     variant={
                       followStatus === "Accepted" ||
@@ -111,8 +124,8 @@ const SocialProfile = () => {
                     {followStatus === "Accepted"
                       ? "Following"
                       : followStatus === "Requested"
-                      ? "Requested"
-                      : "Follow"}
+                        ? "Requested"
+                        : "Follow"}
                   </Button>
                 </>
               )}
@@ -143,7 +156,9 @@ const SocialProfile = () => {
           </div>
         </>
       ) : (
-        <div className="w-full h-screen flex-center"><Spinner className="mb-50"/></div>
+        <div className="w-full h-screen flex-center">
+          <Spinner className="mb-50" />
+        </div>
       )}
     </div>
   );

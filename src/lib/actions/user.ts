@@ -9,6 +9,8 @@ import { ValidationError } from "../errors";
 import {
   getCommentLikesActivityQuery,
   getCommentsActivityQuery,
+  getFollowersQuery,
+  getFollowingQuery,
   getFollowingStatusQuery,
   getNoOfPRsQuery,
   getNoOfWorkoutsDoneQuery,
@@ -29,6 +31,29 @@ import {
 } from "../queries/user";
 import { updateUserSchema } from "@/validations/user";
 import { onboardingSchemaServer } from "@/validations/auth";
+
+export async function generateDemoToken() {
+  const userId = process.env.DEMO_USER_ID;
+
+  if (!userId) {
+    console.error("Missing DEMO_USER_ID in environment variables");
+    throw new Error("Demo system configuration error");
+  }
+
+  const client = await clerkClient();
+
+  try {
+    const token = await client.signInTokens.createSignInToken({
+      userId: userId,
+      expiresInSeconds: 60,
+    });
+
+    return { ticket: token.token };
+  } catch (error) {
+    console.error("Error creating demo token:", error);
+    throw new Error("Failed to generate demo access");
+  }
+}
 
 export async function completeOnboarding(firstName: string, lastName: string) {
   const { userId } = await auth();
@@ -127,10 +152,28 @@ export const getNoOfWorkoutsDone = async () => {
   return data;
 };
 
+export const getCommUserNoOfWorkoutsDone = async (id: string) => {
+  await requireUser();
+
+  const { data, error } = await getNoOfWorkoutsDoneQuery(id);
+
+  if (error) throw error;
+  return data;
+};
+
 export const getNoOfPRs = async () => {
   const userId = await requireUser();
 
   const { data, error } = await getNoOfPRsQuery(userId);
+
+  if (error) throw error;
+  return data;
+};
+
+export const getCommUserNoOfPRs = async (id: string) => {
+  await requireUser();
+
+  const { data, error } = await getNoOfPRsQuery(id);
 
   if (error) throw error;
   return data;
@@ -145,16 +188,25 @@ export const getUser = async () => {
   return data;
 };
 
+export const getCommunityUser = async (id: string) => {
+  await requireUser();
+
+  const { data, error } = await getUserQuery(id);
+
+  if (error) throw error;
+  return data;
+};
+
 export const getUserAIWorkouts = async (
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   const userId = await requireUser();
 
   const { data, error } = await getUserAIWorkoutsQuery(
     userId,
     cursor,
-    direction
+    direction,
   );
 
   if (error) throw error;
@@ -175,7 +227,7 @@ export const getFollowingStatus = async (followingId: string) => {
 
   const { data, error } = await getFollowingStatusQuery(
     followerId,
-    followingId
+    followingId,
   );
 
   if (error) throw error;
@@ -188,23 +240,18 @@ export const updateNotifReadStatus = async (id: string) => {
 
   ensureOwnership(notif.data?.recipientid, userId);
 
-  const { data, error } = await updateNotifReadStatusQuery(
-    id
-  );
+  const { data, error } = await updateNotifReadStatusQuery(id);
 
   if (error) throw error;
   return data;
 };
 
 export const getNotifications = async (
-  cursor: { createdAt: Date; id: string } | null
+  cursor: { createdAt: Date; id: string } | null,
 ) => {
   const userId = await requireUser();
 
-  const { data, error } = await getNotificationsQuery(
-    userId,
-    cursor
-  );
+  const { data, error } = await getNotificationsQuery(userId, cursor);
 
   if (error) throw error;
   return data;
@@ -212,14 +259,14 @@ export const getNotifications = async (
 
 export const getPostsActivity = async (
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   const userId = await requireUser();
 
   const { data, error } = await getPostsActivityQuery(
     userId,
     cursor,
-    direction
+    direction,
   );
 
   if (error) throw error;
@@ -228,14 +275,14 @@ export const getPostsActivity = async (
 
 export const getPostLikesActivity = async (
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   const userId = await requireUser();
 
   const { data, error } = await getPostLikesActivityQuery(
     userId,
     cursor,
-    direction
+    direction,
   );
 
   if (error) throw error;
@@ -244,14 +291,14 @@ export const getPostLikesActivity = async (
 
 export const getCommentLikesActivity = async (
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   const userId = await requireUser();
 
   const { data, error } = await getCommentLikesActivityQuery(
     userId,
     cursor,
-    direction
+    direction,
   );
 
   if (error) throw error;
@@ -260,14 +307,14 @@ export const getCommentLikesActivity = async (
 
 export const getCommentsActivity = async (
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   const userId = await requireUser();
 
   const { data, error } = await getCommentsActivityQuery(
     userId,
     cursor,
-    direction
+    direction,
   );
 
   if (error) throw error;
@@ -276,22 +323,45 @@ export const getCommentsActivity = async (
 
 export const updateFollow = async (
   notificationId: string,
-  followingId: string
+  followingId: string,
 ) => {
   const followerId = await requireUser();
 
-  await updateFollowQuery(
-    notificationId,
-    followerId,
-    followingId,
-  );
+  await updateFollowQuery(notificationId, followerId, followingId);
 };
 
 export const getUnreadNotificationCount = async () => {
   const userId = await requireUser();
 
-  const {data, error} = await getUnreadNotificationCountQuery(userId);
+  const { data, error } = await getUnreadNotificationCountQuery(userId);
 
-  if(error) throw error;
+  if (error) throw error;
+  return data;
+};
+
+export const getFollowers = async (
+  callerId: string | undefined = undefined,
+) => {
+  const userId = await requireUser();
+  const { data, error } = await getFollowersQuery(
+    callerId ?? userId,
+    callerId ? userId : undefined,
+  );
+
+  if (error) throw error;
+  return data;
+};
+
+export const getFollowing = async (
+  callerId: string | undefined = undefined,
+) => {
+  const userId = await requireUser();
+
+  const { data, error } = await getFollowingQuery(
+    callerId ?? userId,
+    callerId ? userId : undefined,
+  );
+
+  if (error) throw error;
   return data;
 };

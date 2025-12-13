@@ -8,6 +8,7 @@ import {
   getLastWeekVolQuery,
   getMuscleGroupDataQuery,
 } from "../queries/charts";
+import { ValidationError } from "../errors";
 
 export const getLastWeekVol = async () => {
   const userId = await requireUser();
@@ -30,15 +31,17 @@ export const getCurrMonthsWorkoutDates = async () => {
 export const getExerciseCatData = async (
   category: ExerciseCategoryType,
   startDate = new Date(),
-  endDate = new Date()
+  endDate = new Date(),
 ) => {
   const userId = await requireUser();
+
+  if (startDate > endDate) throw new ValidationError();
 
   const { data, error } = await getExerciseCatDataQuery(
     userId,
     category,
     startDate,
-    endDate
+    endDate,
   );
 
   if (error) throw error;
@@ -49,16 +52,18 @@ export const getMuscleGroupData = async (
   muscleGroup: MuscleGroupType,
   category: ExerciseCategoryType,
   startDate = new Date(),
-  endDate = new Date()
+  endDate = new Date(),
 ) => {
   const userId = await requireUser();
+
+  if (startDate > endDate) throw new ValidationError();
 
   const { data, error } = await getMuscleGroupDataQuery(
     userId,
     muscleGroup,
     category,
     startDate,
-    endDate
+    endDate,
   );
 
   if (error) throw error;

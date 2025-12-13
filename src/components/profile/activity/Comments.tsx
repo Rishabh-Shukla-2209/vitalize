@@ -24,7 +24,7 @@ const Comments = ({ userId }: { userId: string }) => {
         : pageCursors[currIndex].last;
 
     const data = await getCommentsActivity(cursor, direction);
-    if(!data) return;
+    if (!data) return;
 
     if (data.length > 0) {
       setPageCursors((prev) => {
@@ -50,17 +50,24 @@ const Comments = ({ userId }: { userId: string }) => {
   });
   return (
     <div>
-       <h2 className="mb-2">Comments</h2>
+      <h2 className="mb-2">Comments</h2>
       <div className="bg-zinc-50 dark:bg-sage-400 border border-zinc-200 dark:border-sage-700 overflow-cliprounded-md">
-        {isLoading ? <ActivitySkeleton/> : comments && comments.length > 0 ?
+        {isLoading ? (
+          <ActivitySkeleton />
+        ) : comments && comments.length > 0 ? (
           comments.map((comment) => (
             <div
               key={comment.id}
               className="border border-b-zinc-100 dark:border-sage-700 p-2 flex justify-between items-center text-zinc-600"
             >
-              <p>{comment.text.slice(0, 10)}... on {comment.post.user.firstName}&apos;s post.</p>
+              <p>
+                {comment.text.slice(0, 10)}... on {comment.post.user.firstName}
+                &apos;s post.
+              </p>
               <p className="flex-center">
-                <span className="mr-2 text-sm">{minutesAgo(comment.createdAt)}</span>
+                <span className="mr-2 text-sm">
+                  {minutesAgo(comment.createdAt)}
+                </span>
                 <Button variant="outline">
                   <Icons.view />
                   <Link
@@ -71,7 +78,10 @@ const Comments = ({ userId }: { userId: string }) => {
                 </Button>
               </p>
             </div>
-          )): <p className="p-2">Your comments will appear here.</p>}
+          ))
+        ) : (
+          <p className="p-2">Your comments will appear here.</p>
+        )}
       </div>
       <div className="flex justify-between">
         <Button

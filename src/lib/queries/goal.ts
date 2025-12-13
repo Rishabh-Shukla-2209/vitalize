@@ -32,7 +32,7 @@ export const getActiveGoalsQuery = async (userId: string) => {
     });
     const missedGoals = data.filter((goal) => goal.targetDate < startOfToday());
     const activeGoals = data.filter(
-      (goal) => goal.targetDate >= startOfToday()
+      (goal) => goal.targetDate >= startOfToday(),
     );
 
     if (missedGoals.length > 0) {
@@ -58,7 +58,7 @@ export const getGoalsQuery = async (
   cursor: { createdAt: Date; id: string } | null,
   direction: "next" | "prev",
   search: string = "",
-  status?: GoalStatus | "All"
+  status?: GoalStatus | "All",
 ) => {
   return safeQuery(async () => {
     const findArgs: Prisma.GoalFindManyArgs = {

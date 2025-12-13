@@ -13,7 +13,6 @@ import { DistanceInput } from "@/components/DistanceInput";
 import { GoalFormValues, goalSchema } from "@/validations/goal";
 import { Spinner } from "../ui/spinner";
 
-
 type ValueFieldProps = ControllerRenderProps<
   GoalFormValues,
   "currentValue" | "targetValue"
@@ -112,14 +111,14 @@ const AddGoal = ({
       targetDate: values.targetDate!,
     };
 
-    try{
+    try {
       await addGoal(data);
       resetSearch();
       queryClient.invalidateQueries({
-        queryKey: ["activeGoals"]
-      })
+        queryKey: ["activeGoals"],
+      });
       setAddGoal(false);
-    }catch(err){
+    } catch (err) {
       handleAppError(err);
     }
   };
@@ -154,7 +153,7 @@ const AddGoal = ({
                         setChoice={(val) => field.onChange(val)}
                       />
                     ) : (
-                        <Spinner />
+                      <Spinner />
                     )
                   }
                 />

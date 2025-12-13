@@ -2,7 +2,7 @@ import { StackAction, WorkoutItem } from "@/lib/types";
 
 export const stackReducer = (
   state: Array<WorkoutItem>,
-  action: StackAction
+  action: StackAction,
 ) => {
   switch (action.type) {
     case "PUSH":

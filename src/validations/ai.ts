@@ -16,9 +16,8 @@ export const aiWorkoutSchema = z.object({
       distance: z.number().optional(),
       time: z.number().optional(),
       exerciseId: z.string(),
-    })
+    }),
   ),
 });
-
 
 export type AiWorkoutSchemaType = z.infer<typeof aiWorkoutSchema>;

@@ -9,21 +9,23 @@ const AIWorkoutSkeletom = () => {
     "Shaping your workout flow so every minute counts…",
     "Finalizing your personalized training plan… get ready to move.",
   ];
-  
+
   useEffect(() => {
     const timer = setInterval(
-      () => setTextIndex((prev: number) => prev > 4 ? prev : prev + 1),
-      10000
+      () => setTextIndex((prev: number) => (prev > 4 ? prev : prev + 1)),
+      10000,
     );
 
     return () => clearInterval(timer);
   }, []);
 
-  return <div className="p-5 flex flex-col gap-5 w-full h-90 md:h-100 lg:120 boundary shimmer">
-    {texts.map((text, index) => {
-      return index <= textIndex ?  <p key={index}>{texts[index]}</p> : <></>
-    })}
-  </div>;
+  return (
+    <div className="p-5 flex flex-col gap-5 w-full h-90 md:h-100 lg:120 boundary shimmer">
+      {texts.map((text, index) => {
+        return index <= textIndex ? <p key={index}>{texts[index]}</p> : <></>;
+      })}
+    </div>
+  );
 };
 
 export default AIWorkoutSkeletom;

@@ -13,7 +13,7 @@ function getScrollableParent(el: HTMLElement): HTMLElement | Window {
 }
 
 export function useKeyboardAvoidance<T extends HTMLElement>(
-  ref: React.RefObject<T | null>
+  ref: React.RefObject<T | null>,
 ) {
   useEffect(() => {
     const el = ref.current;
@@ -38,7 +38,10 @@ export function useKeyboardAvoidance<T extends HTMLElement>(
         if (scrollParent === window) {
           window.scrollBy({ top: offset, behavior: "smooth" });
         } else {
-          (scrollParent as HTMLElement).scrollBy({ top: offset, behavior: "smooth" });
+          (scrollParent as HTMLElement).scrollBy({
+            top: offset,
+            behavior: "smooth",
+          });
         }
       } else {
         // Once it's visible, stop listening

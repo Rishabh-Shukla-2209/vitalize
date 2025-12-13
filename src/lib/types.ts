@@ -385,27 +385,27 @@ export type LikeType = {
 };
 
 export type CommentType = {
-    user: {
-        id: string;
-        firstName: string | null;
-        lastName: string | null;
-        imgUrl: string | null;
-    };
-    _count: {
-      CommentLike: number;
-    }
-} & {
+  user: {
     id: string;
-    createdAt: Date;
-    userid: string;
-    text: string;
-    postid: string;
-    parentid: string | null;
-    updatedAt: Date;
-    updated: boolean;
-    liked: boolean;
-    replies?: CommentType[];
-}
+    firstName: string | null;
+    lastName: string | null;
+    imgUrl: string | null;
+  };
+  _count: {
+    CommentLike: number;
+  };
+} & {
+  id: string;
+  createdAt: Date;
+  userid: string;
+  text: string;
+  postid: string;
+  parentid: string | null;
+  updatedAt: Date;
+  updated: boolean;
+  liked: boolean;
+  replies?: CommentType[];
+};
 
 export type FeedFetcher = (params: {
   userId: string;
@@ -413,26 +413,35 @@ export type FeedFetcher = (params: {
   source: Source;
 }) => Promise<GetPostsResponse>;
 
-export type ProfileDataType = {
-    prCount: number;
-    workoutCount: number;
-    profileUser: User;
-    followStatus: FollowStatus;
-} | undefined
+export type ProfileDataType =
+  | {
+      prCount: number;
+      workoutCount: number;
+      profileUser: User;
+      followStatus: FollowStatus;
+    }
+  | undefined;
 
 export type NotificationPayload = {
-    actor: {
-        firstName: string | null;
-        id: string;
-    };
-} & {
+  actor: {
+    firstName: string | null;
     id: string;
-    recipientid: string;
-    type: NotificationType;
-    actorId: string;
-    postid: string | null;
-    commentid: string | null;
-    isRead: boolean;
-    readAt: Date | null;
-    createdAt: Date;
-}
+  };
+} & {
+  id: string;
+  recipientid: string;
+  type: NotificationType;
+  actorId: string;
+  postid: string | null;
+  commentid: string | null;
+  isRead: boolean;
+  readAt: Date | null;
+  createdAt: Date;
+};
+
+export type FollowerFollowingType = {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  imgUrl: string | null;
+};

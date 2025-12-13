@@ -26,7 +26,7 @@ export const updateUserQuery = async (
     about?: string;
     bio?: string;
     privacy?: PrivacyType;
-  }
+  },
 ) => {
   return safeQuery(
     async () =>
@@ -35,7 +35,7 @@ export const updateUserQuery = async (
           id: userId,
         },
         data: updatedData,
-      })
+      }),
   );
 };
 
@@ -49,7 +49,7 @@ export const saveOnboardingDataQuery = async (
     height: number;
     gender: Gender;
     dob: Date;
-  }
+  },
 ) => {
   return safeTransaction(async (tx) => {
     await tx.user.update({
@@ -170,7 +170,7 @@ export const getUserQuery = async (userId: string) => {
 export const getUserAIWorkoutsQuery = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   return safeQuery(async () => {
     const findArgs: Prisma.WorkoutPlanFindManyArgs = {
@@ -199,7 +199,7 @@ export const getUserAIWorkoutsQuery = async (
 export const getUserPostsQuery = async (
   userId: string,
   cursor: Cursor,
-  callerId: string
+  callerId: string,
 ) => {
   return safeQuery(async () => {
     const follow = await prisma.follow.findUnique({
@@ -279,7 +279,7 @@ export const getUserPostsQuery = async (
 
 export const getFollowingStatusQuery = async (
   followerId: string,
-  followingId: string
+  followingId: string,
 ) => {
   return safeQuery(async () => {
     const follow = await prisma.follow.findUnique({
@@ -336,7 +336,7 @@ export const getNotificationRecipient = async (id: string) => {
 
 export const getNotificationsQuery = async (
   userId: string,
-  cursor: { createdAt: Date; id: string } | null
+  cursor: { createdAt: Date; id: string } | null,
 ) => {
   return safeQuery(async () => {
     const data = await prisma.notification.findMany({
@@ -363,7 +363,7 @@ export const getNotificationsQuery = async (
 export const getPostsActivityQuery = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   return safeQuery(async () => {
     const data = await prisma.post.findMany({
@@ -390,7 +390,7 @@ export const getPostsActivityQuery = async (
 export const getPostLikesActivityQuery = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   return safeQuery(async () => {
     const data = await prisma.postLike.findMany({
@@ -426,7 +426,7 @@ export const getPostLikesActivityQuery = async (
 export const getCommentLikesActivityQuery = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   return safeQuery(async () => {
     const data = await prisma.commentLike.findMany({
@@ -472,7 +472,7 @@ export const getCommentLikesActivityQuery = async (
 export const getCommentsActivityQuery = async (
   userId: string,
   cursor: { createdAt: Date; id: string } | null,
-  direction: "next" | "prev"
+  direction: "next" | "prev",
 ) => {
   return safeQuery(async () => {
     const data = await prisma.comment.findMany({
@@ -509,7 +509,7 @@ export const getCommentsActivityQuery = async (
 export const updateFollowQuery = async (
   notificationId: string,
   followerId: string,
-  followingId: string
+  followingId: string,
 ) => {
   const { data: follow, error } = await safeQuery(async () => {
     const follow = await prisma.follow.findUnique({
@@ -564,7 +564,7 @@ export const updateFollowQuery = async (
     await pusherServer.trigger(
       `private-user-${followerId}`,
       "notification:new",
-      newNotification
+      newNotification,
     );
   } else {
     throw transactionError;
@@ -579,5 +579,118 @@ export const getUnreadNotificationCountQuery = async (userId: string) => {
         isRead: false,
       },
     });
+  });
+};
+
+export const getFollowersQuery = async (
+  userId: string,
+  callerId: string | undefined = undefined,
+) => {
+  return safeQuery(async () => {
+    const followers = await prisma.follow.findMany({
+      where: {
+        followingId: userId,
+        status: "ACCEPTED",
+      },
+      select: {
+        follower: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            imgUrl: true,
+          },
+        },
+      },
+    });
+
+    if (!callerId) return followers;
+
+    const [follow, privacy] = await Promise.all([
+      prisma.follow.findUnique({
+        where: {
+          followerId_followingId: { followerId: callerId, followingId: userId },
+        },
+        select: {
+          status: true,
+          following: {
+            select: {
+              privacy: true,
+            },
+          },
+        },
+      }),
+      prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          privacy: true,
+        },
+      }),
+    ]);
+
+    if (
+      follow &&
+      (follow.status === "ACCEPTED" || privacy?.privacy === "PUBLIC")
+    ) {
+      return followers;
+    }
+
+    return [];
+  });
+};
+
+export const getFollowingQuery = async (
+  userId: string,
+  callerId: string | undefined = undefined,
+) => {
+  return safeQuery(async () => {
+    const following = await prisma.follow.findMany({
+      where: {
+        followerId: userId,
+        status: "ACCEPTED",
+      },
+      select: {
+        following: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            imgUrl: true,
+          },
+        },
+      },
+    });
+
+    if (!callerId) return following;
+
+    const [follow, privacy] = await Promise.all([
+      prisma.follow.findUnique({
+        where: {
+          followerId_followingId: { followerId: callerId, followingId: userId },
+        },
+        select: {
+          status: true,
+        },
+      }),
+      prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          privacy: true,
+        },
+      }),
+    ]);
+
+    if (
+      follow &&
+      (follow.status === "ACCEPTED" || privacy?.privacy === "PUBLIC")
+    ) {
+      return following;
+    }
+
+    return [];
   });
 };

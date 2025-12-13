@@ -18,7 +18,7 @@ export default function ImageCropper({
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropArea | null>(
-    null
+    null,
   );
   const [error, setError] = useState<string | null>(null);
   const [cropping, setCropping] = useState(false);
@@ -27,7 +27,7 @@ export default function ImageCropper({
     (_: unknown, croppedAreaPixels: CropArea) => {
       setCroppedAreaPixels(croppedAreaPixels);
     },
-    []
+    [],
   );
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +84,11 @@ export default function ImageCropper({
               onCropComplete={onCropComplete}
             />
           </div>
-          <Button variant="outline" className="dark:text-zinc-200" onClick={showCroppedImage}>
+          <Button
+            variant="outline"
+            className="dark:text-zinc-200"
+            onClick={showCroppedImage}
+          >
             Done
           </Button>
         </>

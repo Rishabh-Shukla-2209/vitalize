@@ -32,10 +32,10 @@ const MultiSelector = ({
       <MultiSelectContent>
         <MultiSelectGroup>
           {choices.map(({ label, val }) => (
-          <MultiSelectItem key={label} value={val}>
-            {label}
-          </MultiSelectItem>
-        ))}
+            <MultiSelectItem key={label} value={val}>
+              {label}
+            </MultiSelectItem>
+          ))}
         </MultiSelectGroup>
       </MultiSelectContent>
     </MultiSelect>

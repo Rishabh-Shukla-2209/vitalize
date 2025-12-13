@@ -31,7 +31,7 @@ export async function uploadCroppedImage(file: Blob, folder: string) {
       (error, result) => {
         if (error || !result) return reject(error);
         resolve(result);
-      }
+      },
     );
 
     uploadStream.end(buffer);
@@ -40,9 +40,9 @@ export async function uploadCroppedImage(file: Blob, folder: string) {
   revalidatePath("/profile");
 
   const transformedUrl = result.secure_url.replace(
-  "/upload/",
-  "/upload/w_500,h_500,c_fill,g_face,f_auto,q_auto/"
-);
+    "/upload/",
+    "/upload/w_500,h_500,c_fill,g_face,f_auto,q_auto/",
+  );
 
   return transformedUrl;
 }

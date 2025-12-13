@@ -67,7 +67,7 @@ const Navbar = () => {
                     "text-gray-900 dark:font-bold font-medium pointer-events-none":
                       pathname === link.href,
                   },
-                  "hover:text-gray-900"
+                  "hover:text-gray-900",
                 )}
               >
                 <p>{link.name}</p>
@@ -88,7 +88,7 @@ const Navbar = () => {
                   className={clsx(
                     "relative flex-center rounded-4xl cursor-pointer",
                     imageUrl && "p-1 bg-primary",
-                    !imageUrl && "p-2.75 bg-gray-300"
+                    !imageUrl && "p-2.75 bg-gray-300",
                   )}
                 >
                   {imageUrl ? (
@@ -106,9 +106,7 @@ const Navbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link
-                    href={"/profile"}
-                  >
+                  <Link href={"/profile"}>
                     <div className="flex gap-1 text-gray-600">
                       <Icons.user className="dark:text-white" />
                       <p>Profile</p>
@@ -119,7 +117,9 @@ const Navbar = () => {
                   <SignOutButton>
                     <div className="flex gap-1 mt-1">
                       <Icons.logout className="text-red-600" />
-                      <p className="text-red-600" onClick={clearQueries}>Logout</p>
+                      <p className="text-red-600" onClick={clearQueries}>
+                        Logout
+                      </p>
                     </div>
                   </SignOutButton>
                 </DropdownMenuItem>

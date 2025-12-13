@@ -6,7 +6,6 @@ export type AppErrorType =
   | "UNAUTHORIZED"
   | "UNKNOWN";
 
-
 export interface AppErrorDetails {
   code?: string;
   cause?: unknown;
@@ -22,7 +21,7 @@ export class AppError extends Error {
     type: AppErrorType,
     message: string,
     status: number,
-    details?: AppErrorDetails
+    details?: AppErrorDetails,
   ) {
     super(message);
     this.name = "AppError";
@@ -31,7 +30,6 @@ export class AppError extends Error {
     this.details = details;
   }
 }
-
 
 export class NotFoundError extends AppError {
   constructor(message = "Not Found", details?: AppErrorDetails) {

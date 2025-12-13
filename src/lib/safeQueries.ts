@@ -1,7 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
 import { DBError, AppError, AppErrorDetails } from "@/lib/errors";
 import prisma from "./db";
-import * as Sentry from "@sentry/nextjs"
+import * as Sentry from "@sentry/nextjs";
 
 export type SafeResult<T> = {
   data: T | null;
@@ -26,7 +26,7 @@ function extractPrismaErrorDetails(err: unknown): AppErrorDetails {
 }
 
 export async function safeQuery<T>(
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<SafeResult<T>> {
   try {
     const data = await fn();
@@ -45,7 +45,7 @@ export async function safeQuery<T>(
 }
 
 export async function safeTransaction<T>(
-  fn: (tx: Prisma.TransactionClient) => Promise<T>
+  fn: (tx: Prisma.TransactionClient) => Promise<T>,
 ): Promise<{ data: T | null; error: DBError | null }> {
   try {
     const data = await prisma.$transaction(async (tx) => {

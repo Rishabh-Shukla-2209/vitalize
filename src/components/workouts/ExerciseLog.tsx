@@ -36,12 +36,12 @@ const ExerciseLog = ({
                 key === "plankHoldTime" ||
                 key === "workIntervalDuration" ||
                 key === "timeToExhaustion" ||
-                key === "restIntervalDuration" || 
+                key === "restIntervalDuration" ||
                 key === "rest"
                   ? formatDuration(value as number)
                   : key === "distance"
-                  ? formatDistance(value as number)
-                  : value}{" "}
+                    ? formatDistance(value as number)
+                    : value}{" "}
                 {unit}
               </li>
             );

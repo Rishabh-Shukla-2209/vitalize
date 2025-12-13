@@ -23,8 +23,9 @@ const MonthlyWorkouts = ({ userId }: { userId: string }) => {
     return <ChartSkeleton />;
   }
 
-  if(isError) handleAppError(error);
-  if(!data) return <p>Unknown Error has occured while displaying this chart.</p>;
+  if (isError) handleAppError(error);
+  if (!data)
+    return <p>Unknown Error has occured while displaying this chart.</p>;
 
   const workedOutOnDays: boolean[] = [];
   const month = getMonth(new Date());
@@ -51,7 +52,7 @@ const MonthlyWorkouts = ({ userId }: { userId: string }) => {
               className={clsx(
                 { "bg-primary dark:text-black": day },
                 { "bg-zinc-100 dark:bg-sage-700": !day },
-                "rounded flex-center"
+                "rounded flex-center",
               )}
             >
               <p>{index + 1}</p>

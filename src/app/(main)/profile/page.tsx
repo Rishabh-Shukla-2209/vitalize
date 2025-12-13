@@ -80,7 +80,7 @@ const ProfilePage = () => {
           <div className="flex flex-col gap-2 p-2">
             <h2>Likes</h2>
             <PostLikes userId={user.id} />
-            <CommentLikes userId={user.id}/>
+            <CommentLikes userId={user.id} />
           </div>
         ) : (
           <ActivitySkeleton />
@@ -93,11 +93,27 @@ const ProfilePage = () => {
           <Stats value={data?.workoutCount || 0} title="Workouts" />
           <Stats value={userData?.longestStreakDays || 0} title="Streak" />
         </div>
-        {user ? <AllPRs userId={user.id} /> : <div className="w-full h-20 flex-center">
-          <Spinner />
-        </div>}
-        {user ? <AllGoals userId={user.id} /> : <div className="w-full h-20 flex-center"><Spinner /></div>}
-        {user ? <UserAIWorkouts/> : <div className="w-full h-20 flex-center"><Spinner /></div>}
+        {user ? (
+          <AllPRs userId={user.id} />
+        ) : (
+          <div className="w-full h-20 flex-center">
+            <Spinner />
+          </div>
+        )}
+        {user ? (
+          <AllGoals userId={user.id} />
+        ) : (
+          <div className="w-full h-20 flex-center">
+            <Spinner />
+          </div>
+        )}
+        {user ? (
+          <UserAIWorkouts />
+        ) : (
+          <div className="w-full h-20 flex-center">
+            <Spinner />
+          </div>
+        )}
       </div>
     </div>
   );

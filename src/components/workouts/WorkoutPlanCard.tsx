@@ -2,6 +2,7 @@ import { WorkoutPlanType } from "@/lib/types";
 import Image from "next/image";
 import Icons from "../icons/appIcons";
 import clsx from "clsx";
+import { formatDuration } from "@/lib/utils";
 
 const WorkoutPlanCard = ({ workout }: { workout: WorkoutPlanType }) => {
   return (
@@ -18,7 +19,7 @@ const WorkoutPlanCard = ({ workout }: { workout: WorkoutPlanType }) => {
             "absolute border z-1 text-sm text-white font-bold py-1 px-1.5 rounded-r-full rounded-l-full top-2 right-2",
             { "bg-red-600": workout.level === "ADVANCED" },
             { "bg-amber-400": workout.level === "INTERMEDIATE" },
-            { "bg-green-500": workout.level === "BEGINNER" }
+            { "bg-green-500": workout.level === "BEGINNER" },
           )}
         >
           {workout?.level}
@@ -30,7 +31,7 @@ const WorkoutPlanCard = ({ workout }: { workout: WorkoutPlanType }) => {
         <span className="text-sm">
           <Icons.clock />
         </span>{" "}
-        <span>{workout.duration} min</span>
+        <span>{formatDuration(workout.duration)}</span>
       </p>
     </div>
   );

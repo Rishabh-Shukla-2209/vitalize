@@ -48,9 +48,7 @@ const Combobox = ({
           aria-expanded={open}
           className="w-[200px] justify-between dark:bg-sage-400"
         >
-          {value
-            ? value
-            : "Select Exercise..."}
+          {value ? value : "Select Exercise..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -75,7 +73,7 @@ const Combobox = ({
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === choice.id ? "opacity-100" : "opacity-0"
+                      value === choice.id ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>

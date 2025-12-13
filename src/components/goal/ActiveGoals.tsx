@@ -24,17 +24,17 @@ const Goals = () => {
 
   // pairing so that 2 items are visible at once in the carousel
   const goalPairs: Array<Array<GoalType>> = [];
-  if (data) {    
+  if (data) {
     for (let i = 0; i < data.length; i += 2) {
       goalPairs.push(data.slice(i, i + 2));
     }
   }
 
   return (
-    <div className="boundary w-full px-5 py-3">
+    <div className="boundary w-full px-5 py-3 grid grid-cols-1">
       <h3 className="mb-1.5">Goals</h3>
       {data && data.length > 0 ? (
-        <Carousel className="relative">
+        <Carousel className="relative w-full min-w-0">
           <CarouselContent>
             {goalPairs.map((goalPair, index) => (
               <CarouselItem key={index}>
@@ -49,11 +49,11 @@ const Goals = () => {
           <CarouselNext className="-top-4 -right-2 md:-top-5 md:right-2" />
         </Carousel>
       ) : (
-          <p>
-            {isError
-              ? "Error fetching your Goals"
-              : "Your goals will appear here."}
-          </p>
+        <p>
+          {isError
+            ? "Error fetching your Goals"
+            : "Your goals will appear here."}
+        </p>
       )}
     </div>
   );

@@ -28,7 +28,7 @@ const WorkoutHistory = () => {
       getPastWorkouts(date, muscleGroup as MuscleGroupType, pageParam),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
-    staleTime: Infinity
+    staleTime: Infinity,
   });
 
   const clearFilters = () => {
@@ -44,7 +44,7 @@ const WorkoutHistory = () => {
       <p>View your past workouts and track your progress.</p>
 
       <div className="flex items-center my-5 gap-3">
-        {(date || muscleGroup) ? (
+        {date || muscleGroup ? (
           <Icons.removeFilter
             color="#38e07b"
             onClick={clearFilters}

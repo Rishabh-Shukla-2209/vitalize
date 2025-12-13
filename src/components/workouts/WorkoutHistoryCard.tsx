@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ExerciseLog from "./ExerciseLog";
 import { format } from "date-fns";
 import Link from "next/link";
+import { formatDuration } from "@/lib/utils";
 
 const WorkoutHistoryCard = ({
   workout,
@@ -28,7 +29,7 @@ const WorkoutHistoryCard = ({
           <div>
             <h3>{workout.plan.name}</h3>
             <ul className="flex flex-wap gap-2 text-zinc-600 dark:text-zinc-100">
-              <li>{workout.duration} minutes</li>
+              <li>{formatDuration(workout.duration)}</li>
               <li>{workout.exercises.length} exercises</li>
             </ul>
           </div>
@@ -69,9 +70,7 @@ const WorkoutHistoryCard = ({
             className="bg-zinc-200 dark:bg-sage-500 overflow-hidden p-5 flex flex-col gap-2 rounded-lg"
           >
             <div className="flex justify-between">
-              <h2>
-                Workout Details
-              </h2>
+              <h2>Workout Details</h2>
               <p>{format(workout.createdAt, "MMM do, yyyy")}</p>
             </div>
             <p>Notes: {workout.notes}</p>

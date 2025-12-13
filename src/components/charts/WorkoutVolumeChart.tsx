@@ -23,8 +23,9 @@ const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
     return <ChartSkeleton />;
   }
 
-  if(isError) handleAppError(error);
-  if(!data) return <p>Unknown Error has occured while displaying this chart.</p>;
+  if (isError) handleAppError(error);
+  if (!data)
+    return <p>Unknown Error has occured while displaying this chart.</p>;
 
   const totalVolCurrent = data.totalVolCurrent;
   const totalVolPrev = data.totalVolPrev;
@@ -49,15 +50,13 @@ const WorkoutVolumeChart = ({ userId }: { userId: string }) => {
         <span
           className={clsx(
             { "text-green-500": totalVolCurrent >= totalVolPrev },
-            { "text-red-500": totalVolCurrent < totalVolPrev }
+            { "text-red-500": totalVolCurrent < totalVolPrev },
           )}
         >
           {change}%
         </span>
       </p>
-      <div
-        className="h-60 sm:h-70 md:h-80 lg:h-90 m-auto flex-center"
-      >
+      <div className="h-60 sm:h-70 md:h-80 lg:h-90 m-auto flex-center">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             width={500}

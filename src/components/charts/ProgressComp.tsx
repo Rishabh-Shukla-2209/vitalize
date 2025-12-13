@@ -21,12 +21,13 @@ const ProgressComp = ({ userId }: { userId: string }) => {
   const [muscleGroupError, setMuscleGroupError] = useState(false);
   const [progressTypeError, setProgressTypeError] = useState(false);
   const [dateFrom, setDateFrom] = useState<Date | undefined>(
-    subDays(new Date(), 30)
+    subDays(new Date(), 30),
   );
   const [dateTo, setDateTo] = useState<Date | undefined>(new Date());
+  const [dateError, setDateError] = useState("");
   const [loading, setLoading] = useState(false);
   const progressTypeOptions = getAvailableCategoriesForMuscleGroup(
-    selectedMuscleGroup as MuscleGroupType
+    selectedMuscleGroup as MuscleGroupType,
   );
   const chartName = useRef(`${selectedMuscleGroup} - ${progressType} PROGRESS`);
 
@@ -39,7 +40,7 @@ const ProgressComp = ({ userId }: { userId: string }) => {
           "CHEST",
           "STRENGTH",
           start,
-          end
+          end,
         );
         setData(chartData!);
       } catch (err) {
@@ -58,17 +59,18 @@ const ProgressComp = ({ userId }: { userId: string }) => {
     if (!progressType || !selectedMuscleGroup) {
       if (!progressType) setProgressTypeError(true);
       if (!selectedMuscleGroup) setMuscleGroupError(true);
-    } else {
+    } else if (dateError) return;
+    else {
       setLoading(true);
       try {
         const updatedData = await getMuscleGroupData(
           selectedMuscleGroup as MuscleGroupType,
           progressType as ExerciseCategoryType,
           dateFrom,
-          dateTo
+          dateTo,
         );
         setData(updatedData!);
-        chartName.current = `${selectedMuscleGroup} - ${progressType} PROGRESS`
+        chartName.current = `${selectedMuscleGroup} - ${progressType} PROGRESS`;
       } catch (err) {
         handleAppError(err);
       } finally {
@@ -80,6 +82,18 @@ const ProgressComp = ({ userId }: { userId: string }) => {
   useEffect(() => {
     setProgressTypeError(false);
   }, [progressType]);
+
+  useEffect(() => {
+    if (!dateFrom) {
+      setDateError("Start date is required.");
+    } else if (!dateTo) {
+      setDateError("End date is required.");
+    } else if (dateFrom >= dateTo) {
+      setDateError("Start date must be before end date.");
+    } else {
+      setDateError("");
+    }
+  }, [dateTo, dateFrom]);
 
   return (
     <div className="boundary p-5 dark:bg-sage-400">
@@ -103,7 +117,10 @@ const ProgressComp = ({ userId }: { userId: string }) => {
           />
           {progressTypeError && <span className="error">Required</span>}
         </div>
-        <DatePicker label="From:" date={dateFrom} setDate={setDateFrom} />
+        <div className="flex flex-col gap-1">
+          <DatePicker label="From:" date={dateFrom} setDate={setDateFrom} />
+          {dateError && <span className="error">{dateError}</span>}
+        </div>
         <DatePicker label="To:" date={dateTo} setDate={setDateTo} />
         <Button variant="default" onClick={updateData} disabled={loading}>
           {loading ? <Spinner /> : "Go"}

@@ -37,6 +37,9 @@ import {
   FunnelX,
   UserSearch,
   UserPlus,
+  Zap,
+  ChartColumnIncreasing,
+  Users,
 } from "lucide-react";
 
 const Icons = {
@@ -77,7 +80,10 @@ const Icons = {
   delete: Trash,
   info: Info,
   userSearch: UserSearch,
-  userSuggestion: UserPlus
+  userSuggestion: UserPlus,
+  bolt: Zap,
+  chart: ChartColumnIncreasing,
+  users: Users,
 };
 
 export default Icons;

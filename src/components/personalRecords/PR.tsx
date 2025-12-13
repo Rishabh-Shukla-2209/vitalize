@@ -39,8 +39,8 @@ const PR = ({ pR }: { pR: PRType }) => {
               pR.prField === "restIntervalDuration"
                 ? formatDuration(pR.prValue)
                 : pR.prField === "distance"
-                ? formatDistance(pR.prValue)
-                : pR.prValue}{" "}
+                  ? formatDistance(pR.prValue)
+                  : pR.prValue}{" "}
               {
                 fitnessMetricUnits[
                   pR.prField as keyof typeof fitnessMetricUnits

@@ -21,7 +21,7 @@ export function useWorkoutFlow(workoutPlan: WorkoutPlanDetailsType | null) {
 
   const currWorkoutItem = useMemo(
     () => (stack.length > 0 ? stack[stack.length - 1] : null),
-    [stack]
+    [stack],
   );
 
   // --- Handle Next Workout Step ---
@@ -34,7 +34,7 @@ export function useWorkoutFlow(workoutPlan: WorkoutPlanDetailsType | null) {
 
   const nextWorkoutItem = useCallback(() => {
     if (!currWorkoutItem || !workoutPlan) return;
-
+    setIsPaused(false);
     const { exercise, currValues, type } = currWorkoutItem;
     if (!exercise) return;
 
@@ -130,7 +130,7 @@ export function useWorkoutFlow(workoutPlan: WorkoutPlanDetailsType | null) {
 
   const prevWorkoutItem = useCallback(() => {
     if (stack.length <= 1) return;
-
+    setIsPaused(false);
     const prevItem = stack[stack.length - 2];
     dispatch({ type: "POP" });
 
@@ -209,6 +209,8 @@ export function useWorkoutFlow(workoutPlan: WorkoutPlanDetailsType | null) {
     prevWorkoutItem,
     pauseWorkout,
     timeRemaining,
+    setTimeRemaining,
+    setIsTimerRunning,
     isTimerRunning,
     isPaused,
     status,

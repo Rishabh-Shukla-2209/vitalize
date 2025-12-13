@@ -8,7 +8,7 @@ export const goalSchema = z.object({
     .min(1, "Required")
     .regex(
       /^[A-Za-z0-9 _-]+$/,
-      "Title should only contain letters and numbers."
+      "Title should only contain letters and numbers.",
     ),
   exercise: z
     .object({

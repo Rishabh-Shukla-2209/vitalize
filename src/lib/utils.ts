@@ -9,12 +9,16 @@ import {
   MuscleGroupType,
   NotificationPayload,
 } from "./types";
-import { differenceInCalendarDays, differenceInMinutes, isToday, isYesterday } from "date-fns";
+import {
+  differenceInCalendarDays,
+  differenceInMinutes,
+  isToday,
+  isYesterday,
+} from "date-fns";
 import { GoalStatus as Status } from "@/generated/prisma/client";
 import { isAppError } from "./errors";
 import { toast } from "sonner";
 import * as Sentry from "@sentry/nextjs";
-
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -218,7 +222,10 @@ export const fitnessMetricLabels = {
 };
 
 export const validCategoryFields: {
-  [k in ExerciseCategoryType]: Array<{label: string, val: keyof ExerciseLogType}>;
+  [k in ExerciseCategoryType]: Array<{
+    label: string;
+    val: keyof ExerciseLogType;
+  }>;
 } = {
   CARDIO: [
     { label: "Sets", val: "sets" },
@@ -276,9 +283,8 @@ export const validCategoryFields: {
   ],
 };
 
-
 export const getAvailableCategoriesForMuscleGroup = (
-  group: MuscleGroupType | ""
+  group: MuscleGroupType | "",
 ): { label: string; val: ExerciseCategoryType }[] => {
   if (group === "") return [];
   return (
@@ -291,9 +297,9 @@ export const getAvailableCategoriesForMuscleGroup = (
 
 export const toProperCase = (str: string) => {
   return str
+    .replace(/_/g, " ")
     .toLowerCase()
-    .replace(/\b\w/g, (char) => char.toUpperCase())
-    .replace(/_/g, " ");
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
 export const timeAgo = (date: Date) => {
@@ -308,17 +314,16 @@ export const timeAgo = (date: Date) => {
   return `${differenceInCalendarDays(new Date(), date)} days ago`;
 };
 
-
 export const minutesAgo = (time: Date) => {
   const diffInMin = differenceInMinutes(new Date(), time);
-  
-  if(diffInMin < 60){
+
+  if (diffInMin < 60) {
     return `${diffInMin}m`;
   }
 
   const minInDay = 24 * 60;
 
-  if(diffInMin < minInDay){
+  if (diffInMin < minInDay) {
     const hours = Math.floor(diffInMin / 60);
     return `${hours}h`;
   }
@@ -337,12 +342,11 @@ function createImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
-
 export const getCroppedImg = async (
   imageSrc: string,
   pixelCrop: CropArea,
   outputWidth: number,
-  outputHeight: number
+  outputHeight: number,
 ): Promise<Blob> => {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
@@ -362,7 +366,7 @@ export const getCroppedImg = async (
     0,
     0,
     outputWidth,
-    outputHeight
+    outputHeight,
   );
 
   return new Promise((resolve) => {
@@ -371,37 +375,36 @@ export const getCroppedImg = async (
       resolve(blob);
     }, "image/jpeg");
   });
-}
+};
 
 export const getNotificationDetails = (notification: NotificationPayload) => {
   const text = {
-    "FOLLOW": `${notification.actor.firstName} started following you`,
-    "FOLLOW_REQUESTED": `${notification.actor.firstName} sent you follow request`,
-    "FOLLOW_ACCEPTED": `${notification.actor.firstName} accepted your follow request`,
-    "LIKE_POST": `${notification.actor.firstName} liked your post`,
-    "LIKE_COMMENT": `${notification.actor.firstName} liked your comment`,
-    "COMMENT_POST": `${notification.actor.firstName} commented on your post`,
-    "COMMENT_COMMENT": `${notification.actor.firstName} commented on your comment`,
-  }
+    FOLLOW: `${notification.actor.firstName} started following you`,
+    FOLLOW_REQUESTED: `${notification.actor.firstName} sent you follow request`,
+    FOLLOW_ACCEPTED: `${notification.actor.firstName} accepted your follow request`,
+    LIKE_POST: `${notification.actor.firstName} liked your post`,
+    LIKE_COMMENT: `${notification.actor.firstName} liked your comment`,
+    COMMENT_POST: `${notification.actor.firstName} commented on your post`,
+    COMMENT_COMMENT: `${notification.actor.firstName} commented on your comment`,
+  };
 
   const link = {
-    "FOLLOW": `/community/user/${notification.actorId}`,
-    "FOLLOW_REQUESTED": `/community/user/${notification.actorId}`,
-    "FOLLOW_ACCEPTED": `/community/user/${notification.actorId}`,
-    "LIKE_POST": `/community/post/${notification.postid}`,
-    "LIKE_COMMENT": `/community/post/${notification.postid}?commentId=${notification.commentid}`,
-    "COMMENT_POST": `/community/post/${notification.postid}?commentId=${notification.commentid}`,
-    "COMMENT_COMMENT": `/community/post/${notification.postid}?commentId=${notification.commentid}`,
-  }
+    FOLLOW: `/community/user/${notification.actorId}`,
+    FOLLOW_REQUESTED: `/community/user/${notification.actorId}`,
+    FOLLOW_ACCEPTED: `/community/user/${notification.actorId}`,
+    LIKE_POST: `/community/post/${notification.postid}`,
+    LIKE_COMMENT: `/community/post/${notification.postid}?commentId=${notification.commentid}`,
+    COMMENT_POST: `/community/post/${notification.postid}?commentId=${notification.commentid}`,
+    COMMENT_COMMENT: `/community/post/${notification.postid}?commentId=${notification.commentid}`,
+  };
 
-  return {text: text[notification.type], link: link[notification.type]};
-}
-
+  return { text: text[notification.type], link: link[notification.type] };
+};
 
 export const formatDuration = (seconds: number | undefined | null): string => {
   if (seconds === undefined || seconds === null) return "-";
   if (seconds === 0) return "0 s";
-  
+
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
 
@@ -409,7 +412,6 @@ export const formatDuration = (seconds: number | undefined | null): string => {
   if (m > 0) return `${m} min`;
   return `${s}s`;
 };
-
 
 export const formatDistance = (meters: number | undefined | null): string => {
   if (meters === undefined || meters === null) return "-";
@@ -447,7 +449,6 @@ export function normalizeError(err: unknown) {
   };
 }
 
-
 export function handleAppError(err: unknown) {
   const e = normalizeError(err);
 
@@ -480,4 +481,3 @@ export function handleAppError(err: unknown) {
       toast.error("Something went wrong.");
   }
 }
-

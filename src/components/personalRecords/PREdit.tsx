@@ -7,6 +7,7 @@ import Selector from "../Selector";
 import { handleAppError, validCategoryFields } from "@/lib/utils";
 import { changePRField } from "@/lib/actions/pr";
 import { Spinner } from "../ui/spinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 const PREdit = ({
   pr,
@@ -18,6 +19,7 @@ const PREdit = ({
   const [edit, setEdit] = useState(false);
   const [newField, setNewField] = useState(pr.prField);
   const [submitting, setSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
   const onEdit = async () => {
     if (newField === pr.prField) {
@@ -29,6 +31,9 @@ const PREdit = ({
       const updatedVal = await changePRField(pr.id, pr.exercise.id, newField);
       prUpdater(pr.id, newField, updatedVal!);
       setEdit(false);
+      queryClient.invalidateQueries({
+        queryKey: ["PRs"],
+      });
     } catch (err) {
       handleAppError(err);
     } finally {

@@ -20,9 +20,9 @@ export const getWorkoutPlans = async (
   equipment: EquipmentType | "" = "",
   difficulty: DifficultyType | "" = "",
   duration: string = "",
-  pageParam: number = 0
+  pageParam: number = 0,
 ) => {
-  const userId = await requireUser();
+  await requireUser();
 
   const { data, error } = await getWorkoutPlansQuery(
     search,
@@ -30,8 +30,7 @@ export const getWorkoutPlans = async (
     equipment,
     difficulty,
     duration,
-    userId,
-    pageParam
+    pageParam,
   );
 
   if (error) throw error;
@@ -50,11 +49,16 @@ export const getWorkoutDetails = async (id: string) => {
 export const getPastWorkouts = async (
   date: Date | undefined | "" = "",
   muscleGroup: MuscleGroupType | "" = "",
-  pageParam: number = 0
+  pageParam: number = 0,
 ) => {
   const userId = await requireUser();
 
-  const { data, error } = await getPastWorkoutsQuery(userId, date, muscleGroup, pageParam);
+  const { data, error } = await getPastWorkoutsQuery(
+    userId,
+    date,
+    muscleGroup,
+    pageParam,
+  );
 
   if (error) throw error;
   return data;
@@ -62,14 +66,14 @@ export const getPastWorkouts = async (
 
 export const saveWorkoutLog = async (
   planId: string,
-  workoutData: WorkoutLogDataType
+  workoutData: WorkoutLogDataType,
 ) => {
   const userId = await requireUser();
 
   const { data, error } = await saveWorkoutLogQuery(
     userId,
     planId,
-    workoutData
+    workoutData,
   );
 
   if (error) throw error;

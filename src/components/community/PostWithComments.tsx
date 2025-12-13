@@ -37,11 +37,11 @@ const PostWithComments = ({
   addComment: (
     text: string,
     parentId?: string,
-    parentAuthor?: string
+    parentAuthor?: string,
   ) => Promise<Omit<CommentType, "user" | "_count" | "liked"> | null>;
   updateLikeCommentQueryData: (
     target: "like" | "comment",
-    commentsToAdd?: number
+    commentsToAdd?: number,
   ) => void;
   targetCommentId?: string;
 }) => {
@@ -52,15 +52,15 @@ const PostWithComments = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
   useKeyboardAvoidance(inputRef);
-  
+
   useEffect(() => {
     const fetchComments = async () => {
-      try{
+      try {
         const data = await getComments(post.id);
         setComments(data!);
-      }catch(err){
+      } catch (err) {
         handleAppError(err);
-      }finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -76,10 +76,10 @@ const PostWithComments = ({
 
   useEffect(() => {
     const getLikes = async () => {
-      try{
+      try {
         const data = await getPostLikes(post.id);
         setLikes(data!);
-      }catch(err){
+      } catch (err) {
         handleAppError(err);
       }
     };
@@ -89,7 +89,7 @@ const PostWithComments = ({
 
   const saveComment = async (text: string) => {
     const newComment = await addComment(text);
-    if(!newComment) return;
+    if (!newComment) return;
     setComment("");
     const formattedComment: CommentType = {
       ...newComment,
@@ -122,8 +122,16 @@ const PostWithComments = ({
         <p className="font-semibold">{post.title}</p>
         <p className="mb-5">{post.body}</p>
         {post.workoutLog && <WorkoutSummary workout={post.workoutLog} />}
-        {post.imgUrl && <div className="relative w-full h-60 min-h-60 md:h-auto md:min-h-120 rounded-md overflow-hidden"><Image src={post.imgUrl} alt="Post Image" fill style={{ objectFit: "cover" }}/></div>}
-        
+        {post.imgUrl && (
+          <div className="relative w-full h-60 min-h-60 md:h-auto md:min-h-120 rounded-md overflow-hidden">
+            <Image
+              src={post.imgUrl}
+              alt="Post Image"
+              fill
+              style={{ objectFit: "cover" }}
+            />
+          </div>
+        )}
       </div>
       <div className="flex flex-col self-center md:self-auto justify-between w-90 md:w-100 bg-zinc-200 dark:bg-sage-500 p-2 rounded-md">
         <Link
@@ -161,8 +169,12 @@ const PostWithComments = ({
                 targetCommentId={targetCommentId}
               />
             ))
+          ) : loading ? (
+            <div className="w-full h-full flex-center">
+              <Spinner />
+            </div>
           ) : (
-            loading ? <div className="w-full h-full flex-center"><Spinner /></div> : <p>No comments to show</p>
+            <p>No comments to show</p>
           )}
         </div>
         <div className="flex gap-3 justify-between text-zinc-600 text-sm font-semibold mt-5">
@@ -177,8 +189,8 @@ const PostWithComments = ({
               />
             </span>
             <span onClick={() => setOpen(true)} className="cursor-pointer">
-            {optimisticLikesCount} Likes
-          </span>
+              {optimisticLikesCount} Likes
+            </span>
           </p>
           {open && (
             <div

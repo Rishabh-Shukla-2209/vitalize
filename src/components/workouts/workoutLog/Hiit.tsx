@@ -26,10 +26,14 @@ const Hiit = ({
 
   const [work, rest] = watch([workIntervalDurationFieldName, restFieldName]);
 
+  const workVal = parseFloat(work as unknown as string) || 0;
+  const restVal = parseFloat(rest as unknown as string) || 1;
+
+  const WRRatio = Math.round((workVal / restVal) * 100) / 100;
+
   useEffect(() => {
-    const WRRatio = Math.round(((work || 0) / (rest || 1)) * 100) / 100;
     setValue(workToRestFieldName, WRRatio);
-  }, [rest, setValue, work, workToRestFieldName]);
+  }, [WRRatio, setValue, workToRestFieldName]);
 
   return (
     <div className="mt-5">
@@ -102,6 +106,7 @@ const Hiit = ({
             type="number"
             {...register(workToRestFieldName, { valueAsNumber: true })}
             readOnly
+            value={isNaN(WRRatio) ? "" : WRRatio}
             className="input-no-spinner rounded-sm text-zinc-600 bg-zinc-50 focus:border-zinc-800 focus:border dark:bg-sage-500 dark:text-zinc-200"
           />
         </p>

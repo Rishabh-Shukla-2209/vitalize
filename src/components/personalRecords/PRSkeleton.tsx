@@ -1,7 +1,5 @@
 const PRSkeleton = () => {
-  return (
-    <div className="boundary w-full h-100 shimmer" />
-  )
-}
+  return <div className="boundary w-full h-100 shimmer" />;
+};
 
-export default PRSkeleton
+export default PRSkeleton;

@@ -60,23 +60,23 @@ const VerifyForm = ({
       <div className="bg-zinc-50 dark:bg-sage-400 p-10 lg:shadow-xl rounded-2xl flex flex-col w-md">
         <h1>Verify your email</h1>
         <form onSubmit={handleVerify}>
-          <label id="code" className="text-zinc-500 my-2 dark:text-zinc-200">Enter your verification code</label>
+          <label id="code" className="text-zinc-500 my-2 dark:text-zinc-200">
+            Enter your verification code
+          </label>
           <input
             value={code}
             id="code"
             name="code"
             onChange={(e) => setCode(e.target.value)}
           />
-          {error && (
-              <span className="error">{error[0].longMessage}</span>
-            )}
+          {error && <span className="error">{error[0].longMessage}</span>}
           <Button
-              variant="default"
-              type="submit"
-              className="text-lg rounded-3xl mt-1.5"
-            >
-              Submit
-            </Button>
+            variant="default"
+            type="submit"
+            className="text-lg rounded-3xl mt-1.5"
+          >
+            Submit
+          </Button>
         </form>
       </div>
     </div>

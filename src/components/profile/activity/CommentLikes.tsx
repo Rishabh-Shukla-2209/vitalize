@@ -22,9 +22,9 @@ const CommentLikes = ({ userId }: { userId: string }) => {
       direction === "prev"
         ? pageCursors[currIndex].first
         : pageCursors[currIndex].last;
-   
+
     const data = await getCommentLikesActivity(cursor, direction);
-    if(!data) return;
+    if (!data) return;
     if (data.length > 0) {
       setPageCursors((prev) => {
         const next = [...prev];
@@ -51,19 +51,33 @@ const CommentLikes = ({ userId }: { userId: string }) => {
     <div>
       <h3 className="mb-2">Comment Likes</h3>
       <div className="bg-zinc-50 dark:bg-sage-400 border border-zinc-200 dark:border-sage-700 overflow-cliprounded-md">
-        {isLoading ? <ActivitySkeleton/> : commentLikes && commentLikes.length > 0 ?
+        {isLoading ? (
+          <ActivitySkeleton />
+        ) : commentLikes && commentLikes.length > 0 ? (
           commentLikes.map((like) => (
-            <div key={like.id} className="border border-b-zinc-100 dark:border-sage-700 p-2 flex justify-between items-center text-zinc-600">
+            <div
+              key={like.id}
+              className="border border-b-zinc-100 dark:border-sage-700 p-2 flex justify-between items-center text-zinc-600"
+            >
               <p>Liked {`${like.comment.user.firstName}'s comment.`}</p>
               <p className="flex-center">
-                <span className="mr-2 text-sm">{minutesAgo(like.createdAt)}</span>
+                <span className="mr-2 text-sm">
+                  {minutesAgo(like.createdAt)}
+                </span>
                 <Button variant="outline">
                   <Icons.view />
-                  <Link href={`/community/post/${like.comment.postid}?commentId=${like.commentid}`}>View</Link>
+                  <Link
+                    href={`/community/post/${like.comment.postid}?commentId=${like.commentid}`}
+                  >
+                    View
+                  </Link>
                 </Button>
               </p>
             </div>
-          )): <p className="p-2">Your comment likes will appear here.</p>}
+          ))
+        ) : (
+          <p className="p-2">Your comment likes will appear here.</p>
+        )}
       </div>
       <div className="flex justify-between">
         <Button
@@ -75,7 +89,8 @@ const CommentLikes = ({ userId }: { userId: string }) => {
             setDirection("prev");
           }}
         >
-        <Icons.left /> Prev</Button>
+          <Icons.left /> Prev
+        </Button>
         <Button
           variant="ghost"
           className="text-primary text-center mt-2 cursor-pointer"

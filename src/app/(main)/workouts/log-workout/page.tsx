@@ -40,19 +40,14 @@ const LogWorkoutPage = () => {
     if (debouncedSearch) getData();
   }, [debouncedSearch, user]);
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["past-workouts", user?.id],
-    queryFn: ({ pageParam }) => getPastWorkouts("", "", pageParam),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
-    staleTime: Infinity
-  });
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ["past-workouts", user?.id],
+      queryFn: ({ pageParam }) => getPastWorkouts("", "", pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
+      staleTime: Infinity,
+    });
 
   const recentWorkouts = data?.pages.flatMap((p) => p?.data) ?? [];
 

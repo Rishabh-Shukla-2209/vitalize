@@ -25,6 +25,7 @@ import { createPost } from "@/lib/actions/community";
 import { getPastWorkouts } from "@/lib/actions/workout";
 import { postSchema } from "@/validations/post";
 import { mapZodErrors } from "@/validations/errorMapper";
+import { toast } from "sonner";
 
 const CreatePostPage = () => {
   const { user } = useUser();
@@ -104,6 +105,7 @@ const CreatePostPage = () => {
           queryKey: ["activity", "posts"],
           exact: false,
         });
+        toast.success("Posted");
         router.push("/home");
       } catch (err) {
         handleAppError(err);
@@ -117,7 +119,7 @@ const CreatePostPage = () => {
     queryFn: async () => {
       const res = await getPastWorkouts();
       const logsMap = new Map(
-        res?.data.map((workout) => [workout.id, workout])
+        res?.data.map((workout) => [workout.id, workout]),
       );
       setWorkoutMap(logsMap);
       return res?.data.map((workout) => ({

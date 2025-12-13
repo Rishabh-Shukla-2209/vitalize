@@ -78,13 +78,11 @@ const SignInForm = () => {
         </div>
         <div className="text-center">
           <h1>Welcome back</h1>
-          <p className="my-2">
-            Log in to continue your fitness journey.
-          </p>
+          <p className="my-2">Log in to continue your fitness journey.</p>
         </div>
         <div className="rounded-2xl bg-zinc-50 dark:bg-sage-400 p-8 mt-10">
           <form onSubmit={handleSubmit(onSubmit)}>
-            <input {...register("email")} type="email" placeholder="Email"/>
+            <input {...register("email")} type="email" placeholder="Email" />
             {errors.email && (
               <span className="error">{errors.email.message}</span>
             )}
@@ -138,7 +136,10 @@ const SignInForm = () => {
             </Button>
             <p className="mt-10 text-center text-md">
               Don&apos;t have an account?{" "}
-              <Link href={"/sign-up"} className="text-primary hover:font-medium">
+              <Link
+                href={"/sign-up"}
+                className="text-primary hover:font-medium"
+              >
                 Sign up
               </Link>
             </p>

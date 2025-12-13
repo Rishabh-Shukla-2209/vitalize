@@ -41,11 +41,11 @@ const saveAiWorkout = async (data: Prisma.WorkoutPlanCreateInput) => {
 
 const getAvailableExercises = async (
   muscleGroups: Array<MuscleGroupType>,
-  category: ExerciseCategoryType
+  category: ExerciseCategoryType,
 ) => {
   const whereClause: Prisma.ExerciseCatalogWhereInput = {};
 
-  if (muscleGroups.length > 0) {
+  if (muscleGroups.length > 0 && !muscleGroups.some((m) => m === "FULL_BODY")) {
     whereClause.muscleGroup = { in: muscleGroups };
   }
 
@@ -67,11 +67,11 @@ const getAvailableExercises = async (
 const getPrompt = async (
   muscleGroups: Array<MuscleGroupType>,
   category: ExerciseCategoryType,
-  difficulty: DifficultyType
+  difficulty: DifficultyType,
 ) => {
   const availableExercises = await getAvailableExercises(
     muscleGroups,
-    category
+    category,
   );
 
   const prompt = `
@@ -117,13 +117,13 @@ Return JSON only — no markdown or prose.
 
 async function getResponseWithTimeout(
   prompt: string,
-  timeoutMs = 60000
+  timeoutMs = 60000,
 ): Promise<ChatCompletion> {
   let timeoutId: NodeJS.Timeout | null = null;
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutId = setTimeout(
       () => reject(new Error("OpenAI request timed out")),
-      timeoutMs
+      timeoutMs,
     );
   });
 
@@ -151,12 +151,14 @@ const transformForPrisma = (aiWorkout: AiWorkoutSchemaType, userId: string) => {
     createdBy: { connect: { id: userId } },
     exercises: {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      create: aiWorkout.exercises.map(({ exerciseId, name, benefit, ...rest }) => ({
-        ...rest,
-        exercise: {
-          connect: { id: exerciseId },
-        },
-      })),
+      create: aiWorkout.exercises.map(
+        ({ exerciseId, name, benefit, ...rest }) => ({
+          ...rest,
+          exercise: {
+            connect: { id: exerciseId },
+          },
+        }),
+      ),
     },
   };
 
@@ -166,11 +168,10 @@ const transformForPrisma = (aiWorkout: AiWorkoutSchemaType, userId: string) => {
 export const createAiWorkout = async (
   muscleGroups: Array<MuscleGroupType>,
   category: ExerciseCategoryType,
-  difficulty: DifficultyType
+  difficulty: DifficultyType,
 ) => {
-  
-  let prompt = await getPrompt(muscleGroups, category, difficulty);  
-  
+  let prompt = await getPrompt(muscleGroups, category, difficulty);
+
   let attempt = 1;
   let result: AiWorkoutSchemaType | undefined;
 
@@ -197,16 +198,16 @@ export const createAiWorkout = async (
       prompt = `${await getPrompt(
         muscleGroups,
         category,
-        difficulty
+        difficulty,
       )} \n The previous response failed validation. Fix the following issues: \n ${JSON.stringify(
         feedbackIssues,
         null,
-        2
+        2,
       )}`;
       if (process.env.NODE_ENV === "development") {
         console.log(
           "Invalid workout. Retrying with feedback...",
-          feedbackIssues
+          feedbackIssues,
         );
       }
     } catch (error) {
@@ -221,8 +222,10 @@ export const createAiWorkout = async (
   return result;
 };
 
-export const saveToDB = async (userId: string, aiResult: AiWorkoutSchemaType) => {
+export const saveToDB = async (
+  userId: string,
+  aiResult: AiWorkoutSchemaType,
+) => {
   const workoutPlan = transformForPrisma(aiResult, userId);
   return await saveAiWorkout(workoutPlan);
-}
-
+};

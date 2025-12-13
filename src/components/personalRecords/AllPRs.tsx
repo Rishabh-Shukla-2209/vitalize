@@ -29,11 +29,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
         ? pageCursors[currIndex].first
         : pageCursors[currIndex].last;
 
-    const data = await getPersonalRecords(
-      cursor,
-      direction,
-      debouncedSearch
-    );
+    const data = await getPersonalRecords(cursor, direction, debouncedSearch);
     if (data && data.length > 0) {
       setPageCursors((prev) => {
         const next = [...prev];
@@ -54,7 +50,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
   const updateEditedValue = (
     prId: string,
     updatedField: string,
-    updatedVal: number
+    updatedVal: number,
   ) => {
     queryClient.setQueryData(
       ["PRs", userId, currIndex, debouncedSearch],
@@ -63,9 +59,9 @@ const AllPRs = ({ userId }: { userId: string }) => {
         return oldPRs.map((pr) =>
           pr.id === prId
             ? { ...pr, prField: updatedField, prValue: updatedVal }
-            : pr
+            : pr,
         );
-      }
+      },
     );
   };
 
@@ -102,9 +98,14 @@ const AllPRs = ({ userId }: { userId: string }) => {
         </p>
       </div>
       <div className="flex flex-col gap-2 mt-2">
-        {isLoading ? <PRSkeleton /> : prs && prs.length > 0 ? (
+        {isLoading ? (
+          <PRSkeleton />
+        ) : prs && prs.length > 0 ? (
           prs.map((pr) => (
-            <div key={pr.id} className="flex gap-2 bg-zinc-50 dark:bg-sage-400 rounded-md pr-2">
+            <div
+              key={pr.id}
+              className="flex gap-2 bg-zinc-50 dark:bg-sage-400 rounded-md pr-2"
+            >
               <PR pR={pr} />
               <div className="flex-center">
                 <PREdit pr={pr} prUpdater={updateEditedValue} />
@@ -112,9 +113,7 @@ const AllPRs = ({ userId }: { userId: string }) => {
             </div>
           ))
         ) : (
-          <p>
-            Your personal records will appear here.
-          </p>
+          <p>Your personal records will appear here.</p>
         )}
 
         <div className="flex justify-between">

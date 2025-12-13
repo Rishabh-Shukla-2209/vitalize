@@ -2,7 +2,7 @@ import Exercise from "@/components/workouts/Exercise";
 import Icons from "@/components/icons/appIcons";
 import { Button } from "@/components/ui/button";
 import { getWorkoutDetails } from "@/lib/actions/workout";
-import { toProperCase } from "@/lib/utils";
+import { formatDuration, toProperCase } from "@/lib/utils";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,7 +25,7 @@ const ProgramDetailPage = async ({
     .filter((equipment) => equipment !== "NONE" && equipment !== null);
 
   const muscles = workout.exercises.map(
-    (planExercise) => planExercise.exercise.muscleGroup
+    (planExercise) => planExercise.exercise.muscleGroup,
   );
   const uniqueEquipments = [...new Set(equipments)];
   const uniqueMuscles = [...new Set(muscles)];
@@ -39,13 +39,13 @@ const ProgramDetailPage = async ({
             "border text-sm text-white font-bold py-1 px-1.5 rounded-r-full rounded-l-full",
             { "bg-red-600": workout.level === "ADVANCED" },
             { "bg-amber-400": workout.level === "INTERMEDIATE" },
-            { "bg-green-500": workout.level === "BEGINNER" }
+            { "bg-green-500": workout.level === "BEGINNER" },
           )}
         >
           {workout.level}
         </div>
         <div className="text-2xl">•</div>
-        <p>{workout.duration} minutes</p>
+        <p>{formatDuration(workout.duration)}</p>
       </div>
       <div className="h-100 w-full relative mt-3">
         <Image
@@ -62,12 +62,15 @@ const ProgramDetailPage = async ({
           <h3 className="mb-1.5">Workout Overview</h3>
           <p>{workout.description}</p>
           <div className="flex flex-col md:flex-row gap-2 mt-1">
-            <h4 className="text-zinc-600 dark:text-zinc-100 font-semibold">Muscles Involved: </h4>
-            <ul className="flex flex-wrap gap-1">{uniqueMuscles.map((muscles, index) => (
-              <p key={index} className="flex gap-1">
-                • {toProperCase(muscles)}
-              </p>
-            ))}
+            <h4 className="text-zinc-600 dark:text-zinc-100 font-semibold">
+              Muscles Involved:{" "}
+            </h4>
+            <ul className="flex flex-wrap gap-1">
+              {uniqueMuscles.map((muscles, index) => (
+                <p key={index} className="flex gap-1">
+                  • {toProperCase(muscles)}
+                </p>
+              ))}
             </ul>
           </div>
         </div>

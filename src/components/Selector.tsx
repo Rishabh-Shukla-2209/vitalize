@@ -13,7 +13,7 @@ type SelectorProps = {
   setChoice: Dispatch<SetStateAction<string>>;
   placeholder: string;
   selectedValue: string;
-  classes?: string
+  classes?: string;
 };
 
 const Selector = ({
@@ -21,9 +21,8 @@ const Selector = ({
   setChoice,
   placeholder,
   selectedValue,
-  classes
-}: SelectorProps
-) => {
+  classes,
+}: SelectorProps) => {
   return (
     <Select value={selectedValue} onValueChange={setChoice}>
       <SelectTrigger className={clsx(classes, "cursor-pointer")}>

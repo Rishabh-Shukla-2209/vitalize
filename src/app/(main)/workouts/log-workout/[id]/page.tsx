@@ -43,7 +43,7 @@ const WorkoutLogPage = () => {
 
   const onSubmit = handleSubmit((data) => {
     if (isLoaded && isSignedIn) {
-      setSubmitting(true);      
+      setSubmitting(true);
       saveWorkoutLog(workout!.id, data)
         .then(() => {
           queryClient.invalidateQueries();
@@ -111,7 +111,7 @@ const WorkoutLogPage = () => {
             })),
           flexibility: data.exercises
             .filter(
-              (ex) => ex.exercise.category === ExerciseCategory.FLEXIBILITY
+              (ex) => ex.exercise.category === ExerciseCategory.FLEXIBILITY,
             )
             .map((ex) => ({
               exerciseId: ex.exerciseid,

@@ -18,12 +18,12 @@ import { useQuery } from "@tanstack/react-query";
 const Homepage = () => {
   const { user } = useUser();
 
-  const {data: todaysWorkoutComplete} = useQuery({
+  const { data: todaysWorkoutComplete } = useQuery({
     queryKey: ["todays-workout-status", user?.id],
     queryFn: hasWorkedOutToday,
     staleTime: Infinity,
-    enabled: !!user
-  })
+    enabled: !!user,
+  });
 
   return (
     <div className="p-8 scroll-smooth">
@@ -37,7 +37,10 @@ const Homepage = () => {
           <Link href={"/workouts/log-workout"}>
             <Button>
               <span className="flex-center gap-1">
-                <Icons.add /> <p className="text-white dark:text-zinc-900 font-bold">Log Workout</p>
+                <Icons.add />{" "}
+                <p className="text-white dark:text-zinc-900 font-bold">
+                  Log Workout
+                </p>
               </span>
             </Button>
           </Link>
@@ -92,7 +95,7 @@ const Homepage = () => {
             <>
               <MonthlyWorkouts userId={user.id} />
               <Goals />
-              <PRs/>
+              <PRs />
             </>
           ) : (
             <>

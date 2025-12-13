@@ -45,13 +45,12 @@ export function NotificationsList() {
     };
 
     const fetchUnreadCount = async () => {
-      try{
+      try {
         const res = await getUnreadNotificationCount();
         setUnreadCount(res!);
-      }catch(err){
+      } catch (err) {
         handleAppError(err);
       }
-      
     };
 
     if (!user) return;
@@ -120,7 +119,7 @@ export function NotificationsList() {
               "fixed inset-0 h-full max-w-full bg-zinc-50 dark:bg-sage-400 p-4 z-50 overflow-y-auto",
 
               // DESKTOP (md+) OVERRIDE → absolute small panel
-              "md:absolute md:top-12 md:right-1 md:inset-auto md:w-auto md:h-auto md:min-w-80 md:max-h-125 md:rounded-md md:p-1 md:shadow-xl"
+              "md:absolute md:top-12 md:right-1 md:inset-auto md:w-auto md:h-auto md:min-w-80 md:max-h-125 md:rounded-md md:p-1 md:shadow-xl",
             )}
           >
             <div>

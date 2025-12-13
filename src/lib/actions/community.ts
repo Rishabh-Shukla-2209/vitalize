@@ -23,7 +23,7 @@ import { ValidationError } from "../errors";
 
 export const getPosts = async (
   cursor: { createdAt: Date; id: string } | null,
-  source: Source
+  source: Source,
 ) => {
   const userId = await requireUser();
 
@@ -36,7 +36,7 @@ export const getPosts = async (
 export const savePostReaction = async (
   postId: string,
   authorId: string,
-  reaction: "liked" | "unliked"
+  reaction: "liked" | "unliked",
 ) => {
   const userId = await requireUser();
   await ensurePostAccessibility(postId, userId);
@@ -45,7 +45,7 @@ export const savePostReaction = async (
     postId,
     authorId,
     userId,
-    reaction
+    reaction,
   );
 
   if (error) throw error;
@@ -57,7 +57,7 @@ export const saveComment = async (
   authorId: string,
   text: string,
   parentId?: string,
-  parentAuthorId?: string
+  parentAuthorId?: string,
 ) => {
   const userId = await requireUser();
   await ensurePostAccessibility(postId, userId);
@@ -68,7 +68,7 @@ export const saveComment = async (
     userId,
     text,
     parentId,
-    parentAuthorId
+    parentAuthorId,
   );
 
   if (error) throw error;
@@ -78,7 +78,7 @@ export const saveComment = async (
 export const saveFollowing = async (
   followingId: string,
   followingPrivacy: PrivacyType,
-  action: "follow" | "unFollow"
+  action: "follow" | "unFollow",
 ) => {
   const userId = await requireUser();
 
@@ -86,7 +86,7 @@ export const saveFollowing = async (
     userId,
     followingId,
     followingPrivacy,
-    action
+    action,
   );
 
   if (error) throw error;
@@ -117,7 +117,7 @@ export const saveCommentReaction = async (
   commentId: string,
   commentAuthorId: string,
   postId: string,
-  reaction: "liked" | "unliked"
+  reaction: "liked" | "unliked",
 ) => {
   const userId = await requireUser();
   await ensurePostAccessibility(postId, userId);
@@ -127,7 +127,7 @@ export const saveCommentReaction = async (
     commentAuthorId,
     postId,
     userId,
-    reaction
+    reaction,
   );
 
   if (error) throw error;
@@ -189,17 +189,17 @@ export const createPost = async (postData: {
     });
   }
 
-  const {error} = await createPostQuery(userId, parsed.data);
+  const { error } = await createPostQuery(userId, parsed.data);
 
-  if(error) throw error;
+  if (error) throw error;
 };
 
 export const getPost = async (postId: string) => {
   const userId = await requireUser();
   await ensurePostAccessibility(postId, userId);
 
-  const {data, error} = await getPostQuery(postId, userId);
+  const { data, error } = await getPostQuery(postId, userId);
 
-  if(error) throw error;
+  if (error) throw error;
   return data;
 };

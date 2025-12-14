@@ -4,6 +4,7 @@ import { SignUpResource, SetActive, ClerkAPIError } from "@clerk/types";
 import { useRouter } from "next/navigation";
 import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
 
 const VerifyForm = ({
   isLoaded,
@@ -16,8 +17,10 @@ const VerifyForm = ({
 }) => {
   const [code, setCode] = useState("");
   const [error, setError] = useState<ClerkAPIError[]>();
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   const handleVerify = async (e: FormEvent) => {
+    setSubmitting(true);
     e.preventDefault();
 
     if (!isLoaded) return;
@@ -52,6 +55,8 @@ const VerifyForm = ({
     } catch (err: unknown) {
       if (isClerkAPIResponseError(err)) setError(err.errors);
       console.error(JSON.stringify(err, null, 2));
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -74,8 +79,9 @@ const VerifyForm = ({
             variant="default"
             type="submit"
             className="text-lg rounded-3xl mt-1.5"
+            disabled={submitting}
           >
-            Submit
+            {submitting ? <Spinner /> : "Submit"}
           </Button>
         </form>
       </div>

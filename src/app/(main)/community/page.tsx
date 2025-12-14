@@ -43,7 +43,7 @@ const CommunityPage = () => {
     queryKey: ["suggestions", { userId: user?.id }],
     queryFn: async () => {
       const existingSuggestions = JSON.parse(
-        localStorage.getItem("suggestions") || "[]",
+        localStorage.getItem("suggestions") || "[]"
       );
       if (Array.isArray(existingSuggestions)) {
         existingSuggestions.push(user!.id);
@@ -58,7 +58,7 @@ const CommunityPage = () => {
   return (
     <div className="flex flex-col items-center xl:flex-row xl:justify-around xl:items-start mt-5 w-full px-5">
       <div>
-        <div className="flex xl:hidden justify-center gap-5 w-full mb-5">
+        <div className="flex xl:hidden justify-center gap-3 w-full mb-5">
           <Button
             variant="secondary"
             onClick={() => setShowSearch((prev) => !prev)}
@@ -80,7 +80,7 @@ const CommunityPage = () => {
         <p
           className={clsx(
             "items-center text-zinc-400 bg-zinc-100 dark:bg-sage-400 px-2.5 rounded-lg w-full xl:w-85 mb-5",
-            showSearch ? "flex" : "hidden xl:flex",
+            showSearch ? "flex" : "hidden xl:flex"
           )}
         >
           <Icons.search />
@@ -102,7 +102,7 @@ const CommunityPage = () => {
         <div
           className={clsx(
             "bg-zinc-100 dark:bg-sage-400 rounded-md px-3 py-2 my-5",
-            showSuggestions ? "block" : "hidden xl:block",
+            showSuggestions ? "block" : "hidden xl:block"
           )}
         >
           <h3 className="border-b border-b-zinc-400 dark:border-b-sage-700">

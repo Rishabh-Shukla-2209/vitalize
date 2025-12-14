@@ -43,7 +43,7 @@ const Post = ({
       const updateData = (
         oldData:
           | { pages: GetPostsResponse[]; pageParams: PageParam[] }
-          | undefined,
+          | undefined
       ) => {
         if (!oldData) return oldData;
 
@@ -68,7 +68,7 @@ const Post = ({
                       }),
                     },
                   }
-                : p,
+                : p
             ),
           })),
         };
@@ -76,14 +76,14 @@ const Post = ({
 
       queryClient.setQueryData(
         ["feed", specificUserId ? specificUserId : "general", userId],
-        updateData,
+        updateData
       );
 
       if (specificUserId) {
         queryClient.setQueryData(["feed", "general", userId], updateData);
       }
     },
-    [liked, post.id, post.liked, queryClient, specificUserId, userId],
+    [liked, post.id, post.liked, queryClient, specificUserId, userId]
   );
 
   useEffect(() => {
@@ -123,7 +123,7 @@ const Post = ({
           post.userid,
           text,
           parentId,
-          parentAuthor,
+          parentAuthor
         );
         queryClient.invalidateQueries({
           queryKey: ["activity", "comments"],
@@ -136,7 +136,7 @@ const Post = ({
         return null;
       }
     },
-    [post.id, post.userid, queryClient, updateLikeCommentQueryData],
+    [post.id, post.userid, queryClient, updateLikeCommentQueryData]
   );
 
   useEffect(() => {
@@ -153,7 +153,7 @@ const Post = ({
   }, [likes.length, open, post.id]);
 
   return (
-    <div className="flex justify-between flex-col bg-zinc-100 dark:bg-sage-400 rounded-md p-5 min-h-160 min-w-95 max-w-95 lg:min-w-125 lg:max-w-125">
+    <div className="flex justify-between flex-col bg-zinc-100 dark:bg-sage-400 rounded-md p-5 min-h-160 min-w-80 max-w-95 lg:min-w-125 lg:max-w-125">
       <Link
         href={`/community/user/${post.userid}`}
         className={clsx("flex gap-3 items-center cursor-pointer", {

@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
 import { updateNotifReadStatus, updateFollow } from "@/lib/actions/user";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Notification = ({
   notification,
@@ -22,7 +23,7 @@ const Notification = ({
   setUnreadCount: Dispatch<SetStateAction<number>>;
 }) => {
   const { text, link } = getNotificationDetails(notification);
-
+  const queryClient = useQueryClient();
   const markRead = () => {
     setOpen(false);
     if (notification.isRead) return;
@@ -32,7 +33,7 @@ const Notification = ({
         setNotifications((prev) =>
           prev.map((n) => {
             return n.id === notification.id ? { ...n, isRead: true } : n;
-          }),
+          })
         );
       })
       .catch((err) => {
@@ -40,7 +41,7 @@ const Notification = ({
         setNotifications((prev) =>
           prev.map((n) => {
             return n.id === notification.id ? { ...n, isRead: false } : n;
-          }),
+          })
         );
       });
   };
@@ -52,10 +53,12 @@ const Notification = ({
         return n.id === notification.id
           ? { ...n, type: "FOLLOW", isRead: true }
           : n;
-      }),
+      })
     );
     try {
       await updateFollow(notification.id, notification.recipientid);
+      queryClient.invalidateQueries({ queryKey: ["following"] });
+      queryClient.invalidateQueries({ queryKey: ["followers"] });
     } catch (error) {
       handleAppError(error);
       setNotifications((prev) =>
@@ -63,7 +66,7 @@ const Notification = ({
           return n.id === notification.id
             ? { ...n, type: "FOLLOW_REQUESTED", isRead: false }
             : n;
-        }),
+        })
       );
     }
   };

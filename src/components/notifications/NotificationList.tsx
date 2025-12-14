@@ -16,6 +16,7 @@ import { getNotificationDetails, handleAppError } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { AnimatePresence, motion } from "framer-motion";
 import clsx from "clsx";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function NotificationsList() {
   const { user } = useUser();
@@ -24,8 +25,9 @@ export function NotificationsList() {
   const [cursor, setCursor] = useState<Cursor>(null);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -71,12 +73,16 @@ export function NotificationsList() {
           onClick: () => setOpen(true),
         },
       });
+      if (payload.type === "FOLLOW" || payload.type === "FOLLOW_ACCEPTED") {
+        queryClient.invalidateQueries({ queryKey: ["following"] });
+        queryClient.invalidateQueries({ queryKey: ["followers"] });
+      }
     });
 
     return () => {
       pusherClient.unsubscribe(channelName);
     };
-  }, [user]);
+  }, [queryClient, user]);
 
   const loadMoreNotifications = async () => {
     setLoading(true);
@@ -119,7 +125,7 @@ export function NotificationsList() {
               "fixed inset-0 h-full max-w-full bg-zinc-50 dark:bg-sage-400 p-4 z-50 overflow-y-auto",
 
               // DESKTOP (md+) OVERRIDE → absolute small panel
-              "md:absolute md:top-12 md:right-1 md:inset-auto md:w-auto md:h-auto md:min-w-80 md:max-h-125 md:rounded-md md:p-1 md:shadow-xl",
+              "md:absolute md:top-12 md:right-1 md:inset-auto md:w-auto md:h-auto md:min-w-80 md:max-h-125 md:rounded-md md:p-1 md:shadow-xl"
             )}
           >
             <div>

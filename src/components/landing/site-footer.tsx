@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Logo from "../icons/Logo";
+import { Button } from "../ui/button";
 
 export function SiteFooter() {
   return (
@@ -13,11 +14,15 @@ export function SiteFooter() {
         </div>
 
         <div className="flex items-center gap-6">
-          {/* Add your footer links here */}
-        </div>
-
-        <div className="flex gap-4 text-zinc-600 dark:text-gray-400">
-          {/* SVGs for GitHub/LinkedIn go here */}
+          <Button variant="ghost" asChild>
+            <Link
+              href="https://github.com/Rishabh-Shukla-2209/vitalize"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Source Code
+            </Link>
+          </Button>
         </div>
       </div>
     </footer>

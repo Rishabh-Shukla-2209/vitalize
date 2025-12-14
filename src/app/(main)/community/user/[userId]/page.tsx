@@ -58,10 +58,10 @@ const SocialProfile = () => {
             ...oldData,
             followStatus: newFollowStatus,
           };
-        },
+        }
       );
     },
-    [id, queryClient, user],
+    [id, queryClient, user]
   );
 
   useEffect(() => {
@@ -76,14 +76,16 @@ const SocialProfile = () => {
       try {
         saveFollowing(id as string, data.profileUser!.privacy, action);
         updateFollowQueryData(followStatus);
+        queryClient.invalidateQueries({ queryKey: ["following"] });
+        queryClient.invalidateQueries({ queryKey: ["followers"] });
       } catch (err) {
         handleAppError(err);
         updateFollowQueryData(data.followStatus!);
       }
-    }, 2000);
+    }, 1000);
 
     return () => clearTimeout(timer);
-  }, [data, followStatus, id, updateFollowQueryData, user]);
+  }, [data, followStatus, id, queryClient, updateFollowQueryData, user]);
 
   const changeFollowStatus = () => {
     if (followStatus === "Accepted" || followStatus === "Requested") {
@@ -124,8 +126,8 @@ const SocialProfile = () => {
                     {followStatus === "Accepted"
                       ? "Following"
                       : followStatus === "Requested"
-                        ? "Requested"
-                        : "Follow"}
+                      ? "Requested"
+                      : "Follow"}
                   </Button>
                 </>
               )}

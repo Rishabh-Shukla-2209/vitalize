@@ -24,6 +24,15 @@ export function SiteHeader() {
           <Button variant="ghost" asChild>
             <Link href="#demo">Demo</Link>
           </Button>
+          <Button variant="ghost" asChild>
+            <Link
+              href="https://github.com/Rishabh-Shukla-2209/vitalize"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Source Code
+            </Link>
+          </Button>
         </nav>
 
         <div className="flex items-center gap-3">

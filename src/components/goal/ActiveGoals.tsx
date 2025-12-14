@@ -45,7 +45,7 @@ const Goals = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="-top-4 left-65 md:-top-5 md:left-80" />
+          <CarouselPrevious className="-top-4 left-auto right-8 md:-top-5 md:right-12" />
           <CarouselNext className="-top-4 -right-2 md:-top-5 md:right-2" />
         </Carousel>
       ) : (

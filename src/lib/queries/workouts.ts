@@ -18,7 +18,7 @@ export const getWorkoutPlansQuery = async (
   equipment: EquipmentType | "" = "",
   difficulty: DifficultyType | "" = "",
   duration: string = "",
-  pageParam: number = 0,
+  pageParam: number = 0
 ) => {
   return safeQuery(async () => {
     const andConditions: Prisma.WorkoutPlanWhereInput[] = [];
@@ -112,7 +112,7 @@ export const getPastWorkoutsQuery = async (
   userId: string,
   date: Date | undefined | "" = "",
   muscleGroup: MuscleGroupType | "" = "",
-  pageParam: number = 0,
+  pageParam: number = 0
 ) => {
   return safeQuery(async () => {
     const whereClause: Prisma.WorkoutLogWhereInput = { userId };
@@ -166,7 +166,7 @@ export const getPastWorkoutsQuery = async (
 export const saveWorkoutLogQuery = async (
   userId: string,
   planId: string,
-  workoutData: WorkoutLogDataType,
+  workoutData: WorkoutLogDataType
 ) => {
   return safeQuery(async () => {
     const exercises: Prisma.ExerciseLogCreateWithoutWorkoutLogInput[] = [];
@@ -189,174 +189,179 @@ export const saveWorkoutLogQuery = async (
     }
 
     try {
-      await prisma.$transaction(async (tx) => {
-        const timeNow = new Date();
+      await prisma.$transaction(
+        async (tx) => {
+          const timeNow = new Date();
 
-        await tx.workoutLog.create({
-          data: {
-            user: { connect: { id: userId } },
-            plan: { connect: { id: planId } },
-            duration: workoutData.duration,
-            notes: workoutData.notes,
-            createdAt: timeNow,
-            exercises: {
-              create: exercises,
+          await tx.workoutLog.create({
+            data: {
+              user: { connect: { id: userId } },
+              plan: { connect: { id: planId } },
+              duration: workoutData.duration,
+              notes: workoutData.notes,
+              createdAt: timeNow,
+              exercises: {
+                create: exercises,
+              },
             },
-          },
-        });
+          });
 
-        const user = await tx.user.findUnique({
-          where: {
-            id: userId,
-          },
-        });
+          const user = await tx.user.findUnique({
+            where: {
+              id: userId,
+            },
+          });
 
-        if (!user) {
-          throw new Error("User not found");
-        }
+          if (!user) {
+            throw new Error("User not found");
+          }
 
-        let currentStreak = user.currentStreakDays || 1;
-        let longestStreak = user.longestStreakDays || 1;
+          let currentStreak = user.currentStreakDays || 1;
+          let longestStreak = user.longestStreakDays || 1;
 
-        if (user.lastActiveOn) {
-          if (!isSameDay(timeNow, user.lastActiveOn)) {
-            if (isSameDay(user.lastActiveOn, subDays(timeNow, 1))) {
-              currentStreak += 1;
-              if (currentStreak > user.longestStreakDays) {
-                longestStreak = currentStreak;
+          if (user.lastActiveOn) {
+            if (!isSameDay(timeNow, user.lastActiveOn)) {
+              if (isSameDay(user.lastActiveOn, subDays(timeNow, 1))) {
+                currentStreak += 1;
+                if (currentStreak > user.longestStreakDays) {
+                  longestStreak = currentStreak;
+                }
+              } else {
+                currentStreak = 1;
               }
-            } else {
-              currentStreak = 1;
             }
           }
-        }
 
-        await tx.user.update({
-          where: {
-            id: userId,
-          },
-          data: {
-            currentStreakDays: currentStreak,
-            longestStreakDays: longestStreak,
-            lastActiveOn: timeNow,
-          },
-        });
+          await tx.user.update({
+            where: {
+              id: userId,
+            },
+            data: {
+              currentStreakDays: currentStreak,
+              longestStreakDays: longestStreak,
+              lastActiveOn: timeNow,
+            },
+          });
 
-        const pRs = await tx.pR.findMany({
-          where: {
-            userid: userId,
-          },
-          select: {
-            prField: true,
-            prValue: true,
-            exerciseid: true,
-          },
-        });
+          const pRs = await tx.pR.findMany({
+            where: {
+              userid: userId,
+            },
+            select: {
+              prField: true,
+              prValue: true,
+              exerciseid: true,
+            },
+          });
 
-        const prExIds = pRs.map((pr) => pr.exerciseid);
-        const prMap = new Map(pRs.map((pr) => [pr.exerciseid, pr]));
+          const prExIds = pRs.map((pr) => pr.exerciseid);
+          const prMap = new Map(pRs.map((pr) => [pr.exerciseid, pr]));
 
-        const prsToUpdate: Array<{ key: string; val: Prisma.PRUpdateInput }> =
-          [];
-        const prsToAdd: Prisma.PRCreateManyInput[] = [];
+          const prsToUpdate: Array<{ key: string; val: Prisma.PRUpdateInput }> =
+            [];
+          const prsToAdd: Prisma.PRCreateManyInput[] = [];
 
-        const { data: goals, error } = await getActiveGoalsQuery(userId);
-        if (error) throw error;
+          const { data: goals, error } = await getActiveGoalsQuery(userId);
+          if (error) throw error;
 
-        const goalsExIds = goals!.map((goal) => goal.targetExercise.id);
-        const goalsToUpdate: Array<{
-          key: string;
-          val: Prisma.GoalUpdateInput;
-        }> = [];
+          const goalsExIds = goals!.map((goal) => goal.targetExercise.id);
+          const goalsToUpdate: Array<{
+            key: string;
+            val: Prisma.GoalUpdateInput;
+          }> = [];
 
-        for (const category of Object.keys(workoutData)) {
-          if (category !== "duration" && category !== "notes") {
-            const catEx = workoutData[category as keyof WorkoutLogDataType];
+          for (const category of Object.keys(workoutData)) {
+            if (category !== "duration" && category !== "notes") {
+              const catEx = workoutData[category as keyof WorkoutLogDataType];
 
-            if (Array.isArray(catEx)) {
-              catEx.forEach((ex) => {
-                const { exerciseId } = ex;
-                if (prExIds.includes(exerciseId)) {
-                  const existingPr = prMap.get(exerciseId);
-                  const newValue = ex[
-                    existingPr!.prField as keyof typeof ex
-                  ] as number;
-                  if (existingPr && existingPr.prValue < newValue) {
-                    prsToUpdate.push({
-                      key: existingPr.exerciseid,
-                      val: { prValue: newValue },
-                    });
-                  }
-                } else {
-                  const newPrField =
-                    ExerciseFilterOptions[
-                      category.toUpperCase() as ExerciseCategoryType
-                    ];
-                  prsToAdd.push({
-                    prField: newPrField,
-                    prValue: ex[newPrField as keyof typeof ex] as number,
-                    exerciseid: exerciseId,
-                    userid: userId,
-                  });
-                }
-
-                if (goalsExIds.includes(exerciseId)) {
-                  const goal = goals!.find(
-                    (goal) => goal.targetExercise.id === exerciseId,
-                  );
-                  const newValue = ex[
-                    goal!.targetField as keyof typeof ex
-                  ] as number;
-                  if (goal && goal.currentValue < newValue) {
-                    if (newValue >= goal.targetValue) {
-                      goalsToUpdate.push({
-                        key: goal.id,
-                        val: { currentValue: newValue, status: "ACHIEVED" },
-                      });
-                    } else {
-                      goalsToUpdate.push({
-                        key: goal.id,
-                        val: { currentValue: newValue },
+              if (Array.isArray(catEx)) {
+                catEx.forEach((ex) => {
+                  const { exerciseId } = ex;
+                  if (prExIds.includes(exerciseId)) {
+                    const existingPr = prMap.get(exerciseId);
+                    const newValue = ex[
+                      existingPr!.prField as keyof typeof ex
+                    ] as number;
+                    if (existingPr && existingPr.prValue < newValue) {
+                      prsToUpdate.push({
+                        key: existingPr.exerciseid,
+                        val: { prValue: newValue },
                       });
                     }
+                  } else {
+                    const newPrField =
+                      ExerciseFilterOptions[
+                        category.toUpperCase() as ExerciseCategoryType
+                      ];
+                    prsToAdd.push({
+                      prField: newPrField,
+                      prValue: ex[newPrField as keyof typeof ex] as number,
+                      exerciseid: exerciseId,
+                      userid: userId,
+                    });
                   }
-                }
-              });
+
+                  if (goalsExIds.includes(exerciseId)) {
+                    const goal = goals!.find(
+                      (goal) => goal.targetExercise.id === exerciseId
+                    );
+                    const newValue = ex[
+                      goal!.targetField as keyof typeof ex
+                    ] as number;
+                    if (goal && goal.currentValue < newValue) {
+                      if (newValue >= goal.targetValue) {
+                        goalsToUpdate.push({
+                          key: goal.id,
+                          val: { currentValue: newValue, status: "ACHIEVED" },
+                        });
+                      } else {
+                        goalsToUpdate.push({
+                          key: goal.id,
+                          val: { currentValue: newValue },
+                        });
+                      }
+                    }
+                  }
+                });
+              }
             }
           }
-        }
 
-        if (prsToAdd.length > 0) {
-          await tx.pR.createMany({
-            data: prsToAdd,
-          });
-        }
+          if (prsToAdd.length > 0) {
+            await tx.pR.createMany({
+              data: prsToAdd,
+            });
+          }
 
-        await Promise.all(
-          prsToUpdate.map((pr) =>
-            tx.pR.update({
-              where: {
-                userid_exerciseid: {
-                  exerciseid: pr.key,
-                  userid: userId,
+          await Promise.all(
+            prsToUpdate.map((pr) =>
+              tx.pR.update({
+                where: {
+                  userid_exerciseid: {
+                    exerciseid: pr.key,
+                    userid: userId,
+                  },
                 },
-              },
-              data: pr.val,
-            }),
-          ),
-        );
+                data: pr.val,
+              })
+            )
+          );
 
-        await Promise.all(
-          goalsToUpdate.map((goal) =>
-            tx.goal.update({
-              where: {
-                id: goal.key,
-              },
-              data: goal.val,
-            }),
-          ),
-        );
-      });
+          await Promise.all(
+            goalsToUpdate.map((goal) =>
+              tx.goal.update({
+                where: {
+                  id: goal.key,
+                },
+                data: goal.val,
+              })
+            )
+          );
+        },
+        {
+          timeout: 15000,
+        }
+      );
     } catch (err) {
       console.error("Error saving workout log:", err);
       throw new Error("Failed to save workout log");

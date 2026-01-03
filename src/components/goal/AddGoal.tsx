@@ -117,6 +117,10 @@ const AddGoal = ({
       queryClient.invalidateQueries({
         queryKey: ["activeGoals"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["Goals", userId],
+        exact: false,
+      });
       setAddGoal(false);
     } catch (err) {
       handleAppError(err);
